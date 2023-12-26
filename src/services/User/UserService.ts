@@ -5,8 +5,8 @@ import { CrudResponse } from "@/types/shared/CrudResponse";
 
 const HOST = 'http://localhost:3000';
 
-export const getUsers = async (): Promise<UserResponse[]> => {
-    return await fetch(`${HOST}/api/users`, { cache: 'no-store' }).then(res => res.json());
+export const getUsers = async () => {
+    return await fetch(`${HOST}/api/users`, { cache: 'no-store' })
 }
 
 export const getUser = async (id: number) => {
