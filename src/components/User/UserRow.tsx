@@ -2,7 +2,6 @@
 
 import { deleteUser } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
-import Link from "next/link";
 import { useRouter } from 'next/navigation';
 
 export const UserRow = ({ user }: { user: UserResponse }) => {
@@ -18,16 +17,18 @@ export const UserRow = ({ user }: { user: UserResponse }) => {
         }).catch((err) => {
             window.alert('Error');
         });
-
     }
+
+    const updateUserHandler = async (id: number) => {
+        router.push(`/dashboard/user/update/${id}`);
+    }
+
     return (
         <tr key={user.id}>
             <td>
                 <ul>
                     <li>
-                        <Link href="/dashboard/user/update">
-                            <button>UPDATE </button>
-                        </Link>
+                        <button onClick={(e) => updateUserHandler(user.id)}>UPDATE </button>
                     </li>
                     <li>
                         <button onClick={(e) => deleteUserHandler(user.id)}>DELETE </button>

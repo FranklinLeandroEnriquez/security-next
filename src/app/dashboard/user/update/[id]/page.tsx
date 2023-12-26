@@ -1,24 +1,44 @@
 'use client'
 
-import { createUser } from "@/services/User/UserService";
+import { getUser, updateUser } from "@/services/User/UserService";
 import { CreateUserRequest } from "@/types/User/CreateUserRequest";
+import { UpdateUserRequest } from "@/types/User/UpdateUserRequest";
 import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function UserCreateForm() {
+export default function UserUpdateForm({ params }: any) {
 
-    const [user, setUser] = useState<CreateUserRequest>({} as CreateUserRequest);
+    const [user, setUser] = useState<UpdateUserRequest>({} as UpdateUserRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
 
     const router = useRouter();
 
+    useEffect(() => {
+        onLoad();
+    }, []);
+
+    const onLoad = async () => {
+        const { id } = params;
+        await getUser(id).then(async (res) => {
+            if (res.status === 200) {
+                return res.json().then((data) => {
+                    setUser(data);
+                });
+            }
+            router.push("/dashboard/user");
+            return window.alert('User Not Found');
+        }).catch((err) => {
+            return window.alert('Error');
+        });
+    }
+
     const onSubmit = async (e: any) => {
         e.preventDefault();
         try {
-            await createUser(user).then(async (res) => {
-                if (res.status === 201) {
+            await updateUser(params.id, user).then(async (res) => {
+                if (res.status === 200) {
                     return router.push("/dashboard/user");
                 }
 
@@ -49,7 +69,8 @@ export default function UserCreateForm() {
 
     return (
         <div>
-            <h1>Crear</h1>
+            <h1>Update</h1>
+
 
             {errorResponse?.message}
 
@@ -89,6 +110,13 @@ export default function UserCreateForm() {
                     onChange={(e) => setUser({ ...user, password: e.target.value })}
                     value={user.password}
                     required
+                />
+
+                {errors?.message?.find((err) => err.field === 'status')?.errors}
+                <input
+                    type="checkbox"
+                    onClick={(e) => setUser({ ...user, status: !user.status })}
+                    checked={user.status ? true : false}
                 />
 
                 <input
