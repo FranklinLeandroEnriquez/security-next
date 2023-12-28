@@ -51,8 +51,8 @@ export default function Home() {
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="Enter your email" />
+                <Label htmlFor="email">Username/Email</Label>
+                <Input id="email" type="email" placeholder="Enter your email or username" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
@@ -72,7 +72,7 @@ export default function Home() {
               <Button className="w-full">Login</Button>
               <p className="mt-2 text-xs text-center text-gray-700">
                 {" "}
-                Don't have an account?{" "}
+                Create an account?{" "}
                 <span className=" text-blue-600 hover:underline">Sign up</span>
               </p>
             </CardFooter>

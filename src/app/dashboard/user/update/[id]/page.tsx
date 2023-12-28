@@ -17,7 +17,7 @@ export default function UserUpdateForm({ params }: any) {
 
     useEffect(() => {
         onLoad();
-    }, []);
+    });
 
     const onLoad = async () => {
         const { id } = params;
