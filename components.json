@@ -12,9 +12,6 @@
   },
   "aliases": {
     "components": "@/components",
-    "utils": "@/lib/utils",
-    "styles": "@/styles",
-    "types": "@/types",
-    "services": "@/services"
+    "utils": "@/lib/utils"
   }
 }
