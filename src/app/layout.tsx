@@ -25,16 +25,6 @@ export default function RootLayout({
             inter.className
           )}>
 
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/images/backgroundUTN.jpg"
-              alt="Background UTN"
-              width={1920}
-              height={1080}
-              className="object-cover object-center w-full h-full hidden md:block"
-            />
-            <div className="absolute inset-0 bg-black opacity-50"></div>
-          </div>
           <main className='relative flex flex-col min-h-screen'>
             <div className='flex-grow flex-1'>
               {children}

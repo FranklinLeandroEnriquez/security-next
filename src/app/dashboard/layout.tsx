@@ -1,5 +1,8 @@
-import styles from './layout.module.css';
-import Link from 'next/link';
+
+import Header from '@/components/Header';
+import SideNav from '@/components/side-nav';
+import MarginWidthWrapper from '@/components/margin-width-wrapper';
+import PageWrapper from '@/components/page-wrapper';
 
 
 export default function DashboardLayout({
@@ -9,25 +12,16 @@ export default function DashboardLayout({
 }) {
     return (
         <div>
-            <aside className={styles.navbar}>
-                <nav>
-                    <ul className={styles.navList}>
-                        <li className={styles.navItem}>
-                            <Link href="/dashboard/user">
-                                <span className={styles.navLink}>Usuarios</span>
-                            </Link>
-                        </li>
-                        <li className={styles.navItem}>
-                            <Link href="/dashboard/role">
-                                <span className={styles.navLink}>Roles</span>
-                            </Link>
-                        </li>
-                    </ul>
-                </nav>
-            </aside>
-            <main className={styles.layout_main}>
-                {children}
-            </main>
+            <div className='flex'>
+                <SideNav />
+                <main className="flex-1">
+                    <MarginWidthWrapper>
+                        <Header />
+                        <PageWrapper>{children}</PageWrapper>
+                    </MarginWidthWrapper>
+                </main>
+
+            </div>
         </div>
     );
 }
