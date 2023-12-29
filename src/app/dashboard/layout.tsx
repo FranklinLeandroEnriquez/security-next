@@ -1,8 +1,9 @@
 
+import Link from 'next/link';
 import Header from '@/components/Header';
-import SideNav from '@/components/side-nav';
-import MarginWidthWrapper from '@/components/margin-width-wrapper';
-import PageWrapper from '@/components/page-wrapper';
+import SideNav from '@/components/SideNav';
+import MarginWidthWrapper from '@/components/marginWidthWrapper';
+import PageWrapper from '@/components/PageWrapper';
 
 
 export default function DashboardLayout({

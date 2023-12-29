@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { SIDEVAR_ITEMS } from '@/config-Side-Nav/constants';
-import { SideNavItems } from '@/config-Side-Nav/types';
-import Icon from '../components/Incon';
+import { SIDEVAR_ITEMS } from '@/SideConfig/constants';
+import { SideNavItems } from '@/SideConfig/types';
+import Icon from './Incon';
 
 const SideNav = () => {
     return (
@@ -46,44 +46,44 @@ const MenuItem = ({ item }: { item: SideNavItems }) => {
                 <>
                     <button
                         onClick={toggleSubMenu}
-                        className={`flex flex-row items-center p-2 rounded-lg hover-bg-yellow-600 w-full justify-between hover:bg-yellow-600 ${pathname.includes(item.path) ? 'bg-yellow-600' : ''
+                        className={`flex flex-row items-center p-2 rounded-lg text-white hover-bg-[#36342e] w-full justify-between hover:bg-[#36342e] ${pathname.includes(item.path) ? 'text-[#FEAF00]' : ''
                             }`}
                     >
                         <div className="flex flex-row space-x-4 items-center">
                             {item.icon}
-                            <span className="font-semibold text-xl  flex">{item.title}</span>
+                            <span className="font-semibold text-lg  flex">{item.title}</span>
                         </div>
 
                         <div className={`${subMenuOpen ? 'rotate-180' : ''} flex`}>
-                            <Icon name="chevron-down" color="#FFD700" size={25} />
+                            <Icon name="chevron-down" color="white" size={25} />
                         </div>
                     </button>
 
                     {subMenuOpen && (
-                        <div className="my-2 ml-12 flex flex-col space-y-4">
-                            {item.subMenuItems?.map((subItem, idx) => {
-                                return (
-                                    <Link
-                                        key={idx}
-                                        href={subItem.path}
-                                        className={`${subItem.path === pathname ? 'font-bold' : ''
-                                            }`}
-                                    >
+                        <div className="my-2 ml-12 flex flex-col space-y-4">{item.subMenuItems?.map((subItem, idx) => {
+                            return (
+                                <Link
+                                    key={idx}
+                                    href={subItem.path}
+                                    className={`${subItem.path === pathname ? 'font-bold' : ''}`}
+                                >
+                                    <div className="flex flex-row space-x-4 items-center">
+                                        {subItem.icon}
                                         <span>{subItem.title}</span>
-                                    </Link>
-                                );
-                            })}
-                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        })}</div>
                     )}
                 </>
             ) : (
                 <Link
                     href={item.path}
-                    className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-100 ${item.path === pathname ? 'bg-zinc-100' : ''
+                    className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-[#36342e] ${item.path === pathname ? 'bg-[#36342e]' : ''
                         }`}
                 >
                     {item.icon}
-                    <span className="font-semibold text-xl flex">{item.title}</span>
+                    <span className="font-semibold text-lg flex">{item.title}</span>
                 </Link>
             )}
         </div>
