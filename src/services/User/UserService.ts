@@ -1,9 +1,7 @@
 import { CreateUserRequest } from "@/types/User/CreateUserRequest";
 import { UpdateUserRequest } from "@/types/User/UpdateUserRequest";
-import { UserResponse } from "@/types/User/UserResponse";
-import { CrudResponse } from "@/types/shared/CrudResponse";
 
-const HOST = 'http://localhost:3000';
+const HOST = process.env.NEXT_PUBLIC_API_HOST;
 
 export const getUsers = async () => {
     return await fetch(`${HOST}/api/users`, { cache: 'no-store' })

@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteUser, getUsers } from "@/services/User/UserService";
+import { deleteUser, getUsers, createUser } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";

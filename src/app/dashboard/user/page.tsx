@@ -1,13 +1,16 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import { columns, User } from '@/app/dashboard/user/columns'
+import { columns, User } from '@/types/User/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
+import { UsersRound } from 'lucide-react';
 
-import { deleteUser } from "@/services/User/UserService";
+import { deleteUser, getUsers } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
+import { Button } from '@/components/ui/button';
+import Header from '@/components/Header';
 
 export default function Page() {
     const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
@@ -34,9 +37,15 @@ export default function Page() {
     }
 
     const getUsersLocal = async () => {
-        const res = await fetch('http://localhost:3000/api/users');
-        const data: UserResponse[] = await res.json();
-        setUsers(data);
+        getUsers().then(async (res) => {
+            if (res.status === 200) {
+                return res.json().then((data) => {
+                    setUsers(data);
+                });
+            }
+        }).catch((err) => {
+            return window.alert('Error');
+        });
     }
 
     useEffect(() => {
@@ -44,9 +53,16 @@ export default function Page() {
     }, []);
 
     return (
-        <MaxWidthWrapper>
-            <h1> ALL USERS</h1>
-            <DataTable<User, string> columns={columns(updateUserHandler, deleteUserHandler)} data={users} />
-        </MaxWidthWrapper>
+        <>
+            <Header title="Usuarios" IconComponent={UsersRound} />
+            <MaxWidthWrapper>
+                <div className="mt-3 flex justify-between mb-2">
+                    <Button onClick={createUserHandler}>
+                        <span> Crear Usuario</span>
+                    </Button>
+                </div>
+                <DataTable<User, string> columns={columns(updateUserHandler, deleteUserHandler)} data={users} />
+            </MaxWidthWrapper>
+        </>
     )
 }
