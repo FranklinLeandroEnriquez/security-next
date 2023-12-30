@@ -1,4 +1,4 @@
-import { Home, Settings, User, UserCheck, BarChart2, FunctionSquare, BookText } from 'lucide-react';
+import { Home, Settings, User, UserCheck, BarChart2, FunctionSquare, BookText, Route } from 'lucide-react';
 import { SideNavItems } from './types';
 
 
@@ -59,6 +59,11 @@ export const SIDEVAR_ITEMS: SideNavItems[] = [
         icon: <BookText size={20} color="#c59a1a" />,
         submenu: true,
         subMenuItems: [
+            {
+                title: "Audit Trails",
+                path: "/dashboard/reports/audit",
+                icon: <Route size={20} />
+            },
             {
                 title: "Users",
                 path: "/",
