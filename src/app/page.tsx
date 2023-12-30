@@ -1,6 +1,4 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-
-
 import { Button } from "@/components/ui/button"
 import {
   Card,

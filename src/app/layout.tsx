@@ -1,7 +1,7 @@
 
 import { Inter } from "next/font/google"
 import Image from 'next/image'
-import './globals.css'
+import '../styles/globals.css'
 import { cn } from "@/lib/utils"
 
 export const metadata = {
