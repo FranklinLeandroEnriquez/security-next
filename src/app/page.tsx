@@ -13,7 +13,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Icon from '../components/Incon';
+import { Tally1 } from 'lucide-react'
 import Image from 'next/image';
 
 
@@ -37,7 +37,7 @@ export default function Home() {
           <Card >
             <CardHeader className="space-y-1">
               <div className="mr-5 mb-7 mt-3 justify-center flex flex-initial items-center">
-                <Icon name="tally-1" color="#FFD700" size={35} />
+                <Tally1 color="#FFD700" size={35} />
                 <span className="font-bold text-2xl">
                   SECURITY UTN
                 </span>
