@@ -14,14 +14,10 @@ export default function UserUpdateForm({ params }: any) {
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
 
     const router = useRouter();
-
     useEffect(() => {
-        onLoad();
-    });
-
-    const onLoad = async () => {
         const { id } = params;
-        await getUser(id).then(async (res) => {
+
+        getUser(id).then(async (res) => {
             if (res.status === 200) {
                 return res.json().then((data) => {
                     setUser(data);
@@ -32,7 +28,8 @@ export default function UserUpdateForm({ params }: any) {
         }).catch((err) => {
             return window.alert('Error');
         });
-    }
+
+    }, []);
 
     const onSubmit = async (e: any) => {
         e.preventDefault();
@@ -115,7 +112,7 @@ export default function UserUpdateForm({ params }: any) {
                 {errors?.message?.find((err) => err.field === 'status')?.errors}
                 <input
                     type="checkbox"
-                    onClick={(e) => setUser({ ...user, status: !user.status })}
+                    onChange={(e) => setUser({ ...user, status: !user.status })}
                     checked={user.status ? true : false}
                 />
 

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import SideNav from '@/components/SideNav';
 import MarginWidthWrapper from '@/components/marginWidthWrapper';
-import PageWrapper from '@/components/PageWrapper';
 
 
 export default function DashboardLayout({
@@ -17,8 +16,7 @@ export default function DashboardLayout({
                 <SideNav />
                 <main className="flex-1">
                     <MarginWidthWrapper>
-                        <Header />
-                        <PageWrapper>{children}</PageWrapper>
+                        {children}
                     </MarginWidthWrapper>
                 </main>
 
