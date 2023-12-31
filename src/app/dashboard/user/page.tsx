@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import { Input } from '@/components/ui/input';
 
 export default function Page() {
     const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
@@ -56,7 +57,7 @@ export default function Page() {
         <>
             <Header title="Usuarios" IconComponent={UsersRound} />
             <MaxWidthWrapper>
-                <div className="mt-3 flex justify-between mb-2">
+                <div className="relative top-8 left-[83%] sm:left-[89.5%] z-10">
                     <Button onClick={createUserHandler}>
                         <span> Crear Usuario</span>
                     </Button>

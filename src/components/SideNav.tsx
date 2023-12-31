@@ -8,7 +8,7 @@ import { ChevronDown, Ghost } from 'lucide-react';
 
 import { SIDEVAR_ITEMS } from '@/SideConfig/constants';
 import { SideNavItems } from '@/SideConfig/types';
-import { Button, buttonVariants } from './ui/button';
+import { buttonVariants } from './ui/button';
 
 const SideNav = () => {
     return (

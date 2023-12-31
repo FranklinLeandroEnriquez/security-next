@@ -16,7 +16,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Button } from "./ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
 import React from "react"
@@ -49,18 +48,18 @@ export function DataTable<TData, TValue>({
     return (
         <>
             {/* filters */}
-            <div>
-                <div className="flex items-center py-4">
-                    <Input
-                        placeholder="Filter username..."
-                        value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("username")?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm"
-                    />
-                </div>
+
+            <div className="relative bottom-2">
+                <Input
+                    placeholder="Filter username..."
+                    value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("username")?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm"
+                />
             </div>
+
             {/* table */}
             <div className="rounded-md border">
                 <Table>
