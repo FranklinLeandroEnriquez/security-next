@@ -38,8 +38,8 @@ export const SIDEVAR_ITEMS: SideNavItems[] = [
         ]
     },
     {
-        title: "Assing",
-        path: "/",
+        title: "Assign",
+        path: "/dashboard/",
         icon: <Settings size={20} color="#c59a1a" />,
         submenu: true,
         subMenuItems: [
@@ -49,7 +49,8 @@ export const SIDEVAR_ITEMS: SideNavItems[] = [
             },
             {
                 title: "Roles to Users",
-                path: "/",
+                path: "/dashboard/assign-role",
+                icon: <UserCheck size={20} />
             },
         ]
     },
