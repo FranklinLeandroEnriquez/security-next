@@ -55,7 +55,6 @@ export default function Page() {
 
     return (
         <>
-
             <Header title='All Roles' />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Role, string> onCreate={createRoleHandler} columns={columns(updateRoleHandler, deleteRoleHandler)} data={roles} />
