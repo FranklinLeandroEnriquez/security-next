@@ -3,7 +3,6 @@
 import { DataTable } from '@/components/data-table'
 import { columns, User } from '@/types/User/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-import { UsersRound } from 'lucide-react';
 
 import { deleteUser, getUsers } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
@@ -54,14 +53,9 @@ export default function Page() {
 
     return (
         <>
-            <Header title="Usuarios" IconComponent={UsersRound} />
-            <MaxWidthWrapper>
-                <div className="relative top-8 left-[83%] sm:left-[89.5%] z-10">
-                    <Button onClick={createUserHandler}>
-                        <span> Crear Usuario</span>
-                    </Button>
-                </div>
-                <DataTable<User, string> columns={columns(updateUserHandler, deleteUserHandler)} data={users} />
+            <Header title='All Users' />
+            <MaxWidthWrapper className='mt-4'>
+                <DataTable<User, string> onCreate={createUserHandler} columns={columns(updateUserHandler, deleteUserHandler)} data={users} />
             </MaxWidthWrapper>
         </>
     )

@@ -24,11 +24,13 @@ import React from "react"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    onCreate: () => void
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    onCreate,
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -48,16 +50,26 @@ export function DataTable<TData, TValue>({
 
     return (
         <>
-            {/* filters */}
-            <div className="relative bottom-2">
-                <Input
-                    placeholder="Filter username..."
-                    value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("username")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
+            <div className="flex justify-between mb-3">
+                {/* filters */}
+                <div>
+                    <Input
+                        placeholder="Filter username..."
+                        value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn("username")?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                    />
+                </div>
+                {/* Crear */}
+                <div className="">
+                    <Button onClick={onCreate}>
+                        <span> Crear </span>
+                    </Button>
+                </div>
+
+
             </div>
             {/* table */}
             <div className="rounded-md border">

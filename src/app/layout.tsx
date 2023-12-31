@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import Image from 'next/image'
 import '../styles/globals.css'
 import { cn } from "@/lib/utils"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata = {
   title: 'Security Module',
@@ -21,15 +22,23 @@ export default function RootLayout({
       <html lang="en" className='h-full'>
         <body
           className={cn(
-            'relative h-full font-sans antialiased',
+            'relative z-10 h-full font-sans antialiased',
             inter.className
           )}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main className='flex flex-col min-h-screen'>
+              <div className='flex-grow flex-1'>
+                {children}
+              </div>
+            </main>
+          </ThemeProvider>
 
-          <main className='relative flex flex-col min-h-screen'>
-            <div className='flex-grow flex-1'>
-              {children}
-            </div>
-          </main>
+
         </body>
       </html>
     </>
