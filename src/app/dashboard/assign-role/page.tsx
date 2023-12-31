@@ -26,45 +26,36 @@ export default function AssignRole() {
     const router = useRouter();
 
     const getUsersHandler = async () => {
-        // try {
         const res = await getUsers();
         if (res.status === 200) {
             const data = await res.json();
-            setUsers(data);
+            const filteredUsers: UserResponse[] = data.filter((user: UserResponse) => user.status === true);
+            setUsers(filteredUsers);
         } else {
             window.alert('Error');
         }
-        // } catch (err) {
-        // window.alert('Error');
-        // }
     }
 
     const getRolesOfUserHandler = async (userId: number) => {
-        // try {
         const res = await getRolesOfUser(userId);
         if (res.status === 200) {
             const data = await res.json();
-            setUserRoles(data);
+            const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
+            setUserRoles(filteredRoles);
         } else {
             window.alert('Error');
         }
-        // } catch (err) {
-        // window.alert('Error');
-        // }
     }
 
     const getRolesHandler = async () => {
-        // try {
         const res = await getRoles();
         if (res.status === 200) {
             const data = await res.json();
-            setAvailableRoles(data);
+            const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
+            setAvailableRoles(filteredRoles);
         } else {
             window.alert('Error');
         }
-        // } catch (err) {
-        // window.alert('Error');
-        // }
     }
 
     const handleUserChange = (userId: number) => {
@@ -121,17 +112,17 @@ export default function AssignRole() {
             <MaxWidthWrapper className="mt-8">
                 <CustomSelect
                     options={[
-                        { label: 'Seleccionar usuario...', value: 0 },
+                        { label: 'Select a user...', value: 0 },
                         ...users.map((user) => ({ label: user.username, value: user.id })),
                     ]}
                     onSelect={(selectedValue) => handleUserChange(selectedValue)}
-                    placeholder="Seleccionar usuario..."
+                    placeholder="Select a user..."
                 />
 
                 {selectedUser && (
                     <div className="flex space-x-4 mt-4"> {/* Agregamos mt-4 para agregar un margen en la parte superior */}
                         <div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
-                            <label>Roles Disponibles:</label>
+                            <label>Available Roles</label>
                             <ScrollableCheckboxList<Role>
                                 items={availableRoles.filter(role => !userRoles.some(userRole => userRole.id === role.id))}
                                 checkedItems={userRoles}
@@ -147,7 +138,7 @@ export default function AssignRole() {
                         </div>
 
                         <div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
-                            <label>Roles del Usuario:</label>
+                            <label>User Roles</label>
                             <ScrollableCheckboxList<Role>
                                 items={userRoles}
                                 checkedItems={userRoles}
@@ -165,7 +156,7 @@ export default function AssignRole() {
                 )}
                 <div className="flex justify-center">
                     <Button onClick={handleAssignRoles} className="mt-8 w-1/3">
-                        Asignar
+                        Assign
                     </Button>
                 </div>
             </MaxWidthWrapper>
