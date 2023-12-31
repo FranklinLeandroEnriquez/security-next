@@ -45,7 +45,8 @@ export const SIDEVAR_ITEMS: SideNavItems[] = [
         subMenuItems: [
             {
                 title: "Fuctions to Roles",
-                path: "/",
+                path: "/dashboard/assign-function",
+                icon: <FunctionSquare size={20} />
             },
             {
                 title: "Roles to Users",
