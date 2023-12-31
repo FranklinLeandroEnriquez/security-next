@@ -4,11 +4,6 @@ import { SideNavItems } from './types';
 
 export const SIDEVAR_ITEMS: SideNavItems[] = [
     {
-        title: "Home",
-        path: "/",
-        icon: <Home size={20} name='home' color="#c59a1a" />
-    },
-    {
         title: "Dashboard",
         path: "/dashboard/",
         icon: <Settings size={20} color="#c59a1a" />,

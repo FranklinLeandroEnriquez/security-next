@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import { columns, Role} from '@/types/Role/columns'
+import { columns, Role } from '@/types/Role/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { UsersRound } from 'lucide-react';
 
@@ -14,7 +14,7 @@ import Header from '@/components/Header';
 
 export default function Page() {
     const [roles, setRoles] = useState<RoleResponse[]>([] as RoleResponse[]);
-    
+
     const router = useRouter();
 
     const deleteRoleHandler = async (id: number) => {
@@ -55,17 +55,9 @@ export default function Page() {
 
     return (
         <>
-            <Header title="Roles" IconComponent={UsersRound} />
-            <MaxWidthWrapper>
-                <div className="relative top-8 left-[83%] sm:left-[89.5%] z-10">
-                    <Button onClick={createRoleHandler}>
-                        Create role
-                    </Button>
-                </div>
-                <DataTable<Role, string>
-                    columns={columns(updateRoleHandler, deleteRoleHandler)}
-                    data={roles}
-                />
+            <Header title='All Roles' />
+            <MaxWidthWrapper className='mt-4'>
+                <DataTable<Role, string> onCreate={createRoleHandler} columns={columns(updateRoleHandler, deleteRoleHandler)} data={roles} />
             </MaxWidthWrapper>
         </>
     )
