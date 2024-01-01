@@ -108,7 +108,7 @@ export default function AssignFunction() {
 
     return (
         <>
-            <Header title="Assing Functions" IconComponent={FunctionSquareIcon} />
+            <Header title="Assing Functions" />
             <MaxWidthWrapper className="mt-8">
                 <CustomSelect
                     options={[
