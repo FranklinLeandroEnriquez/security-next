@@ -25,9 +25,12 @@ export default function AuditReport() {
 
     return (
         <>
-            <Header title="Audit Trails" IconComponent={UsersRound} />
-            <MaxWidthWrapper>
-                <DataTable<AuditResponse, string> columns={column()} data={audits} />
+            <Header title='Audit Trails' />
+            <MaxWidthWrapper className='mt-4'>
+                <DataTable<AuditResponse, string>
+                    columns={column()}
+                    data={audits}
+                />
             </MaxWidthWrapper>
         </>
     );

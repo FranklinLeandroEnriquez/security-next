@@ -1,20 +1,19 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import {columns, Function} from '@/types/Function/columns'
+import { columns, Function } from '@/types/Function/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-import {FunctionSquare} from 'lucide-react';
+import { FunctionSquare } from 'lucide-react';
 
 import { deleteFunction, getFunctions } from "@/services/Function/FunctionService";
 import { FunctionResponse } from "@/types/Function/FunctionResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
-import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 
 export default function Page() {
     const [functions, setFunctions] = useState<FunctionResponse[]>([] as FunctionResponse[]);
-    
+
     const router = useRouter();
 
     const deleteFunctionHandler = async (id: number) => {
@@ -55,12 +54,10 @@ export default function Page() {
 
     return (
         <>
-            <Header title="Functions" IconComponent={FunctionSquare} />
-            <MaxWidthWrapper>
-                <div className="relative top-8 left-[83%] sm:left-[89.5%] z-10">
-                    <Button onClick={createFunctionHandler}>Create</Button>
-                </div>
-                <DataTable<Function,string>
+            <Header title='All Functions' />
+            <MaxWidthWrapper className='mt-4'>
+                <DataTable<Function, string>
+                    onCreate={createFunctionHandler}
                     columns={columns(updateFunctionHandler, deleteFunctionHandler)}
                     data={functions}
                 />

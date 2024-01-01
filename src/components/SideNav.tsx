@@ -13,7 +13,7 @@ import { Button, buttonVariants } from './ui/button';
 const SideNav = () => {
     return (
         <div className="md:w-60 bg-[#1E1E1E] h-screen flex-1 text-white fixed border-r hidden md:flex">
-            <div className="flex flex-col space-y-6 w-full">
+            <div className="flex flex-col w-full">
                 <Link
                     href="/"
                     className="flex flex-row space-x-3 items-center justify-center md:justify-start md:px-6 border-b  h-12 w-full"
@@ -22,7 +22,7 @@ const SideNav = () => {
                     <span className="font-bold text-base hidden md:flex">SECURITY UTN</span>
                 </Link>
 
-                <div className="flex flex-col space-y-2 md:px-6 ">
+                <div className="mt-1 flex flex-col space-y-2 md:px-6 ">
                     {SIDEVAR_ITEMS.map((item, idx) => {
                         return <MenuItem key={idx} item={item} />;
                     })}
@@ -61,12 +61,12 @@ const MenuItem = ({ item }: { item: SideNavItems }) => {
                     </button>
 
                     {subMenuOpen && (
-                        <div className="my-1 ml-2 flex flex-col space-y-2">{item.subMenuItems?.map((subItem, idx) => {
+                        <div className="my-1 ml-3 flex flex-col space-y-2">{item.subMenuItems?.map((subItem, idx) => {
                             return (
                                 <Link
                                     key={idx}
                                     href={subItem.path}
-                                    className={`${subItem.path === pathname ? `${buttonVariants()} bg-[#c59a1a] ml-3 w-[70%]` : ` ${buttonVariants({ variant: "ghost" })} ml-3 w-[70%]  hover:bg-[#c59a1a]`}`}
+                                    className={`${subItem.path === pathname ? `${buttonVariants()} bg-[#c59a1a] ml-3 w-[83%]` : ` ${buttonVariants({ variant: "ghost" })} ml-3 w-[83%]  hover:bg-[#c59a1a]`}`}
                                 >
                                     <div className="flex flex-row space-x-2 flex-auto">
                                         {subItem.icon}

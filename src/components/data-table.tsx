@@ -24,7 +24,7 @@ import React from "react"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
-    onCreate: () => void
+    onCreate?: () => void
 }
 
 export function DataTable<TData, TValue>({

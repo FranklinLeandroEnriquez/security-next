@@ -1,10 +1,7 @@
 
-import MaxWidthWrapper from '@/components/MaxWidthWrapper'
+
 import SideNav from '@/components/SideNav';
-import MarginWidthWrapper from '@/components/marginWidthWrapper';
-
-
-
+import { Toaster } from "@/components/ui/sonner"
 
 export default function DashboardLayout({
     children,
@@ -12,15 +9,15 @@ export default function DashboardLayout({
     children: React.ReactNode
 }) {
     return (
-        <div>
-            <div className='flex'>
+        <div className='flex h-screen overflow-hidden'>
+            <Toaster richColors position="bottom-right" />
+            <div className="relative flex flex-1 flex-col">
                 <SideNav />
-                <main className="flex-1">
-                    <MarginWidthWrapper>
+                <main>
+                    <div className='md:ml-60'>
                         {children}
-                    </MarginWidthWrapper>
+                    </div>
                 </main>
-
             </div>
         </div>
     );

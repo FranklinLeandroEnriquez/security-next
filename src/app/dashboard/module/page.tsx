@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import {columns, Module} from '@/types/Module/columns'
+import { columns, Module } from '@/types/Module/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { BookA } from 'lucide-react';
 
@@ -9,12 +9,11 @@ import { deleteModule, getModules } from "@/services/Module/ModuleService";
 import { ModuleResponse } from "@/types/Module/ModuleResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
-import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 
 export default function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
-    
+
     const router = useRouter();
 
     const deleteModuleHandler = async (id: number) => {
@@ -55,14 +54,10 @@ export default function Page() {
 
     return (
         <>
-            <Header title="Modules" IconComponent={BookA} />
-            <MaxWidthWrapper>
-                <div className="relative top-8 left-[83%] sm:left-[89.5%] z-10">
-                    <Button onClick={createModuleHandler}>
-                        Create module
-                    </Button>
-                </div>
-                <DataTable<Module,string>
+            <Header title='All Modules' />
+            <MaxWidthWrapper className='mt-4'>
+                <DataTable<Module, string>
+                    onCreate={createModuleHandler}
                     columns={columns(updateModuleHandler, deleteModuleHandler)}
                     data={modules}
                 />
