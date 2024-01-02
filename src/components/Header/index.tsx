@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ title, icon }) => {
   const backgroundColor = theme === 'white' ? 'white' : 'dark';
 
   return (
-    <header className="sticky top-0 z-999 flex w-ful drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none" style={{ boxShadow: `0 0px 1px ${boxShadowColor}`, backgroundColor: backgroundColor }}>
+    <header className="top-0 z-999 flex w-full" style={{ boxShadow: `0 0px 1px ${boxShadowColor}`, backgroundColor: backgroundColor }}>
       <div className="flex flex-grow items-center justify-between px-4 py-5 shadow-2 md:px-6 2xl:px-11">
         <div className="flex font-bold text-lg space-between ml-[60px]">
           {icon}

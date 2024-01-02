@@ -3,7 +3,7 @@
 import { DataTable } from '@/components/data-table'
 import { columns, User } from '@/types/User/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-
+import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteUser, getUsers } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
 import { useRouter } from 'next/navigation';
@@ -15,16 +15,23 @@ import { Users2Icon} from 'lucide-react';
 
 export default function Page() {
     const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
-
+    const [errors, setErrors] = useState<ErrorResponse | null>(null);
+    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
 
     const deleteUserHandler = async (id: number) => {
-        await deleteUser(id).then((res) => {
+        await deleteUser(id).then(async (res) => {
             if (res.status === 200) {
                 getUsersLocal();
                 toast.success("User deleted successfully");
             }else{
-                toast.error('Error deleting user.');
+                const errorData: ErrorResponse = await res.json();
+                if(errorData.error === 'ErrorResponse'){
+                    setErrorResponse(null);
+                    setErrors(errorData);
+                    toast.error(errorData.message.toString());
+                }
+                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('Error deleting user');
