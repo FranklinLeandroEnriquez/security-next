@@ -3,27 +3,35 @@
 import { DataTable } from '@/components/data-table'
 import { columns, Function } from '@/types/Function/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-import { FunctionSquare } from 'lucide-react';
-
+import{ErrorResponse} from "@/types/shared/ValidationError"
 import { deleteFunction, getFunctions } from "@/services/Function/FunctionService";
 import { FunctionResponse } from "@/types/Function/FunctionResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import Header from '@/components/Header';
+import { toast } from 'sonner';
 
 export default function Page() {
     const [functions, setFunctions] = useState<FunctionResponse[]>([] as FunctionResponse[]);
-
+    const [errors, setErrors] = useState<ErrorResponse | null>(null);
+    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
 
     const deleteFunctionHandler = async (id: number) => {
-        await deleteFunction(id).then((res) => {
+        await deleteFunction(id).then(async (res) => {
             if (res.status === 200) {
                 return getFunctionsHandler();
+            }else{
+                const errorData: ErrorResponse = await res.json();
+                if(errorData.error === 'ErrorResponse'){
+                    setErrorResponse(null);
+                    setErrors(errorData);
+                    toast.error(errorData.message.toString());
+                }
+                toast.error(errorData.message.toString());
             }
-            window.alert('Error');
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('An error has occurred');
         });
     }
 
@@ -42,9 +50,9 @@ export default function Page() {
                     setFunctions(data);
                 });
             }
-            window.alert('Error');
+            toast.error('An error has occurred');
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('An error has occurred');
         });
     }
 

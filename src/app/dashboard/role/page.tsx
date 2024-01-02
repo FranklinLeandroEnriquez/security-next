@@ -3,8 +3,7 @@
 import { DataTable } from '@/components/data-table'
 import { columns, Role } from '@/types/Role/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-import { UsersRound } from 'lucide-react';
-
+import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteRole, getRoles } from "@/services/Role/RoleService";
 import { RoleResponse } from "@/types/Role/RoleResponse";
 import { useRouter } from 'next/navigation';
@@ -15,16 +14,23 @@ import { toast } from "sonner";
 
 export default function Page() {
     const [roles, setRoles] = useState<RoleResponse[]>([] as RoleResponse[]);
-
+    const [errors, setErrors] = useState<ErrorResponse | null>(null);
+    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
 
     const deleteRoleHandler = async (id: number) => {
-        await deleteRole(id).then((res) => {
+        await deleteRole(id).then(async (res) => {
             if (res.status === 200) {
                 getRolesHandler();
                 toast.success("Role deleted successfully");
             } else {
-                toast.error('Error deleting role have dependencies');
+               const errorData: ErrorResponse = await res.json();
+               if(errorData.error === 'ErrorResponse'){
+                   setErrorResponse(null);
+                   setErrors(errorData);
+                   toast.error(errorData.message.toString());
+               }
+                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('Error deleting role');
