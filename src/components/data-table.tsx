@@ -25,12 +25,14 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     onCreate?: () => void
+    filteredColumn: string
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     onCreate,
+    filteredColumn,
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -54,10 +56,12 @@ export function DataTable<TData, TValue>({
                 {/* filters */}
                 <div>
                     <Input
-                        placeholder="Filter username..."
-                        value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
+                        placeholder={`Filter ${filteredColumn}...`} // Use the filteredColumn prop
+                        value={
+                            (table.getColumn(filteredColumn)?.getFilterValue() as string) ?? ""
+                        }
                         onChange={(event) =>
-                            table.getColumn("username")?.setFilterValue(event.target.value)
+                            table.getColumn(filteredColumn)?.setFilterValue(event.target.value)
                         }
                         className="max-w-sm"
                     />

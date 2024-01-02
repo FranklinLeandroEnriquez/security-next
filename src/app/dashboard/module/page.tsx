@@ -62,6 +62,7 @@ export default function Page() {
                     onCreate={createModuleHandler}
                     columns={columns(updateModuleHandler, deleteModuleHandler)}
                     data={modules}
+                    filteredColumn='name'
                 />
             </MaxWidthWrapper>
         </>

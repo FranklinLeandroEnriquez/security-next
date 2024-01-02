@@ -49,7 +49,7 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
     {
         id: "actions",
         cell: ({ row }) => {
-            const module = row.original
+            const function_ = row.original
 
             return (
                 <DropdownMenu>
@@ -62,18 +62,18 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Options</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(module.id.toString())}
+                            onClick={() => navigator.clipboard.writeText(function_.id.toString())}
                         >
-                            Copy module ID
+                            Copy function ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                            onClick={() => handleUpdate(module.id)}
+                            onClick={() => handleUpdate(function_.id)}
                         >
                             Update
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            onClick={() => handleDelete(module.id)}
+                            onClick={() => handleDelete(function_.id)}
                         >
                             Delete
                         </DropdownMenuItem>

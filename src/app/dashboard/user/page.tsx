@@ -55,7 +55,7 @@ export default function Page() {
         <>
             <Header title='All Users' />
             <MaxWidthWrapper className='mt-4'>
-                <DataTable<User, string> onCreate={createUserHandler} columns={columns(updateUserHandler, deleteUserHandler)} data={users} />
+                <DataTable<User, string> onCreate={createUserHandler} columns={columns(updateUserHandler, deleteUserHandler)} data={users} filteredColumn='username' />
             </MaxWidthWrapper>
         </>
     )
