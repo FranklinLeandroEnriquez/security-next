@@ -45,7 +45,7 @@ import {
 import { stat } from 'fs'
 import { UpdateFunctionRequest } from '@/types/Function/UpdateFunctionRequest'
 
-export default function FunctionUpdateForm({params}: any) {
+export default function FunctionUpdateForm({ params }: any) {
 
     const [functionn, setFunction] = useState<UpdateFunctionRequest>({} as UpdateFunctionRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -64,11 +64,12 @@ export default function FunctionUpdateForm({params}: any) {
         const fetchFunction = async () => {
             try {
                 const res = await getFunction(id);
-                console.log(id);
                 if (res.status === 200) {
                     const data = await res.json();
+                    data.moduleId = data.module.id;
                     setFunction(data);
                     form.reset(data);
+
                 } else {
                     router.push("/dashboard/function");
                     toast.error("Function not found");
@@ -77,15 +78,33 @@ export default function FunctionUpdateForm({params}: any) {
                 toast.error("Error to get function");
             }
         };
+
+        const getModulesHandler = async () => {
+            await getModules().then((res) => {
+                if (res.status === 200) {
+                    return res.json().then((data) => {
+                        setModules(data);
+                    });
+                }
+                window.alert('Error');
+            }).catch((err) => {
+                window.alert('Error');
+            });
+        };
+
         fetchFunction();
-    }, [id]);
+        getModulesHandler();
+
+
+
+    }, []);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         try {
             const res = await updateFunction(params.id, data);
             if (res.status === 200) {
                 toast.success("Funtion updated successfully");
-                router.push("/dashboard/module");
+                router.push("/dashboard/function");
             } else {
                 const errorData: ValidationErrorResponse = await res.json();
                 if (errorData.error == 'ValidationException') {
@@ -126,23 +145,9 @@ export default function FunctionUpdateForm({params}: any) {
         },
     });
 
-    const getModulesHandler = async () => {
-        await getModules().then((res) => {
-            if (res.status === 200) {
-                return res.json().then((data) => {
-                    setModules(data);
-                });
-            }
-            window.alert('Error');
-        }).catch((err) => {
-            window.alert('Error');
-        });
+    if (functionn.name === undefined) {
+        return <></>;
     }
-
-    useEffect(() => {
-        getModulesHandler();
-    }, []);
-
 
     return (
         <>
