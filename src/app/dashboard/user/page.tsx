@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import { toast } from "sonner";
+import { Users2Icon} from 'lucide-react';
 
 export default function Page() {
     const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
@@ -57,7 +58,7 @@ export default function Page() {
 
     return (
         <>
-            <Header title='All Users' />
+            <Header title='All Users' icon= {<Users2Icon/>} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<User, string> onCreate={createUserHandler} columns={columns(updateUserHandler, deleteUserHandler)} data={users} filteredColumn='username' />
             </MaxWidthWrapper>
