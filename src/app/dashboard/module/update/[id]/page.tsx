@@ -32,7 +32,6 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner";
-import { stat } from "fs";
 
 export default function ModuleUpdateFomr({ params }: any) {
 
@@ -41,55 +40,52 @@ export default function ModuleUpdateFomr({ params }: any) {
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
 
     const router = useRouter();
+    const { id } = params;
+
     useEffect(() => {
-        const { id } = params;
-
-        getModule(id).then(async (res) => {
-            if (res.status === 200) {
-                return res.json().then((data) => {
+        const fetchModule = async () => {
+            try {
+                const res = await getModule(id);
+                if (res.status === 200) {
+                    const data = await res.json();
                     setModule(data);
-                    //Esta linea es para que se actualice el formulario
-                    form.setValue("name", data.name);
-                    form.setValue("description", data.description);
-                    form.setValue("status", data.status);
-                });
+                    form.reset(data);
+                } else {
+                    router.push("/dashboard/module");
+                    toast.error("Module not found");
+                }
+            } catch (err) {
+                toast.error("Error to get module");
             }
-            router.push("/dashboard/module");
-            return toast.error("Module not found");
+        };
 
-        }).catch((err) => {
-            return toast.error("Error to get module");
-        });
-    }, []);
+        fetchModule();
+    }, [id]);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         try {
-            await updateModule(params.id, data).then(async (res) => {
-                if (res.status === 200) {
-                    toast.success("Module updated successfully");
-                    return router.push("/dashboard/module");
+            const res = await updateModule(params.id, data);
+            if (res.status === 200) {
+                toast.success("Module updated successfully");
+                router.push("/dashboard/module");
+            } else {
+                const data: ValidationErrorResponse = await res.json();
+                if (data.error == 'ValidationException') {
+                    setErrorResponse(null);
+                    setErrors(data);
+                    toast.error(data.message.toString());
+                } else {
+                    setErrors(null);
+                    setErrorResponse({
+                        error: data.error,
+                        message: data.message.toString(),
+                        statusCode: data.statusCode,
+                        path: data.path,
+                        date: data.date,
+                    });
+                    toast.error(data.message.toString());
                 }
-
-                await res.json().then((data: ValidationErrorResponse) => {
-                    if (data.error == 'ValidationException') {
-                        setErrorResponse(null);
-                        setErrors(data);
-                        toast.error(data.message.toString());
-                    } else {
-                        setErrors(null);
-                        setErrorResponse({
-                            error: data.error,
-                            message: data.message.toString(),
-                            statusCode: data.statusCode,
-                            path: data.path,
-                            date: data.date,
-                        });
-                        toast.error(data.message.toString());
-                    }
-                });
-            }).catch((err) => {
-                toast.error(err.message);
-            });
+            }
         } catch (error) {
             if (error instanceof Error) {
                 toast.error(error.message);
