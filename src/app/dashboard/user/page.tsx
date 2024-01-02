@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import { toast } from "sonner";
 
 export default function Page() {
     const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
@@ -19,11 +20,13 @@ export default function Page() {
     const deleteUserHandler = async (id: number) => {
         await deleteUser(id).then((res) => {
             if (res.status === 200) {
-                return getUsersLocal();
+                getUsersLocal();
+                toast.success("User deleted successfully");
+            }else{
+                toast.error('Error deleting user.');
             }
-            window.alert('Error');
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('Error deleting user');
         });
     }
 
@@ -42,8 +45,9 @@ export default function Page() {
                     setUsers(data);
                 });
             }
+            toast.error('An error has occurred');
         }).catch((err) => {
-            return window.alert('Error');
+            toast.error('An error has occurred');
         });
     }
 

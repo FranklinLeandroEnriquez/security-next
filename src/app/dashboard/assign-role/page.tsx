@@ -108,7 +108,7 @@ export default function AssignRole() {
 
     return (
         <>
-            <Header title="Assign Roles" IconComponent={UsersRound} />
+            <Header title="Assign Roles"/>
             <MaxWidthWrapper className="mt-8">
                 <CustomSelect
                     options={[

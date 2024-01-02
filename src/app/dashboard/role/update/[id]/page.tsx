@@ -1,91 +1,156 @@
 'use client'
 
-import {getRole, updateRole} from "@/services/Role/RoleService"
-import {CreateRoleRequest} from "@/types/Role/CreateRoleRequest"
-import {UpdateRoleRequest} from "@/types/Role/UpdateRoleRequest"
-import {ErrorResponse, ValidationErrorResponse} from "@/types/shared/ValidationError"
-import {useRouter} from "next/navigation"
-import {use, useEffect, useState} from "react"
+import { getRole, updateRole } from "@/services/Role/RoleService"
+import { UpdateRoleRequest } from "@/types/Role/UpdateRoleRequest"
+import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
-export default function RoleUpdateForm({params}: any) {
+import Header from "@/components/Header"
+import React from 'react'
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
+
+export default function RoleUpdateForm({ params }: any) {
 
     const [role, setRole] = useState<UpdateRoleRequest>({} as UpdateRoleRequest)
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null)
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null)
 
     const router = useRouter()
+    const { id } = params
+
     useEffect(() => {
-        const {id} = params
-
-        getRole(id).then(async (res) => {
-            if (res.status === 200) {
-                return res.json().then((data) => {
-                    setRole(data)
-                })
-            }
-            router.push("/dashboard/role")
-            return window.alert('Role Not Found')
-        }).catch((err) => {
-            return window.alert('Error')
-        });
-        
-    }, []);
-
-    const onSubmit = async (e: any) => {
-        e.preventDefault()
-        try{
-            await updateRole(params.id, role).then(async (res) => {
+        const fetchRole = async () => {
+            try {
+                const res = await getRole(id);
                 if (res.status === 200) {
-                    return router.push("/dashboard/role")
+                    const data = await res.json();
+                    setRole(data);
+                    form.reset(data);
+                } else {
+                    router.push("/dashboard/role");
+                    toast.error("Role not found");
                 }
+            } catch (err) {
+                toast.error("Error to get role");
+            }
+        }
 
-                await res.json().then((data: ValidationErrorResponse) => {
-                    if (data.error == 'ValidationException') {
-                        setErrorResponse(null)
-                        return setErrors(data)
-                    }
+        fetchRole();
+    }, [id]);
 
+    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        try {
+            const res = await updateRole(params.id, data)
+            if (res.status === 200) {
+                toast.success("Role updated successfully")
+                router.push("/dashboard/role")
+            } else {
+                const data: ValidationErrorResponse = await res.json()
+                if (data.error == 'ValidationException') {
+                    setErrorResponse(null)
+                    setErrors(data)
+                    toast.error(data.message.toString())
+                } else {
                     setErrors(null)
-                    return setErrorResponse({
+                    setErrorResponse({
                         error: data.error,
                         message: data.message.toString(),
                         statusCode: data.statusCode,
                         path: data.path,
-                        date: data.date,
+                        date: data.date
                     })
+                    toast.error(data.message.toString())
+                }
+            }
 
-                })
 
-            }).catch((err) => {
-                return window.alert('Error')
-            })
-        } catch (error) {
-            window.alert(error)
+        } catch (err) {
+            if (err instanceof Error) {
+                toast.error(err.message)
+            }
         }
     }
 
+    const formSchema = z.object({
+        name: z.string().min(3, {
+            message: "Name must be at least 3 characters long",
+        }).max(50, {
+            message: "Name must be less than 50 characters long",
+        }),
+        status: z.boolean(),
+    })
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: "",
+            status: true,
+        }
+    })
+
     return (
-        <div>
-            <h1>Update</h1>
+        <>
+            <Header title="Update Role" />
+            <div className="flex justify-center items-center mt-10">
+                <Card className="w-[40%]">
+                    <CardHeader>
+                        <CardTitle>Update Role</CardTitle>
+                        <CardDescription>Update Role - <strong>Security Module</strong></CardDescription>
+                    </CardHeader>
+                    <div data-aria-orientation="horizontal" role="none" className="shrink-0 mb-4 bg-border h-[1px] w-full"></div>
+                    <CardContent>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Role Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Write a role name"{...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-            {errorResponse?.message}
-
-            <form onSubmit={onSubmit}>
-                {errors?.message?.find((err) => err.field === 'name')?.errors}
-                <input
-                    type="text"
-                    placeholder="Write a name"
-                    onChange={(e) => setRole({...role, name: e.target.value})}
-                    value={role.name}
-                    required
-                />
-
-                <input
-                    type="submit"
-                    value="Update"
-                />
-            </form>
-        </div>
+                                <div className="flex justify-between">
+                                    <Button variant="outline" type="button" onClick={() => router.push("/dashboard/role")}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit">Update Role</Button>
+                                </div>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+            </div>
+        </>
     )
 
 }

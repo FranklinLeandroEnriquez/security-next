@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import { toast } from "sonner";
 
 export default function Page() {
     const [roles, setRoles] = useState<RoleResponse[]>([] as RoleResponse[]);
@@ -20,11 +21,13 @@ export default function Page() {
     const deleteRoleHandler = async (id: number) => {
         await deleteRole(id).then((res) => {
             if (res.status === 200) {
-                return getRolesHandler();
+                getRolesHandler();
+                toast.success("Role deleted successfully");
+            } else {
+                toast.error('Error deleting role have dependencies');
             }
-            window.alert('Error');
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('Error deleting role');
         });
     }
 
@@ -43,9 +46,9 @@ export default function Page() {
                     setRoles(data);
                 });
             }
-            window.alert('Error');
+            toast.error('An error has occurred');
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('An error has occurred');
         });
     }
 

@@ -65,7 +65,7 @@ export default function UserUpdateForm({ params }: any) {
         try {
             await updateUser(params.id, data).then(async (res) => {
                 if (res.status === 200) {
-                    toast.success("Usuario creado correctamente");
+                    toast.success("User updated successfully");
                     return router.push("/dashboard/user");
                 }
 
