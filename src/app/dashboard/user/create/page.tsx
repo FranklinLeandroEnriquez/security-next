@@ -180,10 +180,8 @@ export default function UserCreateForm() {
                                         </FormItem>
                                     )}
                                 />
-                                {/* Repite este patrón para los campos email, dni y password */}
-                                {/* <Button type="submit">Crear</Button> */}
                                 <div className="flex justify-between">
-                                    <Button variant="outline" onClick={() => router.push("/dashboard/user")}>Cancel</Button>
+                                    <Button variant="outline" type="button" onClick={() => router.push("/dashboard/user")}>Cancel</Button>
                                     <Button
                                         type="submit"
                                         value="Save"
@@ -193,87 +191,6 @@ export default function UserCreateForm() {
                         </Form>
                     </CardContent>
                 </Card>
-
-                {/* <Card className="w-[35%]">
-                    {errorResponse?.message && (
-                        <div className="bg-red-100 border flex justify-center border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                            <strong className="font-bold">Error! </strong>
-                            <span className="block sm:inline">{errorResponse?.message}</span>
-                        </div>
-                    )}
-                    <CardHeader>
-                        <CardTitle>Create Users</CardTitle>
-                        <CardDescription>User Creation - Security Module.</CardDescription>
-                    </CardHeader>
-                    <div data-orientation="horizontal" role="none" className="shrink-0 mb-4 bg-border h-[1px] w-full"></div>
-                    <CardContent>
-                        <form onSubmit={onSubmit}>
-                            <div className="grid w-full items-center gap-4">
-                                <div className="flex flex-col space-y-1.5">
-                                    {errors?.message?.find((err) => err.field === 'username')?.errors && (
-                                        <p className="text-red-500 text-base italic">{errors?.message?.find((err) => err.field === 'username')?.errors}</p>
-                                    )}
-                                    <Input
-                                        type="text"
-                                        placeholder="Write a username"
-                                        autoFocus
-                                        onChange={(e) => setUser({ ...user, username: e.target.value })}
-                                        value={user.username}
-                                        required
-                                        className="border p-2 w-full"
-                                    />
-                                </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    {errors?.message?.find((err) => err.field === 'email')?.errors && (
-                                        <p className="text-red-500 text-base italic">{errors?.message?.find((err) => err.field === 'email')?.errors}</p>
-                                    )}
-                                    <Input
-                                        type="text"
-                                        placeholder="Write a email"
-                                        onChange={(e) => setUser({ ...user, email: e.target.value })}
-                                        value={user.email}
-                                        required
-                                        className="border p-2 w-full"
-                                    />
-                                </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    {errors?.message?.find((err) => err.field === 'dni')?.errors && (
-                                        <p className="text-red-500 text-base italic">{errors?.message?.find((err) => err.field === 'dni')?.errors}</p>
-                                    )}
-                                    <Input
-                                        type="text"
-                                        placeholder="Write a dni"
-                                        onChange={(e) => setUser({ ...user, dni: e.target.value })}
-                                        value={user.dni}
-                                        required
-                                        className="border p-2 w-full"
-                                    />
-                                </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    {errors?.message?.find((err) => err.field === 'password')?.errors && (
-                                        <p className="text-red-500 text-base italic">{errors?.message?.find((err) => err.field === 'password')?.errors}</p>
-                                    )}
-                                    <Input
-                                        type="password"
-                                        placeholder="Write a password"
-                                        onChange={(e) => setUser({ ...user, password: e.target.value })}
-                                        value={user.password}
-                                        required
-                                        className="border p-2 w-full"
-                                    />
-                                </div>
-
-                                <CardFooter className="flex justify-between">
-                                    <Button variant="outline" onClick={() => router.push("/dashboard/user")}>Cancel</Button>
-                                    <Button
-                                        type="submit"
-                                        value="Save"
-                                    >Crear</Button>
-                                </CardFooter>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card> */}
             </div >
         </>
     );
