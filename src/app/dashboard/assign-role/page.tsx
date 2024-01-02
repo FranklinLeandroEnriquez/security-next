@@ -15,10 +15,10 @@ import ScrollableCheckboxList from "@/components/ui/scroll-area";
 import CustomSelect from "@/components/ui/select-filter";
 import { Role } from "@/types/Role/columns";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function AssignRole() {
     const [users, setUsers] = useState<UserResponse[]>([]);
-    // const [roles, setRoles] = useState<RoleResponse[]>([]);
     const [selectedUser, setSelectedUser] = useState<number | null>(null);
     const [availableRoles, setAvailableRoles] = useState<RoleResponse[]>([]);
     const [userRoles, setUserRoles] = useState<RoleResponse[]>([]);
@@ -32,7 +32,7 @@ export default function AssignRole() {
             const filteredUsers: UserResponse[] = data.filter((user: UserResponse) => user.status === true);
             setUsers(filteredUsers);
         } else {
-            window.alert('Error');
+            toast.error('An error has occurred');
         }
     }
 
@@ -43,7 +43,7 @@ export default function AssignRole() {
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
             setUserRoles(filteredRoles);
         } else {
-            window.alert('Error');
+            toast.error('An error has occurred');
         }
     }
 
@@ -54,7 +54,7 @@ export default function AssignRole() {
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
             setAvailableRoles(filteredRoles);
         } else {
-            window.alert('Error');
+            toast.error('An error has occurred');
         }
     }
 
@@ -90,14 +90,13 @@ export default function AssignRole() {
             try {
                 const res = await assignRoles(selectedUser, { userId: selectedUser, roleIds });
                 if (res.status === 201) {
-                    window.alert('Roles asignados correctamente');
+                    toast.success('Roles assgined successfully');
                 } else {
                     const errorData = await res.json();
-                    window.alert(`Error al asignar roles: ${errorData.message}`);
+                    toast.error('Error assigning roles');
                 }
             } catch (err) {
-                window.alert('Error al realizar la solicitud');
-                console.error(err);
+                toast.error('An error has occurred');
             }
         }
     };

@@ -15,7 +15,7 @@ import ScrollableCheckboxList from "@/components/ui/scroll-area"
 import CustomSelect from "@/components/ui/select-filter"
 import { Function } from "@/types/Function/columns"
 import { Button } from "@/components/ui/button"
-
+import { toast } from "sonner"
 
 export default function AssignFunction() {
     const [roles, setRoles] = useState<RoleResponse[]>([])
@@ -33,7 +33,7 @@ export default function AssignFunction() {
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
             setRoles(filteredRoles);
         } else {
-            window.alert("Error")
+            toast.error('An error has occurred')
         }
     }
 
@@ -44,7 +44,7 @@ export default function AssignFunction() {
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
             setRoleFunctions(filteredFunctions)
         } else {
-            window.alert("Error")
+            toast.error('An error has occurred')
         }
     }
 
@@ -55,7 +55,7 @@ export default function AssignFunction() {
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
             setAvailableFunctions(filteredFunctions)
         } else {
-            window.alert("Error")
+            toast.error('An error has occurred')
         }
     }
 
@@ -91,13 +91,13 @@ export default function AssignFunction() {
             try {
                 const res = await assignFunctions(selectedRole, { roleId: selectedRole, functionIds });
                 if (res.status === 201) {
-                    window.alert('Roles asignados correctamente');
+                    toast.success("Functions assigned successfully");
                 } else {
                     const errorData = await res.json();
-                    window.alert(`Error al asignar roles: ${errorData.message}`);
+                    toast.error("Error assigning functions")
                 }
             } catch (err) {
-                window.alert("Error")
+                toast.error("An error has occurred")
             }
         }
     }
