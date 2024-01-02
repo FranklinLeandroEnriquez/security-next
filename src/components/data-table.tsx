@@ -67,12 +67,14 @@ export function DataTable<TData, TValue>({
                     />
                 </div>
                 {/* Crear */}
-                <div className="">
-                    <Button onClick={onCreate}>
-                        <span> Crear </span>
-                    </Button>
-                </div>
-
+                {onCreate ?
+                    (<div className="">
+                        <Button onClick={onCreate}>
+                            <span> Crear </span>
+                        </Button>
+                    </div>)
+                    : ""
+                }
 
             </div>
             {/* table */}
