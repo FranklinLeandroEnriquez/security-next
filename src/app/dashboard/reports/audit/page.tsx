@@ -30,6 +30,7 @@ export default function AuditReport() {
                 <DataTable<AuditResponse, string>
                     columns={column()}
                     data={audits}
+                    filteredColumn='user'
                 />
             </MaxWidthWrapper>
         </>

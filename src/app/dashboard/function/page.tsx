@@ -60,6 +60,7 @@ export default function Page() {
                     onCreate={createFunctionHandler}
                     columns={columns(updateFunctionHandler, deleteFunctionHandler)}
                     data={functions}
+                    filteredColumn='name'
                 />
             </MaxWidthWrapper>
         </>

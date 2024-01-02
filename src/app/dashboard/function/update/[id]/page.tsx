@@ -45,7 +45,7 @@ import {
 import { stat } from 'fs'
 import { UpdateFunctionRequest } from '@/types/Function/UpdateFunctionRequest'
 
-export default function FunctionUpdateForm(params: any) {
+export default function FunctionUpdateForm({params}: any) {
 
     const [functionn, setFunction] = useState<UpdateFunctionRequest>({} as UpdateFunctionRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -64,6 +64,7 @@ export default function FunctionUpdateForm(params: any) {
         const fetchFunction = async () => {
             try {
                 const res = await getFunction(id);
+                console.log(id);
                 if (res.status === 200) {
                     const data = await res.json();
                     setFunction(data);
