@@ -3,13 +3,13 @@
 import { DataTable } from '@/components/data-table'
 import { columns, Module } from '@/types/Module/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-import { BookA } from 'lucide-react';
 
 import { deleteModule, getModules } from "@/services/Module/ModuleService";
 import { ModuleResponse } from "@/types/Module/ModuleResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import Header from '@/components/Header';
+import { toast } from "sonner";
 
 export default function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
@@ -19,11 +19,13 @@ export default function Page() {
     const deleteModuleHandler = async (id: number) => {
         await deleteModule(id).then((res) => {
             if (res.status === 200) {
-                return getModulesHandler();
+                getModulesHandler();
+                toast.success("Module deleted successfully");
+            } else {
+                toast.error('Error deleting module have functions');
             }
-            window.alert('Error');
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('Error deleting module');
         });
     }
 
