@@ -2,7 +2,6 @@
 
 import Header from "@/components/Header";
 import { getUser, updateUser } from "@/services/User/UserService";
-import { CreateUserRequest } from "@/types/User/CreateUserRequest";
 import { UpdateUserRequest } from "@/types/User/UpdateUserRequest";
 import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError";
 import { useRouter } from "next/navigation";
@@ -31,14 +30,6 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner";
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 
 export default function UserUpdateForm({ params }: any) {
 
