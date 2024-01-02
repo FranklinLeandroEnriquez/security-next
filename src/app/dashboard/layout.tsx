@@ -9,7 +9,7 @@ export default function DashboardLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className='flex h-screen overflow-hidden'>
+        <div className='flex h-screen'>
             <Toaster richColors position="bottom-right" />
             <div className="relative flex flex-1 flex-col">
                 <SideNav />
