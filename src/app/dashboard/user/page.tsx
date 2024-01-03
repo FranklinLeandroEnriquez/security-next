@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import { toast } from "sonner";
-import { Users2Icon} from 'lucide-react';
+import { Users2Icon } from 'lucide-react';
 
 export default function Page() {
     const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
@@ -24,9 +24,9 @@ export default function Page() {
             if (res.status === 200) {
                 getUsersLocal();
                 toast.success("User deleted successfully");
-            }else{
+            } else {
                 const errorData: ErrorResponse = await res.json();
-                if(errorData.error === 'ErrorResponse'){
+                if (errorData.error === 'ErrorResponse') {
                     setErrorResponse(null);
                     setErrors(errorData);
                     toast.error(errorData.message.toString());
@@ -65,10 +65,16 @@ export default function Page() {
 
     return (
         <>
-            <Header title='All Users' icon= {<Users2Icon/>} />
-            <MaxWidthWrapper className='mt-4'>
-                <DataTable<User, string> onCreate={createUserHandler} columns={columns(updateUserHandler, deleteUserHandler)} data={users} filteredColumn='username' />
-            </MaxWidthWrapper>
+            <Header title='All Users' icon={<Users2Icon size={26} />} />
+            <div>
+                <MaxWidthWrapper className='mt-4'>
+                    <DataTable<User, string>
+                        onCreate={createUserHandler}
+                        columns={columns(updateUserHandler, deleteUserHandler)}
+                        data={users}
+                        filteredColumn='username' />
+                </MaxWidthWrapper>
+            </div>
         </>
     )
 }

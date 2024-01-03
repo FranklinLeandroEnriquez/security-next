@@ -9,7 +9,7 @@ import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
+import { SquareUserRoundIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -65,9 +65,9 @@ export default function RoleCreateForm() {
                 toast.error(data.message.toString())
             }
         } catch (err) {
-            if(err instanceof Error){
+            if (err instanceof Error) {
                 toast.error(err.message.toString())
-            } else{
+            } else {
                 toast.error("An error has occurred")
             }
         }
@@ -76,7 +76,7 @@ export default function RoleCreateForm() {
     const formSchema = z.object({
         name: z.string().min(5, {
             message: "Name must be at least 5 characters long",
-        }).max(50,{
+        }).max(50, {
             message: "Name must be less than 50 characters long",
         }),
 
@@ -90,7 +90,7 @@ export default function RoleCreateForm() {
     })
     return (
         <>
-            <Header title="Create Role" />
+            <Header title="Create Role" icon={<SquareUserRoundIcon size={25} />} />
             <div className="flex justify-center items-center mt-10">
                 <Card className="w-[40%]">
                     <CardHeader>
@@ -116,9 +116,9 @@ export default function RoleCreateForm() {
                                         </FormItem>
                                     )}
                                 />
-                                <div className="flex justify-end">
-                                    <Button variant="outline" type="button" onClick={()=> router.push("/dashboard/role")}>Cancel</Button>
-                                    <Button 
+                                <div className="flex justify-between">
+                                    <Button variant="outline" type="button" onClick={() => router.push("/dashboard/user")}>Cancel</Button>
+                                    <Button
                                         type="submit"
                                         value="Save"
                                     >Create</Button>

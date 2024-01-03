@@ -12,7 +12,7 @@ import Header from '@/components/Header'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
+import { PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -100,7 +100,7 @@ export default function ModuleCreateForm() {
 
     return (
         <>
-            <Header title='Create Module' />
+            <Header title='Create Module' icon={<PieChart size={25} />} />
 
             <div className="flex justify-center items-center mt-10">
                 <Card className="w-[40%]">
@@ -119,9 +119,9 @@ export default function ModuleCreateForm() {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nombre del Módulo</FormLabel>
+                                            <FormLabel>Module Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un nombre del Módulo" {...field} />
+                                                <Input placeholder="Write a module name" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -134,7 +134,7 @@ export default function ModuleCreateForm() {
                                         <FormItem>
                                             <FormLabel>Descripción</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe una descripción" {...field} />
+                                                <Input placeholder="Write a description" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -145,7 +145,7 @@ export default function ModuleCreateForm() {
                                     <Button
                                         type="submit"
                                         value="Save"
-                                    >Crear</Button>
+                                    >Create</Button>
                                 </div>
                             </form>
                         </Form>

@@ -3,13 +3,14 @@
 import { DataTable } from '@/components/data-table'
 import { columns, Function } from '@/types/Function/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
-import{ErrorResponse} from "@/types/shared/ValidationError"
+import { ErrorResponse } from "@/types/shared/ValidationError"
 import { deleteFunction, getFunctions } from "@/services/Function/FunctionService";
 import { FunctionResponse } from "@/types/Function/FunctionResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from 'sonner';
+import { FunctionSquare } from 'lucide-react';
 
 export default function Page() {
     const [functions, setFunctions] = useState<FunctionResponse[]>([] as FunctionResponse[]);
@@ -21,9 +22,9 @@ export default function Page() {
         await deleteFunction(id).then(async (res) => {
             if (res.status === 200) {
                 return getFunctionsHandler();
-            }else{
+            } else {
                 const errorData: ErrorResponse = await res.json();
-                if(errorData.error === 'ErrorResponse'){
+                if (errorData.error === 'ErrorResponse') {
                     setErrorResponse(null);
                     setErrors(errorData);
                     toast.error(errorData.message.toString());
@@ -62,7 +63,7 @@ export default function Page() {
 
     return (
         <>
-            <Header title='All Functions' />
+            <Header title='All Functions' icon={<FunctionSquare size={25} />} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Function, string>
                     onCreate={createFunctionHandler}

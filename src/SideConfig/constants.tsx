@@ -1,4 +1,10 @@
-import { Home, Settings, User, UserCheck, BarChart2, FunctionSquare, BookText, Route } from 'lucide-react';
+import {
+    Home, Settings,
+    User, UserCheck,
+    BarChart2, FunctionSquare,
+    BookText, Route
+}
+    from 'lucide-react';
 import { SideNavItems } from './types';
 
 

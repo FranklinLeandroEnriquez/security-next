@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 // New Form
-
+import { PackagePlus } from 'lucide-react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -131,7 +131,11 @@ export default function FunctionUpdateForm({ params }: any) {
     };
 
     const formSchema = z.object({
-        name: z.string().min(3).max(50),
+        name: z.string().min(3, {
+            message: 'The name must be at least 3 characters',
+        }).max(50, {
+            message: 'The name must be less than 50 characters',
+        }),
         moduleId: z.number().int().positive(),
         status: z.boolean(),
     });
@@ -151,7 +155,7 @@ export default function FunctionUpdateForm({ params }: any) {
 
     return (
         <>
-            <Header title='Update Function' />
+            <Header title='Update Function' icon={<PackagePlus size={25} />} />
             <div className="flex justify-center items-center mt-10">
                 <Card className="w-[40%]">
                     <CardHeader>
@@ -169,9 +173,9 @@ export default function FunctionUpdateForm({ params }: any) {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nombre del Función</FormLabel>
+                                            <FormLabel>Function Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un nombre de la Función" {...field} />
+                                                <Input placeholder="Write a function name" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -183,7 +187,7 @@ export default function FunctionUpdateForm({ params }: any) {
                                     name="moduleId"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Módulos</FormLabel>
+                                            <FormLabel>Module</FormLabel>
                                             <Select
                                                 onValueChange={(value) => field.onChange(Number(value))}
                                                 defaultValue={field.value.toString()}
@@ -191,7 +195,7 @@ export default function FunctionUpdateForm({ params }: any) {
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Selecciona un módulo" />
+                                                        <SelectValue placeholder="Select a module" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>

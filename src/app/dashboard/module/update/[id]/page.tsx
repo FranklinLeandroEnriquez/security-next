@@ -12,7 +12,7 @@ import React from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
+import { FilePieChartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -119,7 +119,7 @@ export default function ModuleUpdateFomr({ params }: any) {
 
     return (
         <>
-            <Header title="Update Module" />
+            <Header title="Update Module" icon={<FilePieChartIcon size={25} />} />
             <div className="flex justify-center items-center mt-10">
                 <Card className="w-[40%]">
                     <CardHeader>
@@ -137,9 +137,9 @@ export default function ModuleUpdateFomr({ params }: any) {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nombre del Módulo</FormLabel>
+                                            <FormLabel>Module Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un nombre del Módulo" {...field} />
+                                                <Input placeholder="Write a module name" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -150,9 +150,9 @@ export default function ModuleUpdateFomr({ params }: any) {
                                     name="description"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Descripción</FormLabel>
+                                            <FormLabel>Description</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe una descripción" {...field} />
+                                                <Input placeholder="Write a description" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
