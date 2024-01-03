@@ -117,7 +117,7 @@ export default function RoleCreateForm() {
                                     )}
                                 />
                                 <div className="flex justify-between">
-                                    <Button variant="outline" type="button" onClick={() => router.push("/dashboard/user")}>Cancel</Button>
+                                    <Button variant="outline" type="button" onClick={() => router.push("/dashboard/role")}>Cancel</Button>
                                     <Button
                                         type="submit"
                                         value="Save"
