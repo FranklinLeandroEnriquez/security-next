@@ -1,7 +1,3 @@
-import { ColumnDef } from "@tanstack/react-table";
-import Module from "../../app/dashboard/module/page";
-import { MoreHorizontal } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -11,38 +7,59 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 
-export type Module = {
+export type Audit = {
     id: number;
-    name: string;
+    action: string;
     description: string;
-    status: boolean;
+    observation: string;
+    ip: string;
+    date: Date;
+    user: string;
+    functionName?: string;
 }
 
 export const columns = (handleUpdate: (id: number) => void, handleDelete:
-    (id: number) => void): ColumnDef<Module>[] =>
+    (id: number) => void): ColumnDef<Audit>[] =>
     [
-
         {
             accessorKey: "id",
             header: "ID",
         },
         {
-            accessorKey: "name",
-            header: "Name",
+            accessorKey: "date",
+            header: "Date",
+        },
+        {
+            accessorKey: "user",
+            header: "User",
+        },
+        {
+            accessorKey: "action",
+            header: "Action",
         },
         {
             accessorKey: "description",
             header: "Description",
         },
         {
-            accessorKey: "status",
-            header: "Status",
+            accessorKey: "observation",
+            header: "Observation",
+        },
+        {
+            accessorKey: "ip",
+            header: "IP",
+        },
+        {
+            accessorKey: "functionName",
+            header: "Function",
         },
         {
             id: "actions",
             cell: ({ row }) => {
-                const module_ = row.original
+                const audit = row.original
 
                 return (
                     <DropdownMenu>
@@ -55,16 +72,9 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Options</DropdownMenuLabel>
                             <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(module_.id.toString())}
+                                onClick={() => navigator.clipboard.writeText(audit.id.toString())}
                             >
-                                Copy module ID
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdate(module_.id)}>
-                                Edit module
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(module_.id)}>
-                                Delete module
+                                Copy function ID
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

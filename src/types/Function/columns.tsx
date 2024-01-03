@@ -35,10 +35,10 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
         accessorKey: "module",
         header: "Module",
         cell: ({ row }) => {
-            const module = row.original
+            const module_ = row.original
 
             return (
-                <span>{module.module.name}</span>
+                <span>{module_.module.name}</span>
             )
         }
     },
