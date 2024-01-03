@@ -9,6 +9,7 @@ import { RoleResponse } from "@/types/Role/RoleResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { Button } from '@/components/ui/button';
+import { UserCheck } from 'lucide-react';
 import Header from '@/components/Header';
 import { toast } from "sonner";
 
@@ -24,12 +25,12 @@ export default function Page() {
                 getRolesHandler();
                 toast.success("Role deleted successfully");
             } else {
-               const errorData: ErrorResponse = await res.json();
-               if(errorData.error === 'ErrorResponse'){
-                   setErrorResponse(null);
-                   setErrors(errorData);
-                   toast.error(errorData.message.toString());
-               }
+                const errorData: ErrorResponse = await res.json();
+                if (errorData.error === 'ErrorResponse') {
+                    setErrorResponse(null);
+                    setErrors(errorData);
+                    toast.error(errorData.message.toString());
+                }
                 toast.error(errorData.message.toString());
             }
         }).catch((err) => {
@@ -64,7 +65,7 @@ export default function Page() {
 
     return (
         <>
-            <Header title='All Roles' />
+            <Header title='All Roles' icon={<UserCheck />} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Role, string> onCreate={createRoleHandler} columns={columns(updateRoleHandler, deleteRoleHandler)} data={roles} filteredColumn='name' />
             </MaxWidthWrapper>

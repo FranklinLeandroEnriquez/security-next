@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { UserRoundSearch } from 'lucide-react';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -99,20 +100,16 @@ export default function UserUpdateForm({ params }: any) {
 
     const formSchema = z.object({
         username: z.string().min(5, {
-            message: "El nombre de usuario debe tener al menos 5 caracteres.",
+            message: "Name must be at least 5 characters.",
         }),
-        email: z.string(
-            {
-                required_error: "El email es requerido.",
-            }
-        ).email({
-            message: "Ingrese un email válido.",
+        email: z.string().email({
+            message: "Email is not valid.",
         }),
         dni: z.string().min(10, {
-            message: "El DNI debe tener al menos 8 caracteres.",
+            message: "DNI must be at least 10 characters.",
         }),
         password: z.string().min(8, {
-            message: "La contraseña debe tener al menos 8 caracteres.",
+            message: "Password must be at least 8 characters.",
         }),
         status: z.boolean(),
     })
@@ -130,13 +127,13 @@ export default function UserUpdateForm({ params }: any) {
 
     return (
         <>
-            <Header title="Update Users" />
+            <Header title='Update User' icon={<UserRoundSearch size={26} />} />
 
-            <div className="flex justify-center items-center mt-10">
+            <div className="flex justify-center items-center my-10">
 
                 {/* {errorResponse?.message} */}
                 <Card className="w-[40%]">
-                    <CardHeader className="text-center">
+                    <CardHeader>
                         <CardTitle>Update User</CardTitle>
                         <CardDescription>User Update - Security Module.</CardDescription>
                     </CardHeader>
@@ -150,9 +147,9 @@ export default function UserUpdateForm({ params }: any) {
                                     name="username"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nombre de usuario</FormLabel>
+                                            <FormLabel>Username</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un nombre de usuario" {...field} />
+                                                <Input placeholder="Enter your username" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -165,7 +162,7 @@ export default function UserUpdateForm({ params }: any) {
                                         <FormItem>
                                             <FormLabel>Email</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un email" {...field} />
+                                                <Input placeholder="Enter your email" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -178,7 +175,7 @@ export default function UserUpdateForm({ params }: any) {
                                         <FormItem>
                                             <FormLabel>DNI</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un DNI" {...field} />
+                                                <Input placeholder="Enter your DNI" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -191,7 +188,7 @@ export default function UserUpdateForm({ params }: any) {
                                         <FormItem>
                                             <FormLabel>Password</FormLabel>
                                             <FormControl>
-                                                <Input type="password" placeholder="Escribe un password" {...field} />
+                                                <Input type="password" placeholder="Enter your password" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -215,7 +212,7 @@ export default function UserUpdateForm({ params }: any) {
                                     <Button
                                         type="submit"
                                         value="Save"
-                                    >Actualizar</Button>
+                                    >Update</Button>
                                 </div>
                             </form>
                         </Form>

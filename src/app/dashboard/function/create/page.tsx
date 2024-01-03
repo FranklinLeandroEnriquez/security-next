@@ -8,6 +8,7 @@ import { CreateFunctionRequest } from '@/types/Function/CreateFunctionRequest'
 import { ErrorResponse, ValidationErrorResponse } from '@/types/shared/ValidationError'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { Blocks } from 'lucide-react'
 
 // New Form
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -87,8 +88,14 @@ export default function FunctionCreateFormpage() {
     };
 
     const formSchema = z.object({
-        name: z.string().min(3).max(50),
-        moduleId: z.number().int().positive(),
+        name: z.string().min(3, {
+            message: 'The name must be at least 3 characters',
+        }).max(50, {
+            message: 'The name must be less than 50 characters',
+        }),
+        moduleId: z.number().int().positive({
+            message: 'Select a module',
+        }),
     });
 
     const form = useForm<CreateFunctionRequest>({
@@ -119,7 +126,7 @@ export default function FunctionCreateFormpage() {
     return (
 
         <>
-            <Header title='Create Function' />
+            <Header title='Create Function' icon={<Blocks size={25} />} />
             <div className="flex justify-center items-center mt-10">
                 <Card className="w-[40%]">
                     <CardHeader>
@@ -137,9 +144,9 @@ export default function FunctionCreateFormpage() {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nombre del Función</FormLabel>
+                                            <FormLabel>Function Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un nombre de la Función" {...field} />
+                                                <Input placeholder="Write a function name" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -151,15 +158,15 @@ export default function FunctionCreateFormpage() {
                                     name="moduleId"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Módulos</FormLabel>
+                                            <FormLabel>Module</FormLabel>
                                             <Select
                                                 onValueChange={(value) => field.onChange(Number(value))}
-                                                defaultValue={field.value.toString()}
-                                                value={field.value.toString()}
+                                                defaultValue={field.value === 0 ? "" : field.value.toString()}
+                                                value={field.value === 0 ? "" : field.value.toString()}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Selecciona un módulo" />
+                                                        <SelectValue placeholder="Select a module" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -179,7 +186,7 @@ export default function FunctionCreateFormpage() {
                                     <Button
                                         type="submit"
                                         value="Save"
-                                    >Crear</Button>
+                                    >Create</Button>
                                 </div>
                             </form>
 

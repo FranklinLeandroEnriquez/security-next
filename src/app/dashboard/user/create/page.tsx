@@ -5,6 +5,7 @@ import { CreateUserRequest } from "@/types/User/CreateUserRequest";
 import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { UserPlus } from 'lucide-react';
 
 // New Form
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -44,7 +45,7 @@ export default function UserCreateForm() {
         try {
             await createUser(values).then(async (res) => {
                 if (res.status === 201) {
-                    toast.success("Usuario creado correctamente");
+                    toast.success("User created successfully");
                     return router.push("/dashboard/user");
                 }
 
@@ -78,20 +79,16 @@ export default function UserCreateForm() {
 
     const formSchema = z.object({
         username: z.string().min(5, {
-            message: "El nombre de usuario debe tener al menos 5 caracteres.",
+            message: "Name must be at least 5 characters.",
         }),
-        email: z.string(
-            {
-                required_error: "El email es requerido.",
-            }
-        ).email({
-            message: "Ingrese un email válido.",
+        email: z.string().email({
+            message: "Email is not valid.",
         }),
         dni: z.string().min(10, {
-            message: "El DNI debe tener al menos 8 caracteres.",
+            message: "DNI must be at least 10 characters.",
         }),
         password: z.string().min(8, {
-            message: "La contraseña debe tener al menos 8 caracteres.",
+            message: "Password must be at least 8 characters.",
         }),
     })
 
@@ -107,9 +104,9 @@ export default function UserCreateForm() {
 
     return (
         <>
-            <Header title='Create Users' />
+            <Header title='Create User' icon={<UserPlus size={26} />} />
 
-            <div className="flex justify-center items-center mt-10">
+            <div className="flex justify-center items-center my-10">
 
 
                 <Card className="w-[40%]">
@@ -132,9 +129,9 @@ export default function UserCreateForm() {
                                     name="username"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nombre de usuario</FormLabel>
+                                            <FormLabel>Username</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un nombre de usuario" {...field} />
+                                                <Input placeholder="Enter your username " {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -147,7 +144,7 @@ export default function UserCreateForm() {
                                         <FormItem>
                                             <FormLabel>Email</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un email" {...field} />
+                                                <Input placeholder="Enter your email" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -160,7 +157,7 @@ export default function UserCreateForm() {
                                         <FormItem>
                                             <FormLabel>DNI</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Escribe un DNI" {...field} />
+                                                <Input placeholder="Enter your DNI" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -173,7 +170,7 @@ export default function UserCreateForm() {
                                         <FormItem>
                                             <FormLabel>Password</FormLabel>
                                             <FormControl>
-                                                <Input type="password" placeholder="Escribe un password" {...field} />
+                                                <Input type="password" placeholder="Enter your password" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -184,7 +181,7 @@ export default function UserCreateForm() {
                                     <Button
                                         type="submit"
                                         value="Save"
-                                    >Crear</Button>
+                                    >Create</Button>
                                 </div>
                             </form>
                         </Form>

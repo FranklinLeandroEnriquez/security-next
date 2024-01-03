@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
+import { FileBarChart2 } from "lucide-react";
 
 export default function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
@@ -56,7 +57,7 @@ export default function Page() {
 
     return (
         <>
-            <Header title='All Modules' />
+            <Header title='All Modules' icon={<FileBarChart2 size={25} />} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Module, string>
                     onCreate={createModuleHandler}

@@ -12,6 +12,7 @@ import React from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { UserCog } from 'lucide-react';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -114,7 +115,7 @@ export default function RoleUpdateForm({ params }: any) {
 
     return (
         <>
-            <Header title="Update Role" />
+            <Header title="Update Role" icon={<UserCog size={25} />} />
             <div className="flex justify-center items-center mt-10">
                 <Card className="w-[40%]">
                     <CardHeader>
