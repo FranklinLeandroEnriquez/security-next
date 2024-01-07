@@ -17,7 +17,7 @@ const ScrollableCheckboxList = <T,>({
     renderItem,
 }: ScrollableCheckboxListProps<T>) => {
     return (
-        <div className="max-h-48 overflow-y-auto border p-4 mb-4">
+        <div className="max-h-72 overflow-y-auto border p-4 mb-4">
             {items.map((item) => (
                 <div
                     key={getKey(item)}

@@ -8,7 +8,8 @@ import { assignFunctions } from "@/services/Role/RoleService"
 import { getFunctionsOfRole } from "@/services/Role/RoleService"
 import { getFunctions } from "@/services/Function/FunctionService"
 import { useEffect, useState } from "react"
-import { FunctionSquareIcon, UsersRound } from "lucide-react"
+import { ModuleResponse } from "@/types/Module/ModuleResponse"
+import Accordion from "@/components/ui/accordion"
 import Header from "@/components/Header"
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import ScrollableCheckboxList from "@/components/ui/scroll-area"
@@ -102,6 +103,22 @@ export default function AssignFunction() {
         }
     }
 
+    const groupByModule = (functions: FunctionResponse[]) => {
+        const grouped = functions.reduce((acc, function_) => {
+            const moduleId = function_.module.id;
+            if (!acc[moduleId]) {
+                acc[moduleId] = {
+                    module: function_.module,
+                    functions: [],
+                };
+            }
+            acc[moduleId].functions.push(function_);
+            return acc;
+        }, {} as Record<number, { module: ModuleResponse, functions: FunctionResponse[] }>);
+
+        return Object.values(grouped);
+    };
+
     useEffect(() => {
         getRolesHandler()
     }, [])
@@ -123,18 +140,24 @@ export default function AssignFunction() {
                     <div className="flex space-x-4 mt-4">
                         <div className="flex-1 p-4 border rounded">
                             <label>Available Functions:</label>
-                            <ScrollableCheckboxList<Function>
-                                items={availableFunctions.filter(function_ => !roleFunctions.some(roleFunction => roleFunction.id === function_.id))}
-                                checkedItems={roleFunctions}
-                                onChange={handleFunctionAssignment}
-                                getKey={(function_) => function_.id.toString()}
-                                renderItem={(function_) => (
-                                    <>
-                                        <span>{function_.id}</span>
-                                        <span className="ml-2">{function_.name}</span>
-                                    </>
-                                )}
-                            />
+                            <div className="max-h-72 overflow-y-auto border p-4 mb-4">
+                                {groupByModule(availableFunctions).map((group, index) => (
+                                    <Accordion title={group.module.name} key={index}>
+                                        <ScrollableCheckboxList<FunctionResponse>
+                                            items={group.functions}
+                                            checkedItems={roleFunctions}
+                                            onChange={handleFunctionAssignment}
+                                            getKey={(function_) => function_.id.toString()}
+                                            renderItem={(function_) => (
+                                                <>
+                                                    <span>{function_.id}</span>
+                                                    <span className="ml-2">{function_.name}</span>
+                                                </>
+                                            )}
+                                        />
+                                    </Accordion>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="flex-1 p-4 border rounded">
@@ -155,7 +178,7 @@ export default function AssignFunction() {
                     </div>
                 )}
                 <div className="flex justify-center">
-                    <Button onClick={handleAssignFunctions} className="mt-8 w-1/3">
+                    <Button onClick={handleAssignFunctions} className="mt-2 w-1/3">
                         Assign
                     </Button>
                 </div>
