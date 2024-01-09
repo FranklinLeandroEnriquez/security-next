@@ -10,20 +10,19 @@ export default function DashboardLayout({
 }) {
 
     return (
-        <div className='flex h-screen'>
-            <Toaster richColors position="bottom-right" />
-            <div className="relative flex flex-1 flex-col">
-                <SideNav />
-                <main>
-                    <div className='md:ml-60'>
-                        <AuthProvider>
+        <AuthProvider>
+            <div className='flex h-screen'>
+                <Toaster richColors position="bottom-right" />
+                <div className="relative flex flex-1 flex-col">
+                    <SideNav />
+                    <main>
+                        <div className='md:ml-60'>
                             {children}
-                        </AuthProvider>
-                    </div>
-                </main>
+                        </div>
+                    </main>
+                </div>
             </div>
-        </div>
-
+        </AuthProvider>
     )
 }
 
