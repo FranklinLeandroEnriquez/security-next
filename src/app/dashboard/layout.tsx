@@ -12,7 +12,7 @@ export default function DashboardLayout({
     return (
         <AuthProvider>
             <div className='flex h-screen'>
-                <Toaster richColors position="bottom-right" />
+                <Toaster richColors position="top-center" />
                 <div className="relative flex flex-1 flex-col">
                     <SideNav />
                     <main>
