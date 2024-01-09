@@ -5,7 +5,6 @@ export interface AuthContextType {
     saveAuthResponse: (authResponse: AuthResponse) => void;
     getAuthResponse: () => AuthResponse | null;
     clearAuthResponse: () => void;
-    isAuthenticated: () => boolean;
 }
 
 // Creating the context with an initial undefined value

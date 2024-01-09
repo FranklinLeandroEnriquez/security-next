@@ -10,30 +10,29 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: FunctionComponent<AuthProviderProps> = ({ children }) => {
+    const router = useRouter();
     const { saveAuthResponse, getAuthResponse, clearAuthResponse } = useSessionAuth();
-
-    const isAuthenticated = (): boolean => {
-        return getAuthResponse() !== null;
-    };
 
     const contextValue: AuthContextType = {
         saveAuthResponse,
         getAuthResponse,
-        clearAuthResponse,
-        isAuthenticated
+        clearAuthResponse
     };
 
-    const router = useRouter();
 
     useEffect(() => {
-        if (!isAuthenticated()) {
+        const response = getAuthResponse();
+        const isAuthenticated = response !== null && response.token !== null;
+        if (!isAuthenticated) {
             router.push('/login');
         }
-    }, [isAuthenticated, router]);
+    }, [router]);
 
-    return (
+
+
+    return getAuthResponse() ? (
         <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
-    );
+    ) : null;
 };
