@@ -47,8 +47,15 @@ export default function Home() {
       }
       else {
         await res.json().then((data: AuthResponse) => {
-          saveAuthResponse(data)
-          return router.push("/dashboard/user");
+          if (!data.functions.includes("SEC-LOGIN")) {
+            toast.error("You don't have permission to access");
+            return;
+          }
+          else {
+            saveAuthResponse(data)
+            return router.push("/dashboard/user");
+          }
+
         })
       }
     })
