@@ -21,7 +21,38 @@ export type Role = {
 export const columns = (handleUpdate: (id: number) => void, handleDelete:
     (id: number) => void): ColumnDef<Role>[] =>
     [
+        {
+            id: "actions",
+            cell: ({ row }) => {
+                const role = row.original
 
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Options</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => navigator.clipboard.writeText(role.id.toString())}
+                            >
+                                Copy role ID
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleUpdate(role.id)}>
+                                Edit role
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDelete(role.id)}>
+                                Delete role
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
         {
             accessorKey: "id",
             header: ({ column }) => {
@@ -64,36 +95,5 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                 )
             },
         },
-        {
-            id: "actions",
-            cell: ({ row }) => {
-                const role = row.original
-
-                return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Options</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(role.id.toString())}
-                            >
-                                Copy role ID
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdate(role.id)}>
-                                Edit role
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(role.id)}>
-                                Delete role
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )
-            },
-        },
+       
     ]

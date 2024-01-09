@@ -22,7 +22,38 @@ export type Module = {
 export const columns = (handleUpdate: (id: number) => void, handleDelete:
     (id: number) => void): ColumnDef<Module>[] =>
     [
+        {
+            id: "actions",
+            cell: ({ row }) => {
+                const module_ = row.original
 
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Options</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => navigator.clipboard.writeText(module_.id.toString())}
+                            >
+                                Copy module ID
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleUpdate(module_.id)}>
+                                Edit module
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDelete(module_.id)}>
+                                Delete module
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
         {
             accessorKey: "id",
             header: ({ column }) => {
@@ -79,36 +110,5 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                 )
             },
         },
-        {
-            id: "actions",
-            cell: ({ row }) => {
-                const module_ = row.original
-
-                return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Options</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(module_.id.toString())}
-                            >
-                                Copy module ID
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdate(module_.id)}>
-                                Edit module
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(module_.id)}>
-                                Delete module
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )
-            },
-        },
+        
     ]

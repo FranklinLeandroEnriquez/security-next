@@ -25,6 +25,31 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
     (id: number) => void): ColumnDef<Audit>[] =>
     [
         {
+            id: "actions",
+            cell: ({ row }) => {
+                const audit = row.original
+
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Options</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => navigator.clipboard.writeText(audit.id.toString())}
+                            >
+                                Copy function ID
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
+        {
             accessorKey: "id",
             header: "ID",
         },
@@ -56,29 +81,5 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
             accessorKey: "functionName",
             header: "Function",
         },
-        {
-            id: "actions",
-            cell: ({ row }) => {
-                const audit = row.original
-
-                return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Options</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(audit.id.toString())}
-                            >
-                                Copy function ID
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )
-            },
-        },
+        
     ]
