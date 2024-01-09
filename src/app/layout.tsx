@@ -12,35 +12,33 @@ export const metadata = {
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
+
   return (
-    <>
-      <html lang="en" className='h-full'>
-        <body
-          className={cn(
-            'relative z-10 h-full font-sans antialiased',
-            inter.className
-          )}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <main className='flex flex-col min-h-screen'>
-              <div className='flex-grow flex-1'>
-                {children}
-              </div>
-            </main>
-          </ThemeProvider>
-
-
-        </body>
-      </html>
-    </>
+    <html lang="en" className='h-full'>
+      <body
+        className={cn(
+          'relative z-10 h-full font-sans antialiased',
+          inter.className
+        )}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main className='flex flex-col min-h-screen'>
+            <div className='flex-grow flex-1'>
+              {children}
+            </div>
+          </main>
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }
