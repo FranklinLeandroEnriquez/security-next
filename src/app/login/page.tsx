@@ -1,3 +1,5 @@
+"use client"
+
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { Button } from "@/components/ui/button"
 import {
@@ -8,16 +10,54 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { authenticate } from "@/services/Auth/AuthService"
+import { LoginRequest } from "@/types/Auth/LoginRequest"
+import { AuthResponse } from "@/types/Auth/AuthResponse"
 import { Tally1 } from 'lucide-react'
 import Image from 'next/image';
-
+import { useState } from "react"
+import { useSessionAuth } from "@/hooks/useSessionAuth"
+import { toast } from "sonner";
+import { ErrorResponse } from "@/types/shared/ValidationError"
+import { Toaster } from "@/components/ui/sonner"
+import { useRouter } from "next/navigation";
 
 
 export default function Home() {
+  const [login, setLogin] = useState<LoginRequest>(
+    {
+      ip: "192.168.0.1",
+      username: "",
+      password: ""
+    }
+  )
+
+  const router = useRouter();
+
+  const { saveAuthResponse } = useSessionAuth();
+
+  const handleLogin = async () => {
+    await authenticate(login).then(async res => {
+      if (res.status != 201) {
+        await res.json().then((data: ErrorResponse) => {
+          toast.error(data.message.toString());
+        })
+      }
+      else {
+        await res.json().then((data: AuthResponse) => {
+          saveAuthResponse(data)
+          return router.push("/dashboard/user");
+        })
+      }
+    })
+  }
+
+
   return <>
+
+    <Toaster richColors position="top-center" />
 
     <MaxWidthWrapper>
       <div className="absolute inset-0 z-0">
@@ -49,14 +89,28 @@ export default function Home() {
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Username/Email</Label>
-                <Input id="email" type="email" placeholder="Enter your email or username" />
+                <Label htmlFor="username">Username/Email</Label>
+                <Input id="username" type="text" placeholder="Enter your email or username"
+                  onChange={(e) => {
+                    setLogin({
+                      ...login,
+                      username: e.target.value
+                    })
+                  }}
+                  value={login.username} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" placeholder="Enter your password" />
+                <Input id="password" type="password" placeholder="Enter your password"
+                  onChange={(e) => {
+                    setLogin({
+                      ...login,
+                      password: e.target.value
+                    })
+                  }}
+                  value={login.password} />
               </div>
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Checkbox id="terms" />
                 <label
                   htmlFor="terms"
@@ -64,15 +118,17 @@ export default function Home() {
                 >
                   Remember me
                 </label>
-              </div>
+              </div> */}
             </CardContent>
             <CardFooter className="flex flex-col">
-              <Button className="w-full">Login</Button>
-              <p className="mt-2 text-xs text-center text-gray-700">
+              <Button className="w-full" onClick={() => {
+                handleLogin()
+              }}>Login</Button>
+              {/* <p className="mt-2 text-xs text-center text-gray-700">
                 {" "}
                 Create an account?{" "}
                 <span className=" text-blue-600 hover:underline">Sign up</span>
-              </p>
+              </p> */}
             </CardFooter>
           </Card>
         </div>
