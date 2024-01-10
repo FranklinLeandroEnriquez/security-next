@@ -10,3 +10,14 @@ export const authenticate = async (request: LoginRequest) => {
     });
 }
 
+
+export const verifyToken = async (token: string) => {
+    return await fetch(`${HOST}/api/auth`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+    });
+}
+

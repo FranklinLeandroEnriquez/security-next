@@ -128,9 +128,7 @@ export default function Home() {
               </div> */}
             </CardContent>
             <CardFooter className="flex flex-col">
-              <Button className="w-full" onClick={() => {
-                handleLogin()
-              }}>Login</Button>
+              <Button className="w-full" onClick={(e) => { handleLogin() }}>Login</Button>
               {/* <p className="mt-2 text-xs text-center text-gray-700">
                 {" "}
                 Create an account?{" "}
