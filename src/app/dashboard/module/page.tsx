@@ -11,11 +11,23 @@ import { useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { FileBarChart2 } from "lucide-react";
+import { useSessionAuth } from '@/hooks/useSessionAuth';
 
 export default function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
 
     const router = useRouter();
+
+    const [isFunctionCreate, setIsFunctionCreate] = useState<boolean>(false);
+
+    //Control de sesion de usuario
+    const { getAuthResponse } = useSessionAuth();
+    const authResponse = getAuthResponse();
+
+    useEffect(() => {
+        const hasFunctionCreate = authResponse?.functions.includes('SEC-MODULES-CREATE') || false;
+        setIsFunctionCreate(hasFunctionCreate);
+    }, []);
 
     const deleteModuleHandler = async (id: number) => {
         await deleteModule(id).then((res) => {
@@ -60,6 +72,7 @@ export default function Page() {
             <Header title='All Modules' icon={<FileBarChart2 size={25} />} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Module, string>
+                    isFunctionCreate={isFunctionCreate}
                     onCreate={createModuleHandler}
                     columns={columns(updateModuleHandler, deleteModuleHandler)}
                     data={modules}

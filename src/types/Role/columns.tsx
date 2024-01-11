@@ -23,6 +23,7 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
     [
         {
             id: "actions",
+            header: 'Actions',
             cell: ({ row }) => {
                 const role = row.original
 

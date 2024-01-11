@@ -41,19 +41,19 @@ export const AuthProvider: FunctionComponent<AuthProviderProps> = ({ children })
                     }
                     setLoading(false);
                 });
-            }, 250);
+            }, 100);
         }
-    }, [pathname]);
+    }, []);
 
 
     React.useEffect(() => {
-        const timer = setTimeout(() => setProgress(100), 100)
+        const timer = setTimeout(() => setProgress(100), 50)
         return () => clearTimeout(timer)
     }, []);
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <div className='flex justify-center items-center h-screen'>
                 <Progress value={progress} className="w-[60%]" />
             </div>
         );

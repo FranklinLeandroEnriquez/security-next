@@ -12,31 +12,39 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { Users2Icon } from 'lucide-react';
+import { useSessionAuth } from '@/hooks/useSessionAuth';
 
 export default function Page() {
-    const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
+    const [users, setUsers] = useState<UserResponse[]>([]);
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
+    const [isFunctionCreate, setIsFunctionCreate] = useState<boolean>(false);
+
+    //Control de sesion de usuario
+    const { getAuthResponse } = useSessionAuth();
+    const authResponse = getAuthResponse();
+
+    useEffect(() => {
+        const hasFunctionCreate = authResponse?.functions.includes('SEC-USERS-CREATE') || false;
+        setIsFunctionCreate(hasFunctionCreate);
+    }, []);
 
     const deleteUserHandler = async (id: number) => {
-        await deleteUser(id).then(async (res) => {
-            if (res.status === 200) {
-                getUsersLocal();
-                toast.success("User deleted successfully");
+        const res = await deleteUser(id);
+        if (res.status === 200) {
+            getUsersLocal();
+            toast.success("User deleted successfully");
+        } else {
+            const errorData: ErrorResponse = await res.json();
+            if (errorData.error === 'ErrorResponse') {
+                setErrorResponse(null);
             } else {
-                const errorData: ErrorResponse = await res.json();
-                if (errorData.error === 'ErrorResponse') {
-                    setErrorResponse(null);
-                    setErrors(errorData);
-                    toast.error(errorData.message.toString());
-                }
-                toast.error(errorData.message.toString());
+                setErrorResponse(errorData);
+                toast.error(errorData.message);
             }
-        }).catch((err) => {
-            toast.error('Error deleting user');
-        });
-    }
+        }
+    };
 
     const updateUserHandler = async (id: number) => {
         router.push(`/dashboard/user/update/${id}`);
@@ -69,6 +77,7 @@ export default function Page() {
             <div>
                 <MaxWidthWrapper className='mt-4'>
                     <DataTable<User, string>
+                        isFunctionCreate={isFunctionCreate}
                         onCreate={createUserHandler}
                         columns={columns(updateUserHandler, deleteUserHandler)}
                         data={users}
