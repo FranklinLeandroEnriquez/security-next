@@ -6,6 +6,8 @@ import { UpdateUserRequest } from "@/types/User/UpdateUserRequest";
 import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getIp, logAuditAction } from "@/services/Audit/AuditService";
+import { useAuthToken } from "@/hooks/useAuthToken";
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -39,37 +41,78 @@ export default function UserUpdateForm({ params }: any) {
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
 
     const router = useRouter();
+    const token = useAuthToken();
     useEffect(() => {
         const { id } = params;
-
-        getUser(id).then(async (res) => {
+        (async () => {
+          try {
+            const ip = await getIp();
+    
+            const res = await getUser(id);
+    
             if (res.status === 200) {
-                return res.json().then((data) => {
-                    setUser(data);
-                    // Establece los valores de los campos del formulario
-                    form.setValue('username', data.username);
-                    form.setValue('email', data.email);
-                    form.setValue('dni', data.dni);
-                    form.setValue('password', data.password);
-                    form.setValue('status', data.status);
-                });
+              await logAuditAction(
+                {
+                  functionName: "SEC-USERS-READ",
+                  action: "get User",
+                  description: "Successfully read user",
+                  observation: `User id: ${id}`,
+                  ip: ip.toString(),
+                },
+                token
+              );
+    
+              const data = await res.json();
+              setUser(data);
+    
+              // Establece los valores de los campos del formulario
+              form.setValue("username", data.username);
+              form.setValue("email", data.email);
+              form.setValue("dni", data.dni);
+              form.setValue("password", data.password);
+              form.setValue("status", data.status);
+            } else {
+                await logAuditAction(
+                    {
+                    functionName: "SEC-USERS-READ",
+                    action: "get User",
+                    description: "Error reading user",
+                    ip: ip.toString(),
+                    },
+                    token
+                );
+              router.push("/dashboard/user");
+              toast.error("An error has occurred");
             }
-            router.push("/dashboard/user");
-            return window.alert('User Not Found');
-        }).catch((err) => {
-            return window.alert('Error');
-        });
+          } catch (err) {
+            toast.error("An error has occurred");
+          }
+        })();
+      }, []);
 
-    }, []);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        const ip = await getIp();
         try {
             await updateUser(params.id, data).then(async (res) => {
                 if (res.status === 200) {
+                    await logAuditAction({
+                        functionName: 'SEC-USERS-UPDATE',
+                        action: 'update User',
+                        description: 'Successfully updated user',
+                        observation: `Username: ${data.username}`,
+                        ip: ip.toString(),
+                    }, token);
                     toast.success("User updated successfully");
                     return router.push("/dashboard/user");
                 }
 
+                await logAuditAction({
+                    functionName: 'SEC-USERS-UPDATE',
+                    action: 'update User',
+                    description: 'Error updating user',
+                    ip: ip.toString(),
+                }, token);
                 await res.json().then((data: ValidationErrorResponse) => {
                     if (data.error == 'ValidationException') {
                         setErrorResponse(null);
