@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { FunctionSquare } from 'lucide-react';
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
+import { useSessionAuth } from '@/hooks/useSessionAuth';
 
 export default function Page() {
     const [functions, setFunctions] = useState<FunctionResponse[]>([] as FunctionResponse[]);
@@ -20,6 +21,17 @@ export default function Page() {
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
     const token = useAuthToken();
+
+    const [isFunctionCreate, setIsFunctionCreate] = useState<boolean>(false);
+
+    //Control de sesion de usuario
+    const { getAuthResponse } = useSessionAuth();
+    const authResponse = getAuthResponse();
+
+    useEffect(() => {
+        const hasFunctionCreate = authResponse?.functions.includes('SEC-USERS-CREATE') || false;
+        setIsFunctionCreate(hasFunctionCreate);
+    }, []);
 
     const deleteFunctionHandler = async (id: number) => {
         const ip = await getIp();
@@ -100,6 +112,7 @@ export default function Page() {
             <Header title='All Functions' icon={<FunctionSquare size={25} />} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Function, string>
+                    isFunctionCreate={isFunctionCreate}
                     onCreate={createFunctionHandler}
                     columns={columns(updateFunctionHandler, deleteFunctionHandler)}
                     data={functions}

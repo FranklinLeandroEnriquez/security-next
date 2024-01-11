@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { UserCheck } from 'lucide-react';
 import Header from '@/components/Header';
 import { toast } from "sonner";
+import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 
@@ -20,6 +21,17 @@ export default function Page() {
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
+
+    const [isFunctionCreate, setIsFunctionCreate] = useState<boolean>(false);
+
+    //Control de sesion de usuario
+    const { getAuthResponse } = useSessionAuth();
+    const authResponse = getAuthResponse();
+
+    useEffect(() => {
+        const hasFunctionCreate = authResponse?.functions.includes('SEC-ROLES-CREATE') || false;
+        setIsFunctionCreate(hasFunctionCreate);
+    }, []);
     const token = useAuthToken();
 
     const deleteRoleHandler = async (id: number) => {
@@ -102,7 +114,12 @@ export default function Page() {
         <>
             <Header title='All Roles' icon={<UserCheck />} />
             <MaxWidthWrapper className='mt-4'>
-                <DataTable<Role, string> onCreate={createRoleHandler} columns={columns(updateRoleHandler, deleteRoleHandler)} data={roles} filteredColumn='name' />
+                <DataTable<Role, string>
+                    isFunctionCreate={isFunctionCreate}
+                    onCreate={createRoleHandler}
+                    columns={columns(updateRoleHandler, deleteRoleHandler)}
+                    data={roles}
+                    filteredColumn='name' />
             </MaxWidthWrapper>
         </>
     )

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -9,8 +9,18 @@ import { ChevronDown, Ghost } from 'lucide-react';
 import { SIDEVAR_ITEMS } from '@/SideConfig/constants';
 import { SideNavItems } from '@/SideConfig/types';
 import { Button, buttonVariants } from './ui/button';
+import { useSessionAuth } from '@/hooks/useSessionAuth';
 
 const SideNav = () => {
+    const [isFunctionCreate, setIsFunctionCreate] = useState<boolean>(false);
+    //Control de sesion de usuario
+    const { getAuthResponse } = useSessionAuth();
+    const authResponse = getAuthResponse();
+
+    useEffect(() => {
+        const hasFunctionCreate = authResponse?.functions.includes('SEC-USERS-CREATE') || false;
+        setIsFunctionCreate(hasFunctionCreate);
+    }, []);
     return (
         <div className="md:w-60 bg-[#1E1E1E] h-screen flex-1 text-white fixed border-r hidden md:flex">
             <div className="flex flex-col w-full">
@@ -23,7 +33,7 @@ const SideNav = () => {
                 </Link>
 
                 <div className="mt-1 flex flex-col space-y-2 md:px-6 ">
-                    {SIDEVAR_ITEMS.map((item, idx) => {
+                    {SIDEVAR_ITEMS.filter(item => !(item.title === "Assign" && !isFunctionCreate)).map((item, idx) => {
                         return <MenuItem key={idx} item={item} />;
                     })}
                 </div>

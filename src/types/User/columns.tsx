@@ -26,6 +26,7 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
     [
         {
             id: "actions",
+            header: 'Actions',
             cell: ({ row }) => {
                 const user = row.original
 
@@ -38,7 +39,7 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuLabel>Options</DropdownMenuLabel>
                             <DropdownMenuItem
                                 onClick={() => navigator.clipboard.writeText(user.id.toString())}
                             >
@@ -127,5 +128,5 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                 )
             },
         },
-        
+
     ]
