@@ -10,7 +10,6 @@ export default function ValidFunctions(Component: any, functionToValidate: strin
         const userFunctions = useUserFunctions();
 
         const hasValidFunction = userFunctions ? userFunctions.includes(functionToValidate) : false;
-        console.log('hasValidFunction', hasValidFunction);
 
         useEffect(() => {
             if (userFunctions && userFunctions.length > 0 && !hasValidFunction) {

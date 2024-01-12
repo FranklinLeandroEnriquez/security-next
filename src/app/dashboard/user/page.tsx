@@ -11,10 +11,10 @@ import { use, useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { Users2Icon } from 'lucide-react';
-import { getIp, logAuditAction } from '@/services/Audit/AuditService';
-import { useAuthToken } from '@/hooks/useAuthToken';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions'
+import { getIp, logAuditAction } from '@/services/Audit/AuditService';
+import { useAuthToken } from '@/hooks/useAuthToken';
 
 function Page() {
     const [users, setUsers] = useState<UserResponse[]>([]);
@@ -52,10 +52,11 @@ function Page() {
                     setErrorResponse(null);
                     setErrors(errorData);
                     toast.error(errorData.message.toString());
+                } else {
+                    toast.error(errorData.message.toString());
                 }
-                toast.error(errorData.message.toString());
             }
-        }
+        }); // Aquí es donde faltaba la llave de cierre
     };
 
     const updateUserHandler = async (id: number) => {

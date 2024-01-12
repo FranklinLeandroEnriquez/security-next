@@ -46,50 +46,50 @@ function UserUpdateForm({ params }: any) {
     useEffect(() => {
         const { id } = params;
         (async () => {
-          try {
-            const ip = await getIp();
-    
-            const res = await getUser(id, token);
-    
-            if (res.status === 200) {
-              await logAuditAction(
-                {
-                  functionName: "SEC-USERS-READ",
-                  action: "get User",
-                  description: "Successfully read user",
-                  observation: `User id: ${id}`,
-                  ip: ip.toString(),
-                },
-                token
-              );
-    
-              const data = await res.json();
-              setUser(data);
-    
-              // Establece los valores de los campos del formulario
-              form.setValue("username", data.username);
-              form.setValue("email", data.email);
-              form.setValue("dni", data.dni);
-              form.setValue("password", data.password);
-              form.setValue("status", data.status);
-            } else {
-                await logAuditAction(
-                    {
-                    functionName: "SEC-USERS-READ",
-                    action: "get User",
-                    description: "Error reading user",
-                    ip: ip.toString(),
-                    },
-                    token
-                );
-              router.push("/dashboard/user");
-              toast.error("An error has occurred");
+            try {
+                const ip = await getIp();
+
+                const res = await getUser(id, token);
+
+                if (res.status === 200) {
+                    await logAuditAction(
+                        {
+                            functionName: "SEC-USERS-READ",
+                            action: "get User",
+                            description: "Successfully read user",
+                            observation: `User id: ${id}`,
+                            ip: ip.toString(),
+                        },
+                        token
+                    );
+
+                    const data = await res.json();
+                    setUser(data);
+
+                    // Establece los valores de los campos del formulario
+                    form.setValue("username", data.username);
+                    form.setValue("email", data.email);
+                    form.setValue("dni", data.dni);
+                    form.setValue("password", data.password);
+                    form.setValue("status", data.status);
+                } else {
+                    await logAuditAction(
+                        {
+                            functionName: "SEC-USERS-READ",
+                            action: "get User",
+                            description: "Error reading user",
+                            ip: ip.toString(),
+                        },
+                        token
+                    );
+                    router.push("/dashboard/user");
+                    toast.error("An error has occurred");
+                }
+            } catch (err) {
+                toast.error("An error has occurred");
             }
-          } catch (err) {
-            toast.error("An error has occurred");
-          }
         })();
-      }, []);
+    }, []);
 
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
