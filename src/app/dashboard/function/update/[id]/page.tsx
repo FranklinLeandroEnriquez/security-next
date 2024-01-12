@@ -175,8 +175,8 @@ export default function FunctionUpdateForm({ params }: any) {
     };
 
     const formSchema = z.object({
-        name: z.string().min(3, {
-            message: 'The name must be at least 3 characters',
+        name: z.string().min(5, {
+            message: 'The name must be at least 5 characters',
         }).max(50, {
             message: 'The name must be less than 50 characters',
         }),
