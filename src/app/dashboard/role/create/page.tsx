@@ -31,9 +31,10 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import path from "path"
+import validFunctions from '@/providers/ValidateFunctions'
 
-export default function RoleCreateForm() {
+
+function RoleCreateForm() {
     const [role, setRole] = useState<CreateRoleRequest>({} as CreateRoleRequest)
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null)
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null)
@@ -132,4 +133,6 @@ export default function RoleCreateForm() {
 
     )
 
-}
+};
+
+export default validFunctions(RoleCreateForm, 'SEC-ROLES-CREATE');

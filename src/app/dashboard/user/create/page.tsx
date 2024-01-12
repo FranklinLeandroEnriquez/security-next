@@ -32,8 +32,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner";
+import validFunctions from '@/providers/ValidateFunctions';
 
-export default function UserCreateForm() {
+function UserCreateForm() {
 
     const [user, setUser] = useState<CreateUserRequest>({} as CreateUserRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -191,4 +192,5 @@ export default function UserCreateForm() {
         </>
     );
 };
+export default validFunctions(UserCreateForm, 'SEC-USERS-CREATE');
 

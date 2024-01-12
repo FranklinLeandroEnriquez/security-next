@@ -31,8 +31,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner";
+import validFunctions from '@/providers/ValidateFunctions'
 
-export default function UserUpdateForm({ params }: any) {
+function UserUpdateForm({ params }: any) {
 
     const [user, setUser] = useState<UpdateUserRequest>({} as UpdateUserRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -216,61 +217,12 @@ export default function UserUpdateForm({ params }: any) {
                                 </div>
                             </form>
                         </Form>
-
-                        {/* <form onSubmit={onSubmit}>
-                            {errors?.message?.find((err) => err.field === 'username')?.errors}
-                            <input
-                                type="text"
-                                placeholder="Write a username"
-                                autoFocus
-                                onChange={(e) => setUser({ ...user, username: e.target.value })}
-                                value={user.username}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'email')?.errors}
-                            <input
-                                type="text"
-                                placeholder="Write a email"
-                                onChange={(e) => setUser({ ...user, email: e.target.value })}
-                                value={user.email}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'dni')?.errors}
-                            <input
-                                type="text"
-                                placeholder="Write a dni"
-                                onChange={(e) => setUser({ ...user, dni: e.target.value })}
-                                value={user.dni}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'password')?.errors}
-                            <input
-                                type="password"
-                                placeholder="Write a password"
-                                onChange={(e) => setUser({ ...user, password: e.target.value })}
-                                value={user.password}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'status')?.errors}
-                            <input
-                                type="checkbox"
-                                onChange={(e) => setUser({ ...user, status: !user.status })}
-                                checked={user.status ? true : false}
-                            />
-
-                            <input
-                                type="submit"
-                                value="Save"
-                            />
-                        </form> */}
                     </CardContent>
                 </Card>
             </div>
         </>
     );
 };
+
+export default validFunctions(UserUpdateForm, 'SEC-USERS-UPDATE');
 

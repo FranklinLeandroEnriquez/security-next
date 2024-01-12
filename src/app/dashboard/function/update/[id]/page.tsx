@@ -42,10 +42,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { stat } from 'fs'
 import { UpdateFunctionRequest } from '@/types/Function/UpdateFunctionRequest'
+import validFunctions from '@/providers/ValidateFunctions';
 
-export default function FunctionUpdateForm({ params }: any) {
+function FunctionUpdateForm({ params }: any) {
 
     const [functionn, setFunction] = useState<UpdateFunctionRequest>({} as UpdateFunctionRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -239,4 +239,6 @@ export default function FunctionUpdateForm({ params }: any) {
             </div>
         </>
     )
-}
+};
+
+export default validFunctions(FunctionUpdateForm, 'SEC-FUNCTIONS-UPDATE');

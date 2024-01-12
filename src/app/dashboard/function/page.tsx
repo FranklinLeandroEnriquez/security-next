@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import { columns, Function } from '@/types/Function/columns'
+import { useColumns, Function } from '@/types/Function/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from "@/types/shared/ValidationError"
 import { deleteFunction, getFunctions } from "@/services/Function/FunctionService";
@@ -11,24 +11,18 @@ import { useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from 'sonner';
 import { FunctionSquare } from 'lucide-react';
-import { useSessionAuth } from '@/hooks/useSessionAuth';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import ValidFunctions from '@/providers/ValidateFunctions';
+import exp from 'constants';
 
-export default function Page() {
+function Page() {
     const [functions, setFunctions] = useState<FunctionResponse[]>([] as FunctionResponse[]);
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
 
-    const [isFunctionCreate, setIsFunctionCreate] = useState<boolean>(false);
-
-    //Control de sesion de usuario
-    const { getAuthResponse } = useSessionAuth();
-    const authResponse = getAuthResponse();
-
-    useEffect(() => {
-        const hasFunctionCreate = authResponse?.functions.includes('SEC-USERS-CREATE') || false;
-        setIsFunctionCreate(hasFunctionCreate);
-    }, []);
+    const userFunctions = useUserFunctions();
+    const isFunctionCreate = userFunctions?.includes('SEC-FUNCTIONS-CREATE') || false;
 
     const deleteFunctionHandler = async (id: number) => {
         await deleteFunction(id).then(async (res) => {
@@ -78,13 +72,15 @@ export default function Page() {
             <Header title='All Functions' icon={<FunctionSquare size={25} />} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Function, string>
-                    isFunctionCreate={isFunctionCreate}
+                    canCreate={isFunctionCreate}
                     onCreate={createFunctionHandler}
-                    columns={columns(updateFunctionHandler, deleteFunctionHandler)}
+                    columns={useColumns(updateFunctionHandler, deleteFunctionHandler)}
                     data={functions}
                     filteredColumn='name'
                 />
             </MaxWidthWrapper>
         </>
     )
-}
+};
+
+export default ValidFunctions(Page, 'SEC-FUNCTIONS-READ');

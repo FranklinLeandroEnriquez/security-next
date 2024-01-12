@@ -1,5 +1,4 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogInIcon } from 'lucide-react'
 

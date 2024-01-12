@@ -12,6 +12,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 
 export type User = {
     id: number;
@@ -21,9 +22,13 @@ export type User = {
     status: boolean;
 }
 
-export const columns = (handleUpdate: (id: number) => void, handleDelete:
-    (id: number) => void): ColumnDef<User>[] =>
-    [
+
+export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
+    (id: number) => void): ColumnDef<User>[] => {
+    const userFunctions = useUserFunctions();
+    const isFunctionDelete = userFunctions?.includes('SEC-USERS-DELETE') || false;
+    const isFunctionUpdate = userFunctions?.includes('SEC-USERS-UPDATE') || false;
+    return [
         {
             id: "actions",
             header: 'Actions',
@@ -43,15 +48,23 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                             <DropdownMenuItem
                                 onClick={() => navigator.clipboard.writeText(user.id.toString())}
                             >
-                                Copy user ID
+                                Copy User ID
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdate(user.id)}>
-                                Edit user
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(user.id)}>
-                                Delete user
-                            </DropdownMenuItem>
+                            {isFunctionUpdate || isFunctionDelete ? (
+                                <DropdownMenuSeparator />
+                            ) : null
+                            }
+                            {isFunctionUpdate ? (
+                                <DropdownMenuItem onClick={() => handleUpdate(user.id)}>
+                                    Edit User
+                                </DropdownMenuItem>
+                            ) : null}
+
+                            {isFunctionDelete ? (
+                                <DropdownMenuItem onClick={() => handleDelete(user.id)}>
+                                    Delete User
+                                </DropdownMenuItem>
+                            ) : null}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )
@@ -130,3 +143,4 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
         },
 
     ]
+}

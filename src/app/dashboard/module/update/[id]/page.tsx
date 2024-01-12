@@ -32,8 +32,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner";
+import validFunctions from '@/providers/ValidateFunctions'
 
-export default function ModuleUpdateFomr({ params }: any) {
+function ModuleUpdateFomr({ params }: any) {
 
     const [module, setModule] = useState<UpdateModuleRequest>({} as UpdateModuleRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -186,5 +187,7 @@ export default function ModuleUpdateFomr({ params }: any) {
             </div>
         </>
     )
-}
+};
+
+export default validFunctions(ModuleUpdateFomr, 'SEC-MODULES-UPDATE');
 
