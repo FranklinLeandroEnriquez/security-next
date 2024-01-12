@@ -5,8 +5,7 @@ import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { AuthContext, AuthContextType } from '@/contexts/AuthContext';
 import { verifyToken } from '@/services/Auth/AuthService';
 import { usePathname } from 'next/navigation'
-import { Progress } from "@/components/ui/progress"
-import { set } from 'react-hook-form';
+// import { Progress } from "@/components/ui/progress"
 import { useRouter } from 'next/navigation'
 
 
@@ -41,20 +40,24 @@ export const AuthProvider: FunctionComponent<AuthProviderProps> = ({ children })
                     }
                     setLoading(false);
                 });
-            }, 250);
+            }, 200);
         }
-    }, [pathname]);
-
-
-    React.useEffect(() => {
-        const timer = setTimeout(() => setProgress(100), 100)
-        return () => clearTimeout(timer)
     }, []);
+
+
+    // React.useEffect(() => {
+    //     const timer = setTimeout(() => setProgress(100), 50)
+    //     return () => clearTimeout(timer)
+    // }, []);
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Progress value={progress} className="w-[60%]" />
+            // <div className='flex justify-center items-center h-screen'>
+            //     <Progress value={progress} className="w-[60%]" />
+            // </div>
+
+            <div className='flex justify-center items-center h-screen'>
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-yellow-500"></div>
             </div>
         );
     }

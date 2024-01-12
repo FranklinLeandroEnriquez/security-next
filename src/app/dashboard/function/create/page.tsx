@@ -43,10 +43,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { getModules } from '@/services/Module/ModuleService'
+import { getModules } from '@/services/Module/ModuleService';
+import validFunctions from '@/providers/ValidateFunctions';
 
 
-export default function FunctionCreateFormpage() {
+
+function FunctionCreateFormpage() {
 
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
@@ -229,4 +231,6 @@ export default function FunctionCreateFormpage() {
 
         </>
     )
-}
+};
+
+export default validFunctions(FunctionCreateFormpage, 'SEC-FUNCTIONS-CREATE');

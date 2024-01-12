@@ -1,26 +1,33 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import { columns, Role } from '@/types/Role/columns'
+import { useColumns, Role } from '@/types/Role/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteRole, getRoles } from "@/services/Role/RoleService";
 import { RoleResponse } from "@/types/Role/RoleResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
-import { Button } from '@/components/ui/button';
 import { UserCheck } from 'lucide-react';
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
+import { useSessionAuth } from '@/hooks/useSessionAuth';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import validFunctions from '@/providers/ValidateFunctions';
 
-export default function Page() {
+function Page() {
     const [roles, setRoles] = useState<RoleResponse[]>([] as RoleResponse[]);
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
     const token = useAuthToken();
+
+    const userFunctions = useUserFunctions();
+    const isFunctionCreate = userFunctions?.includes('SEC-ROLES-CREATE') || false;
+
+
 
     const deleteRoleHandler = async (id: number) => {
         const ip = await getIp();
@@ -102,8 +109,15 @@ export default function Page() {
         <>
             <Header title='All Roles' icon={<UserCheck />} />
             <MaxWidthWrapper className='mt-4'>
-                <DataTable<Role, string> onCreate={createRoleHandler} columns={columns(updateRoleHandler, deleteRoleHandler)} data={roles} filteredColumn='name' />
+                <DataTable<Role, string>
+                    canCreate={isFunctionCreate}
+                    onCreate={createRoleHandler}
+                    columns={useColumns(updateRoleHandler, deleteRoleHandler)}
+                    data={roles}
+                    filteredColumn='name' />
             </MaxWidthWrapper>
         </>
     )
 }
+
+export default validFunctions(Page, 'SEC-ROLES-READ');

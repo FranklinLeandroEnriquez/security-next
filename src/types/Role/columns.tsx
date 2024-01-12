@@ -11,6 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUserFunctions } from "@/contexts/UserFunctionProvider";
 
 export type Role = {
     id: number;
@@ -18,11 +19,15 @@ export type Role = {
     status: boolean;
 }
 
-export const columns = (handleUpdate: (id: number) => void, handleDelete:
-    (id: number) => void): ColumnDef<Role>[] =>
-    [
+export const useColumns = (handleUpdate: (id: number) => void, handleDelete: (id: number) => void): ColumnDef<Role>[] => {
+    const userFunctions = useUserFunctions();
+    const isFunctionDelete = userFunctions?.includes('SEC-ROLES-DELETE') || false;
+    const isFunctionUpdate = userFunctions?.includes('SEC-ROLES-UPDATE') || false;
+
+    return [
         {
             id: "actions",
+            header: 'Actions',
             cell: ({ row }) => {
                 const role = row.original
 
@@ -39,15 +44,23 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                             <DropdownMenuItem
                                 onClick={() => navigator.clipboard.writeText(role.id.toString())}
                             >
-                                Copy role ID
+                                Copy Role ID
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleUpdate(role.id)}>
-                                Edit role
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(role.id)}>
-                                Delete role
-                            </DropdownMenuItem>
+                            {isFunctionUpdate || isFunctionDelete ? (
+                                <DropdownMenuSeparator />
+                            ) : null
+                            }
+                            {isFunctionUpdate ? (
+                                <DropdownMenuItem onClick={() => handleUpdate(role.id)}>
+                                    Edit Role
+                                </DropdownMenuItem>
+                            ) : null}
+
+                            {isFunctionDelete ? (
+                                <DropdownMenuItem onClick={() => handleDelete(role.id)}>
+                                    Delete Role
+                                </DropdownMenuItem>
+                            ) : null}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )
@@ -95,5 +108,6 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                 )
             },
         },
-       
+
     ]
+}

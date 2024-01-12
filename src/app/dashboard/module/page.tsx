@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import { columns, Module } from '@/types/Module/columns'
+import { useColumns, Module } from '@/types/Module/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 
 import { deleteModule, getModules } from "@/services/Module/ModuleService";
@@ -11,15 +11,20 @@ import { useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { FileBarChart2 } from "lucide-react";
-import { getIp,logAuditAction } from '@/services/Audit/AuditService';
+import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
+import { useSessionAuth } from '@/hooks/useSessionAuth';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import validFunctions from '@/providers/ValidateFunctions';
 
-export default function Page() {
+function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
 
     const router = useRouter();
     const token = useAuthToken();
-    
+    const userFunctions = useUserFunctions();
+    const isFunctionCreate = userFunctions?.includes('SEC-MODULES-CREATE') || false;
+
     const deleteModuleHandler = async (id: number) => {
         const ip = await getIp();
         await deleteModule(id, token).then(async (res) => {
@@ -96,8 +101,9 @@ export default function Page() {
             <Header title='All Modules' icon={<FileBarChart2 size={25} />} />
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Module, string>
+                    canCreate={isFunctionCreate}
                     onCreate={createModuleHandler}
-                    columns={columns(updateModuleHandler, deleteModuleHandler)}
+                    columns={useColumns(updateModuleHandler, deleteModuleHandler)}
                     data={modules}
                     filteredColumn='name'
                 />
@@ -105,3 +111,4 @@ export default function Page() {
         </>
     )
 }
+export default validFunctions(Page, 'SEC-MODULES-READ');

@@ -19,8 +19,9 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { getIp, logAuditAction } from "@/services/Audit/AuditService"
 import { useAuthToken } from "@/hooks/useAuthToken"
+import validFunctions from '@/providers/ValidateFunctions';
 
-export default function AssignFunction() {
+function AssignFunction() {
     const [roles, setRoles] = useState<RoleResponse[]>([])
     const [selectedRole, setSelectedRole] = useState<number | null>(null)
     const [availableFunctions, setAvailableFunctions] = useState<FunctionResponse[]>([])
@@ -225,4 +226,6 @@ export default function AssignFunction() {
 
         </>
     )
-}
+};
+
+export default validFunctions(AssignFunction, 'SEC-FUNCTIONS-TO-ROLE-READ');

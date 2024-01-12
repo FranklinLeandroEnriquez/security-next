@@ -35,8 +35,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import validFunctions from '@/providers/ValidateFunctions'
 
-export default function RoleUpdateForm({ params }: any) {
+function RoleUpdateForm({ params }: any) {
 
     const [role, setRole] = useState<UpdateRoleRequest>({} as UpdateRoleRequest)
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null)
@@ -184,5 +185,6 @@ export default function RoleUpdateForm({ params }: any) {
             </div>
         </>
     )
+};
 
-}
+export default validFunctions(RoleUpdateForm, 'SEC-ROLES-UPDATE')

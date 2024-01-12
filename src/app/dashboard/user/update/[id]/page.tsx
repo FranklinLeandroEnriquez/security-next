@@ -33,8 +33,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner";
+import validFunctions from '@/providers/ValidateFunctions'
 
-export default function UserUpdateForm({ params }: any) {
+function UserUpdateForm({ params }: any) {
 
     const [user, setUser] = useState<UpdateUserRequest>({} as UpdateUserRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -45,50 +46,50 @@ export default function UserUpdateForm({ params }: any) {
     useEffect(() => {
         const { id } = params;
         (async () => {
-          try {
-            const ip = await getIp();
-    
-            const res = await getUser(id, token);
-    
-            if (res.status === 200) {
-              await logAuditAction(
-                {
-                  functionName: "SEC-USERS-READ",
-                  action: "get User",
-                  description: "Successfully read user",
-                  observation: `User id: ${id}`,
-                  ip: ip.toString(),
-                },
-                token
-              );
-    
-              const data = await res.json();
-              setUser(data);
-    
-              // Establece los valores de los campos del formulario
-              form.setValue("username", data.username);
-              form.setValue("email", data.email);
-              form.setValue("dni", data.dni);
-              form.setValue("password", data.password);
-              form.setValue("status", data.status);
-            } else {
-                await logAuditAction(
-                    {
-                    functionName: "SEC-USERS-READ",
-                    action: "get User",
-                    description: "Error reading user",
-                    ip: ip.toString(),
-                    },
-                    token
-                );
-              router.push("/dashboard/user");
-              toast.error("An error has occurred");
+            try {
+                const ip = await getIp();
+
+                const res = await getUser(id, token);
+
+                if (res.status === 200) {
+                    await logAuditAction(
+                        {
+                            functionName: "SEC-USERS-READ",
+                            action: "get User",
+                            description: "Successfully read user",
+                            observation: `User id: ${id}`,
+                            ip: ip.toString(),
+                        },
+                        token
+                    );
+
+                    const data = await res.json();
+                    setUser(data);
+
+                    // Establece los valores de los campos del formulario
+                    form.setValue("username", data.username);
+                    form.setValue("email", data.email);
+                    form.setValue("dni", data.dni);
+                    form.setValue("password", data.password);
+                    form.setValue("status", data.status);
+                } else {
+                    await logAuditAction(
+                        {
+                            functionName: "SEC-USERS-READ",
+                            action: "get User",
+                            description: "Error reading user",
+                            ip: ip.toString(),
+                        },
+                        token
+                    );
+                    router.push("/dashboard/user");
+                    toast.error("An error has occurred");
+                }
+            } catch (err) {
+                toast.error("An error has occurred");
             }
-          } catch (err) {
-            toast.error("An error has occurred");
-          }
         })();
-      }, []);
+    }, []);
 
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -259,61 +260,12 @@ export default function UserUpdateForm({ params }: any) {
                                 </div>
                             </form>
                         </Form>
-
-                        {/* <form onSubmit={onSubmit}>
-                            {errors?.message?.find((err) => err.field === 'username')?.errors}
-                            <input
-                                type="text"
-                                placeholder="Write a username"
-                                autoFocus
-                                onChange={(e) => setUser({ ...user, username: e.target.value })}
-                                value={user.username}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'email')?.errors}
-                            <input
-                                type="text"
-                                placeholder="Write a email"
-                                onChange={(e) => setUser({ ...user, email: e.target.value })}
-                                value={user.email}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'dni')?.errors}
-                            <input
-                                type="text"
-                                placeholder="Write a dni"
-                                onChange={(e) => setUser({ ...user, dni: e.target.value })}
-                                value={user.dni}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'password')?.errors}
-                            <input
-                                type="password"
-                                placeholder="Write a password"
-                                onChange={(e) => setUser({ ...user, password: e.target.value })}
-                                value={user.password}
-                                required
-                            />
-
-                            {errors?.message?.find((err) => err.field === 'status')?.errors}
-                            <input
-                                type="checkbox"
-                                onChange={(e) => setUser({ ...user, status: !user.status })}
-                                checked={user.status ? true : false}
-                            />
-
-                            <input
-                                type="submit"
-                                value="Save"
-                            />
-                        </form> */}
                     </CardContent>
                 </Card>
             </div>
         </>
     );
 };
+
+export default validFunctions(UserUpdateForm, 'SEC-USERS-UPDATE');
 

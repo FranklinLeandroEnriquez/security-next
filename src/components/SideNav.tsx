@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, Ghost } from 'lucide-react';
 
-import { SIDEVAR_ITEMS } from '@/SideConfig/constants';
+import { useSidevarItems } from '@/SideConfig/constants';
 import { SideNavItems } from '@/SideConfig/types';
 import { Button, buttonVariants } from './ui/button';
 
@@ -22,8 +22,15 @@ const SideNav = () => {
                     <span className="font-bold text-base hidden md:flex">SECURITY UTN</span>
                 </Link>
 
+                {/* <div className="mt-1 flex flex-col space-y-2 md:px-6 ">
+
+                    {useSidevarItems().map((item, idx) => {
+                        return item.subMenuItems?.map((subItem, subIdx) => subItem.canRead ? <MenuItem key={`${idx}-${subIdx}`} item={subItem} /> : null);
+                    })}
+                </div> */}
+
                 <div className="mt-1 flex flex-col space-y-2 md:px-6 ">
-                    {SIDEVAR_ITEMS.map((item, idx) => {
+                    {useSidevarItems().filter(item => item.canRead).map((item, idx) => {
                         return <MenuItem key={idx} item={item} />;
                     })}
                 </div>
@@ -61,23 +68,26 @@ const MenuItem = ({ item }: { item: SideNavItems }) => {
                     </button>
 
                     {subMenuOpen && (
-                        <div className="my-1 ml-3 flex flex-col space-y-2">{item.subMenuItems?.map((subItem, idx) => {
-                            return (
-                                <Link
-                                    key={idx}
-                                    href={subItem.path}
-                                    className={`${subItem.path === pathname ? `${buttonVariants()} bg-[#c59a1a] ml-3 w-[83%]` : ` ${buttonVariants({ variant: "ghost" })} ml-3 w-[83%]  hover:bg-[#c59a1a]`}`}
-                                >
-                                    <div className="flex flex-row space-x-2 flex-auto">
-                                        {subItem.icon}
-                                        <span>{subItem.title}</span>
-                                    </div>
-                                </Link>
-                            );
-                        })}</div>
+                        <div className="my-1 ml-3 flex flex-col space-y-2">
+                            {item.subMenuItems?.filter(subItem => subItem.canRead).map((subItem, idx) => {
+                                return (
+                                    <Link
+                                        key={idx}
+                                        href={subItem.path}
+                                        className={`${subItem.path === pathname ? `${buttonVariants()} bg-[#c59a1a] ml-3 w-[83%]` : ` ${buttonVariants({ variant: "ghost" })} ml-3 w-[83%]  hover:bg-[#c59a1a]`}`}
+                                    >
+                                        <div className="flex flex-row space-x-2 flex-auto">
+                                            {subItem.icon}
+                                            <span>{subItem.title}</span>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     )}
                 </>
             ) : (
+
                 <Link
                     href={item.path}
                     className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-[#36342e] ${item.path === pathname ? 'bg-[#36342e]' : ''

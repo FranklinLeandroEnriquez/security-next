@@ -23,6 +23,7 @@ import { Button } from "./ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
 import React from "react"
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 
 import {
     RankingInfo,
@@ -43,6 +44,10 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
     onCreate?: () => void
     filteredColumn: string
+    canCreate?: boolean
+    canUpdate?: boolean
+    canDelete?: boolean
+    canRead?: boolean
 }
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     // Rank the item
@@ -62,6 +67,9 @@ export function DataTable<TData, TValue>({
     data,
     onCreate,
     filteredColumn,
+    canCreate: canCreate,
+    canUpdate: canUpdate,
+    canDelete: canDelete
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -102,21 +110,8 @@ export function DataTable<TData, TValue>({
                         className="max-w-sm"
                     />
                 </div>
-                {/* filters */}
-                {/* <div>
-                    <Input
-                        placeholder={`Filter ${filteredColumn}...`} // Use the filteredColumn prop
-                        value={
-                            (table.getColumn(filteredColumn)?.getFilterValue() as string) ?? ""
-                        }
-                        onChange={(event) =>
-                            table.getColumn(filteredColumn)?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm"
-                    />
-                </div> */}
                 {/* Crear */}
-                {onCreate ?
+                {onCreate && canCreate ?
                     (<div className="">
                         <Button onClick={onCreate}>
                             <span> Create </span>
@@ -135,7 +130,7 @@ export function DataTable<TData, TValue>({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead className="text-center" key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -156,7 +151,7 @@ export function DataTable<TData, TValue>({
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell className="text-center" key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}

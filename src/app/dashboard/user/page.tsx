@@ -1,26 +1,31 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import { columns, User } from '@/types/User/columns'
+import { useColumns, User } from '@/types/User/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteUser, getUsers } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
-import { Button } from '@/components/ui/button';
+import { use, useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { Users2Icon } from 'lucide-react';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import validFunctions from '@/providers/ValidateFunctions'
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 
-export default function Page() {
-    const [users, setUsers] = useState<UserResponse[]>([] as UserResponse[]);
+function Page() {
+    const [users, setUsers] = useState<UserResponse[]>([]);
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
     const token = useAuthToken();
+
+    const userFunctions = useUserFunctions();
+
+    const isFunctionCreateUser = userFunctions?.includes('SEC-USERS-CREATE') || false;
 
     const deleteUserHandler = async (id: number) => {
         const ip = await getIp();
@@ -47,13 +52,12 @@ export default function Page() {
                     setErrorResponse(null);
                     setErrors(errorData);
                     toast.error(errorData.message.toString());
+                } else {
+                    toast.error(errorData.message.toString());
                 }
-                toast.error(errorData.message.toString());
             }
-        }).catch((err) => {
-            toast.error('Error deleting user');
-        });
-    }
+        }); // Aquí es donde faltaba la llave de cierre
+    };
 
     const updateUserHandler = async (id: number) => {
         router.push(`/dashboard/user/update/${id}`);
@@ -96,14 +100,17 @@ export default function Page() {
         getUsersLocal();
     }, []);
 
+
+
     return (
         <>
             <Header title='All Users' icon={<Users2Icon size={26} />} />
             <div>
                 <MaxWidthWrapper className='mt-4'>
                     <DataTable<User, string>
+                        canCreate={isFunctionCreateUser}
                         onCreate={createUserHandler}
-                        columns={columns(updateUserHandler, deleteUserHandler)}
+                        columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
                         filteredColumn='username' />
                 </MaxWidthWrapper>
@@ -111,3 +118,5 @@ export default function Page() {
         </>
     )
 }
+
+export default validFunctions(Page, 'SEC-USERS-READ');
