@@ -90,6 +90,7 @@ export const useSidevarItems = (): SideNavItems[] => {
                     title: "Audit Trails",
                     path: "/dashboard/reports/audit",
                     icon: <Route size={20} />,
+                    canRead: casReadAuditTrailReport
                 },
                 {
                     title: "Users",
