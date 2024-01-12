@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { Users2Icon } from 'lucide-react';
-import { getIp,logAuditAction } from '@/services/Audit/AuditService';
+import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 
 export default function Page() {
