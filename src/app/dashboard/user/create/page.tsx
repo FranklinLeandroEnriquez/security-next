@@ -47,7 +47,7 @@ export default function UserCreateForm() {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         const ip = await getIp();
         try {
-            await createUser(values).then(async (res) => {
+            await createUser(values, token).then(async (res) => {
                 if (res.status === 201) {
                     await logAuditAction({
                         functionName: 'SEC-USERS-CREATE',

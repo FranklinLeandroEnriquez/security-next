@@ -31,7 +31,7 @@ export default function AssignFunction() {
 
     const getRolesHandler = async () => {
         const ip = await getIp()
-        const res = await getRoles()
+        const res = await getRoles(token)
         if (res.status === 200) {
             const data = await res.json()
             // Filtrar roles con status igual a true
@@ -50,7 +50,7 @@ export default function AssignFunction() {
 
     const getFunctionsOfRoleHandler = async (roleId: number) => {
         const ip = await getIp()
-        const res = await getFunctionsOfRole(roleId)
+        const res = await getFunctionsOfRole(roleId, token)
         if (res.status === 200) {
             const data = await res.json()
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
@@ -69,7 +69,7 @@ export default function AssignFunction() {
 
     const getFunctionsHandler = async () => {
         const ip = await getIp()
-        const res = await getFunctions()
+        const res = await getFunctions(token)
         if (res.status === 200) {
             const data = await res.json()
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
@@ -116,7 +116,7 @@ export default function AssignFunction() {
         if (selectedRole) {
             const functionIds = roleFunctions.map(f => f.id)
             try {
-                const res = await assignFunctions(selectedRole, { roleId: selectedRole, functionIds });
+                const res = await assignFunctions(selectedRole, { roleId: selectedRole, functionIds }, token);
                 if (res.status === 201) {
                     logAuditAction({
                         functionName: 'SEC-FUNCTIONS-TO-ROLE-UPDATE',

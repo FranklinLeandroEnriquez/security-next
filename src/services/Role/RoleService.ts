@@ -4,42 +4,70 @@ import { AssignFunctionsToRoleRequest } from "@/types/Role/AssignFunctionsToRole
 
 const HOST = process.env.NEXT_PUBLIC_API_HOST;
 
-export const getRoles = async () => {
-    return await fetch(`${HOST}/api/roles`, { cache: 'no-store' })
+export const getRoles = async (token: string) => {
+    return await fetch(`${HOST}/api/roles`,
+        {
+            cache: 'no-store',
+            headers: { authorization: `Bearer ${token}` }
+        }
+    )
 }
 
-export const getRole = async (id: number) => {
-    return await fetch(`${HOST}/api/roles/${id}`, { cache: 'no-store' });
+export const getRole = async (id: number, token: string) => {
+    return await fetch(`${HOST}/api/roles/${id}`,
+        {
+            cache: 'no-store',
+            headers: { authorization: `Bearer ${token}` }
+        });
 }
 
-export const deleteRole = async (id: number) => {
-    return await fetch(`${HOST}/api/roles/${id}`, { method: 'DELETE' });
+export const deleteRole = async (id: number, token: string) => {
+    return await fetch(`${HOST}/api/roles/${id}`,
+        {
+            method: 'DELETE',
+            headers: { authorization: `Bearer ${token}` }
+        }
+    );
 }
 
-export const createRole = async (role: CreateRoleRequest) => {
+export const createRole = async (role: CreateRoleRequest, token: string) => {
     return await fetch(`${HOST}/api/roles`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`
+        },
         body: JSON.stringify(role)
     });
 }
 
-export const updateRole = async (id: number, role: UpdateRoleRequest) => {
+export const updateRole = async (id: number, role: UpdateRoleRequest, token: string) => {
     return await fetch(`${HOST}/api/roles/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`
+        },
         body: JSON.stringify(role)
     });
 }
 
-export const getFunctionsOfRole = async (id: number) => {
-    return await fetch(`${HOST}/api/roles/${id}/functions`, { method: 'GET' });
+export const getFunctionsOfRole = async (id: number, token: string) => {
+    return await fetch(`${HOST}/api/roles/${id}/functions`,
+        {
+            method: 'GET',
+            headers: { authorization: `Bearer ${token}` }
+        }
+    );
 }
 
-export const assignFunctions = async (id: number, functions: AssignFunctionsToRoleRequest) => {
+export const assignFunctions = async (id: number, functions: AssignFunctionsToRoleRequest, token: string) => {
     return await fetch(`${HOST}/api/roles/${id}/functions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`
+        },
         body: JSON.stringify(functions)
     });
 }

@@ -17,7 +17,7 @@ export default function AuditReport() {
     const token = useAuthToken();
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     useEffect(() => {
-        getAudits().then(async(res): Promise<void> => {
+        getAudits(token).then(async(res): Promise<void> => {
             const ip = await getIp();
             if (res.status === 200) {
                 logAuditAction({

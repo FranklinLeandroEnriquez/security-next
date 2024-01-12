@@ -66,7 +66,7 @@ export default function FunctionUpdateForm({ params }: any) {
         const fetchFunction = async () => {
             const ip = await getIp();
             try {
-                const res = await getFunction(id);
+                const res = await getFunction(id, token);
                 if (res.status === 200) {
                     const data = await res.json();
                     data.moduleId = data.module.id;
@@ -97,7 +97,7 @@ export default function FunctionUpdateForm({ params }: any) {
 
         const getModulesHandler = async () => {
             const ip = await getIp();
-            await getModules().then(async(res) => {
+            await getModules(token).then(async (res) => {
                 if (res.status === 200) {
                     await logAuditAction({
                         functionName: 'SEC-MODULES-READ',
@@ -132,7 +132,7 @@ export default function FunctionUpdateForm({ params }: any) {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         const ip = await getIp();
         try {
-            const res = await updateFunction(params.id, data);
+            const res = await updateFunction(params.id, data, token);
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-FUNCTIONS-UPDATE',
@@ -175,8 +175,8 @@ export default function FunctionUpdateForm({ params }: any) {
     };
 
     const formSchema = z.object({
-        name: z.string().min(3, {
-            message: 'The name must be at least 3 characters',
+        name: z.string().min(5, {
+            message: 'The name must be at least 5 characters',
         }).max(50, {
             message: 'The name must be less than 50 characters',
         }),

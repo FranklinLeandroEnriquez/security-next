@@ -24,7 +24,7 @@ export default function Page() {
 
     const deleteUserHandler = async (id: number) => {
         const ip = await getIp();
-        await deleteUser(id).then(async (res) => {
+        await deleteUser(id, token).then(async (res) => {
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-USERS-DELETE',
@@ -65,7 +65,7 @@ export default function Page() {
 
     const getUsersLocal = async () => {
         const ip = await getIp();
-        getUsers().then(async (res) => {
+        getUsers(token).then(async (res) => {
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-USERS-READ',

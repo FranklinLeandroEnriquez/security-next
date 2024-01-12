@@ -16,7 +16,7 @@ import CustomSelect from "@/components/ui/select-filter";
 import { Role } from "@/types/Role/columns";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { getIp,logAuditAction } from "@/services/Audit/AuditService";
+import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
 
 export default function AssignRole() {
@@ -30,7 +30,7 @@ export default function AssignRole() {
 
     const getUsersHandler = async () => {
         const ip = await getIp();
-        const res = await getUsers();
+        const res = await getUsers(token);
         if (res.status === 200) {
             const data = await res.json();
             const filteredUsers: UserResponse[] = data.filter((user: UserResponse) => user.status === true);
@@ -54,7 +54,7 @@ export default function AssignRole() {
 
     const getRolesOfUserHandler = async (userId: number) => {
         const ip = await getIp();
-        const res = await getRolesOfUser(userId);
+        const res = await getRolesOfUser(userId, token);
         if (res.status === 200) {
             const data = await res.json();
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
@@ -73,7 +73,7 @@ export default function AssignRole() {
 
     const getRolesHandler = async () => {
         const ip = await getIp();
-        const res = await getRoles();
+        const res = await getRoles(token);
         if (res.status === 200) {
             const data = await res.json();
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
@@ -120,7 +120,7 @@ export default function AssignRole() {
         if (selectedUser) {
             const roleIds = userRoles.map(r => r.id);
             try {
-                const res = await assignRoles(selectedUser, { userId: selectedUser, roleIds });
+                const res = await assignRoles(selectedUser, { userId: selectedUser, roleIds }, token);
                 if (res.status === 201) {
                     await logAuditAction({
                         functionName: 'SEC-ROLES-TO-USER-UPDATE',
@@ -152,7 +152,7 @@ export default function AssignRole() {
 
     return (
         <>
-            <Header title="Assign Roles"/>
+            <Header title="Assign Roles" />
             <MaxWidthWrapper className="mt-8">
                 <CustomSelect
                     options={[

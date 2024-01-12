@@ -64,7 +64,7 @@ export default function FunctionCreateFormpage() {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         const ip = await getIp();
         try {
-            const res = await createFunction(values);
+            const res = await createFunction(values, token);
             if (res.status === 201) {
                 await logAuditAction({
                     functionName: 'SEC-FUNCTIONS-CREATE',
@@ -104,8 +104,8 @@ export default function FunctionCreateFormpage() {
     };
 
     const formSchema = z.object({
-        name: z.string().min(3, {
-            message: 'The name must be at least 3 characters',
+        name: z.string().min(5, {
+            message: 'The name must be at least 5 characters',
         }).max(50, {
             message: 'The name must be less than 50 characters',
         }),
@@ -124,7 +124,7 @@ export default function FunctionCreateFormpage() {
 
     const getModulesHandler = async () => {
         const ip = await getIp();
-        await getModules().then((res) => {
+        await getModules(token).then((res) => {
             if (res.status === 200) {
                 logAuditAction({
                     functionName: 'SEC-MODULES-READ',

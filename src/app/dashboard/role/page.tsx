@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { UserCheck } from 'lucide-react';
 import Header from '@/components/Header';
 import { toast } from "sonner";
-import { getIp,logAuditAction } from '@/services/Audit/AuditService';
+import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 
 export default function Page() {
@@ -24,7 +24,7 @@ export default function Page() {
 
     const deleteRoleHandler = async (id: number) => {
         const ip = await getIp();
-        await deleteRole(id).then(async (res) => {
+        await deleteRole(id, token).then(async (res) => {
             if (res.status === 200) {
 
                 await logAuditAction({
@@ -67,7 +67,7 @@ export default function Page() {
 
     const getRolesHandler = async () => {
         const ip = await getIp();
-        await getRoles().then(async (res) => {
+        await getRoles(token).then(async (res) => {
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-ROLES-READ',

@@ -49,7 +49,7 @@ export default function ModuleUpdateFomr({ params }: any) {
         const fetchModule = async () => {
             const ip = await getIp();
             try {
-                const res = await getModule(id);
+                const res = await getModule(id, token);
                 if (res.status === 200) {
                     const data = await res.json();
                     setModule(data);
@@ -82,7 +82,7 @@ export default function ModuleUpdateFomr({ params }: any) {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         const ip = await getIp();
         try {
-            const res = await updateModule(params.id, data);
+            const res = await updateModule(params.id, data, token);
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-MODULES-UPDATE',

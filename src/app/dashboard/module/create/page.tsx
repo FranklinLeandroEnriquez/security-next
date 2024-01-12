@@ -48,7 +48,7 @@ export default function ModuleCreateForm() {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
        const ip = await getIp();
         try {
-            const res = await createModule(values);
+            const res = await createModule(values, token);
             if (res.status === 201) {
                 await logAuditAction({
                     functionName: 'SEC-MODULES-CREATE',
