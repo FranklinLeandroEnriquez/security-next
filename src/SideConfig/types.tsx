@@ -4,4 +4,5 @@ export type SideNavItems = {
     icon?: JSX.Element;
     submenu?: boolean;
     subMenuItems?: SideNavItems[];
+    canRead?: boolean;
 };

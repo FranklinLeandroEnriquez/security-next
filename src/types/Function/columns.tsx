@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModuleResponse } from "../Module/ModuleResponse";
+import { useUserFunctions } from "@/contexts/UserFunctionProvider";
 
 export type Function = {
     id: number;
@@ -20,15 +21,17 @@ export type Function = {
     status: boolean;
 }
 
-export const columns = (handleUpdate: (id: number) => void, handleDelete:
-    (id: number) => void): ColumnDef<Function>[] =>
-    [
+export const useColumns = (handleUpdate: (id: number) => void, handleDelete: (id: number) => void): ColumnDef<Function>[] => {
+    const userFunctions = useUserFunctions();
+    const isFunctionDelete = userFunctions?.includes('SEC-FUNCTIONS-DELETE') || false;
+    const isFunctionUpdate = userFunctions?.includes('SEC-FUNCTIONS-UPDATE') || false;
+    return [
         {
             id: "actions",
             header: 'Actions',
             cell: ({ row }) => {
                 const function_ = row.original
-    
+
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -44,85 +47,90 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                             >
                                 Copy function ID
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                onClick={() => handleUpdate(function_.id)}
-                            >
-                                Update
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => handleDelete(function_.id)}
-                            >
-                                Delete
-                            </DropdownMenuItem>
+                            {isFunctionUpdate || isFunctionDelete ? (
+                                <DropdownMenuSeparator />
+                            ) : null
+                            }
+                            {isFunctionUpdate ? (
+                                <DropdownMenuItem onClick={() => handleUpdate(function_.id)}>
+                                    Edit User
+                                </DropdownMenuItem>
+                            ) : null}
+
+                            {isFunctionDelete ? (
+                                <DropdownMenuItem onClick={() => handleDelete(function_.id)}>
+                                    Delete User
+                                </DropdownMenuItem>
+                            ) : null}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )
             },
         },
         {
-        accessorKey: "id",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    ID
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
+            accessorKey: "id",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        ID
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
         },
-    },
-    {
-        accessorKey: "name",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
+        {
+            accessorKey: "name",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Name
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
+
+        },
+        {
+            accessorKey: "module",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Module
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => {
+                const module_ = row.original
+
+                return (
+                    <span>{module_.module.name}</span>
+                )
+            }
+        },
+        {
+            accessorKey: "status",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Status
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
         },
 
-    },
-    {
-        accessorKey: "module",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Module
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const module_ = row.original
-
-            return (
-                <span>{module_.module.name}</span>
-            )
-        }
-    },
-    {
-        accessorKey: "status",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Status
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    
     ]
+}

@@ -34,9 +34,10 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner";
+import validFunctions from '@/providers/ValidateFunctions'
+import exp from "constants";
 
-
-export default function ModuleCreateForm() {
+function ModuleCreateForm() {
 
     const [module, setModule] = useState<CreateModuleRequest>({} as CreateModuleRequest);
     const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
@@ -172,4 +173,6 @@ export default function ModuleCreateForm() {
             </div>
         </>
     )
-}
+};
+
+export default validFunctions(ModuleCreateForm, 'SEC-MODULES-CREATE');

@@ -23,6 +23,7 @@ import { Button } from "./ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
 import React from "react"
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 
 import {
     RankingInfo,
@@ -43,7 +44,10 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
     onCreate?: () => void
     filteredColumn: string
-    isFunctionCreate?: boolean
+    canCreate?: boolean
+    canUpdate?: boolean
+    canDelete?: boolean
+    canRead?: boolean
 }
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     // Rank the item
@@ -63,7 +67,9 @@ export function DataTable<TData, TValue>({
     data,
     onCreate,
     filteredColumn,
-    isFunctionCreate
+    canCreate: canCreate,
+    canUpdate: canUpdate,
+    canDelete: canDelete
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -105,8 +111,7 @@ export function DataTable<TData, TValue>({
                     />
                 </div>
                 {/* Crear */}
-                {/* Crear */}
-                {onCreate && isFunctionCreate ?
+                {onCreate && canCreate ?
                     (<div className="">
                         <Button onClick={onCreate}>
                             <span> Create </span>
@@ -120,11 +125,12 @@ export function DataTable<TData, TValue>({
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
+
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.filter(header => !(header.id.includes('actions') && !isFunctionCreate)).map((header) => {
+                                {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead className="text-center" key={header.id}>
+                                        <TableHead key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -144,13 +150,11 @@ export function DataTable<TData, TValue>({
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().filter(cell => !(cell.id.includes('actions') && !isFunctionCreate)).map((cell) => {
-                                        return (
-                                            <TableCell className="text-center" key={cell.id}>
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        );
-                                    })}
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
                             ))
                         ) : (

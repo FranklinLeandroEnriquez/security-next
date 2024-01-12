@@ -16,10 +16,12 @@ import CustomSelect from "@/components/ui/select-filter";
 import { Role } from "@/types/Role/columns";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import validFunctions from '@/providers/ValidateFunctions';
+import exp from "constants";
 import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
 
-export default function AssignRole() {
+function AssignRole() {
     const [users, setUsers] = useState<UserResponse[]>([]);
     const [selectedUser, setSelectedUser] = useState<number | null>(null);
     const [availableRoles, setAvailableRoles] = useState<RoleResponse[]>([]);
@@ -207,3 +209,5 @@ export default function AssignRole() {
         </>
     );
 };
+
+export default validFunctions(AssignRole, 'SEC-ROLES-TO-USER-READ');

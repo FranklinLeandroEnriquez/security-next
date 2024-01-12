@@ -1,32 +1,31 @@
 'use client';
 
 import { DataTable } from '@/components/data-table'
-import { columns, User } from '@/types/User/columns'
+import { useColumns, User } from '@/types/User/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteUser, getUsers } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
-import { Button } from '@/components/ui/button';
+import { use, useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { Users2Icon } from 'lucide-react';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import validFunctions from '@/providers/ValidateFunctions'
 import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 
-export default function Page() {
+function Page() {
     const [users, setUsers] = useState<UserResponse[]>([]);
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
-    const [isFunctionCreate, setIsFunctionCreate] = useState<boolean>(false);
 
-    //Control de sesion de usuario
-    const { getAuthResponse } = useSessionAuth();
-    const authResponse = getAuthResponse();
+    const userFunctions = useUserFunctions();
 
+    const isFunctionCreateUser = userFunctions?.includes('SEC-USERS-CREATE') || false;
     useEffect(() => {
         const hasFunctionCreate = authResponse?.functions.includes('SEC-USERS-CREATE') || false;
         setIsFunctionCreate(hasFunctionCreate);
@@ -105,15 +104,17 @@ export default function Page() {
         getUsersLocal();
     }, []);
 
+
+
     return (
         <>
             <Header title='All Users' icon={<Users2Icon size={26} />} />
             <div>
                 <MaxWidthWrapper className='mt-4'>
                     <DataTable<User, string>
-                        isFunctionCreate={isFunctionCreate}
+                        canCreate={isFunctionCreateUser}
                         onCreate={createUserHandler}
-                        columns={columns(updateUserHandler, deleteUserHandler)}
+                        columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
                         filteredColumn='username' />
                 </MaxWidthWrapper>
@@ -121,3 +122,5 @@ export default function Page() {
         </>
     )
 }
+
+export default validFunctions(Page, 'SEC-USERS-READ');
