@@ -6,6 +6,8 @@ import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/Validatio
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserPlus } from 'lucide-react';
+import { getIp,logAuditAction } from "@/services/Audit/AuditService";
+import { useAuthToken } from "@/hooks/useAuthToken";
 
 // New Form
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -41,14 +43,29 @@ function UserCreateForm() {
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
 
     const router = useRouter();
+    const token = useAuthToken();
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const ip = await getIp();
         try {
-            await createUser(values).then(async (res) => {
+            await createUser(values, token).then(async (res) => {
                 if (res.status === 201) {
+                    await logAuditAction({
+                        functionName: 'SEC-USERS-CREATE',
+                        action: 'create User',
+                        description: 'Successfully created user',
+                        observation: `User name: ${values.username}`,
+                        ip: ip.toString(),
+                    }, token);
                     toast.success("User created successfully");
                     return router.push("/dashboard/user");
                 }
+                await logAuditAction({
+                    functionName: 'SEC-USERS-CREATE',
+                    action: 'create User',
+                    description: 'Error creating user',
+                    ip: ip.toString(),
+                }, token);
 
                 await res.json().then((data: ValidationErrorResponse) => {
                     if (data.error == 'ValidationException') {

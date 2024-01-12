@@ -8,6 +8,8 @@ import { useEffect, useState } from "react"
 
 import Header from "@/components/Header"
 import React from 'react'
+import { getIp, logAuditAction } from "@/services/Audit/AuditService"
+import { useAuthToken } from "@/hooks/useAuthToken"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -43,16 +45,31 @@ function RoleUpdateForm({ params }: any) {
 
     const router = useRouter()
     const { id } = params
+    const token = useAuthToken();
 
     useEffect(() => {
         const fetchRole = async () => {
+            const ip = await getIp()
             try {
-                const res = await getRole(id);
+                const res = await getRole(id, token);
                 if (res.status === 200) {
                     const data = await res.json();
                     setRole(data);
                     form.reset(data);
+                    await logAuditAction({
+                        functionName: 'SEC-ROLES-READ',
+                        action: 'get Role',
+                        description: 'Successfully fetched role',
+                        observation: `Role id: ${id}`,
+                        ip: ip.toString(),
+                    }, token)
                 } else {
+                    await logAuditAction({
+                        functionName: 'SEC-ROLES-READ',
+                        action: 'get Role',
+                        description: 'Failed to fetch role',
+                        ip: ip.toString(),
+                    }, token)
                     router.push("/dashboard/role");
                     toast.error("Role not found");
                 }
@@ -65,12 +82,26 @@ function RoleUpdateForm({ params }: any) {
     }, [id]);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        const ip = await getIp()
         try {
-            const res = await updateRole(params.id, data)
+            const res = await updateRole(params.id, data, token)
             if (res.status === 200) {
+                await logAuditAction({
+                    functionName: 'SEC-ROLES-UPDATE',
+                    action: 'update Role',
+                    description: 'Successfully updated role',
+                    observation: `Role id: ${params.id}`,
+                    ip: ip.toString(),
+                }, token)
                 toast.success("Role updated successfully")
                 router.push("/dashboard/role")
             } else {
+                await logAuditAction({
+                    functionName: 'SEC-ROLES-UPDATE',
+                    action: 'update Role',
+                    description: 'Failed to update role',
+                    ip: ip.toString(),
+                }, token)
                 const data: ValidationErrorResponse = await res.json()
                 if (data.error == 'ValidationException') {
                     setErrorResponse(null)

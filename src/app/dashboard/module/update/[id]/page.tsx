@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 
 import Header from '@/components/Header'
 import React from 'react'
+import { getIp, logAuditAction } from "@/services/Audit/AuditService";
+import { useAuthToken } from "@/hooks/useAuthToken";
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -42,16 +44,31 @@ function ModuleUpdateFomr({ params }: any) {
 
     const router = useRouter();
     const { id } = params;
+    const token = useAuthToken();
 
     useEffect(() => {
         const fetchModule = async () => {
+            const ip = await getIp();
             try {
-                const res = await getModule(id);
+                const res = await getModule(id, token);
                 if (res.status === 200) {
                     const data = await res.json();
                     setModule(data);
                     form.reset(data);
+                    await logAuditAction({
+                        functionName: 'SEC-MODULES-READ',
+                        action: 'get Module',
+                        description: 'Successfully fetched module',
+                        observation: `Module name: ${data.name}`,
+                        ip: ip.toString(),
+                    }, token);
                 } else {
+                    await logAuditAction({
+                        functionName: 'SEC-MODULES-READ',
+                        action: 'get Module',
+                        description: 'Failed to fetch module',
+                        ip: ip.toString(),
+                    }, token);
                     router.push("/dashboard/module");
                     toast.error("Module not found");
                 }
@@ -64,12 +81,26 @@ function ModuleUpdateFomr({ params }: any) {
     }, [id]);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        const ip = await getIp();
         try {
-            const res = await updateModule(params.id, data);
+            const res = await updateModule(params.id, data, token);
             if (res.status === 200) {
+                await logAuditAction({
+                    functionName: 'SEC-MODULES-UPDATE',
+                    action: 'update Module',
+                    description: 'Successfully updated module',
+                    observation: `Module name: ${data.name}`,
+                    ip: ip.toString(),
+                }, token);
                 toast.success("Module updated successfully");
                 router.push("/dashboard/module");
             } else {
+                await logAuditAction({
+                    functionName: 'SEC-MODULES-UPDATE',
+                    action: 'update Module',
+                    description: 'Failed to update module',
+                    ip: ip.toString(),
+                }, token);
                 const data: ValidationErrorResponse = await res.json();
                 if (data.error == 'ValidationException') {
                     setErrorResponse(null);

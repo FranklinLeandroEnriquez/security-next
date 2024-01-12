@@ -11,6 +11,8 @@ import { use, useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { Users2Icon } from 'lucide-react';
+import { getIp, logAuditAction } from '@/services/Audit/AuditService';
+import { useAuthToken } from '@/hooks/useAuthToken';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions'
 
@@ -19,23 +21,39 @@ function Page() {
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
+    const token = useAuthToken();
 
     const userFunctions = useUserFunctions();
 
     const isFunctionCreateUser = userFunctions?.includes('SEC-USERS-CREATE') || false;
 
     const deleteUserHandler = async (id: number) => {
-        const res = await deleteUser(id);
-        if (res.status === 200) {
-            getUsersLocal();
-            toast.success("User deleted successfully");
-        } else {
-            const errorData: ErrorResponse = await res.json();
-            if (errorData.error === 'ErrorResponse') {
-                setErrorResponse(null);
+        const ip = await getIp();
+        await deleteUser(id, token).then(async (res) => {
+            if (res.status === 200) {
+                await logAuditAction({
+                    functionName: 'SEC-USERS-DELETE',
+                    action: 'delete user',
+                    description: 'Successfully deleted user',
+                    observation: `User id: ${id}`,
+                    ip: ip.toString(),
+                }, token);
+                getUsersLocal();
+                toast.success("User deleted successfully");
             } else {
-                setErrorResponse(errorData);
-                toast.error(errorData.message);
+                await logAuditAction({
+                    functionName: 'SEC-USERS-DELETE',
+                    action: 'delete user',
+                    description: 'Failed to delete user',
+                    ip: ip.toString(),
+                }, token);
+                const errorData: ErrorResponse = await res.json();
+                if (errorData.error === 'ErrorResponse') {
+                    setErrorResponse(null);
+                    setErrors(errorData);
+                    toast.error(errorData.message.toString());
+                }
+                toast.error(errorData.message.toString());
             }
         }
     };
@@ -49,13 +67,29 @@ function Page() {
     }
 
     const getUsersLocal = async () => {
-        getUsers().then(async (res) => {
+        const ip = await getIp();
+        getUsers(token).then(async (res) => {
             if (res.status === 200) {
+                await logAuditAction({
+                    functionName: 'SEC-USERS-READ',
+                    action: 'get Users',
+                    description: 'Successfully fetched users',
+                    ip: ip.toString(),
+
+                }, token);
                 return res.json().then((data) => {
                     setUsers(data);
                 });
+            } else {
+                await logAuditAction({
+                    functionName: 'SEC-USERS-READ',
+                    action: 'get Users',
+                    description: 'Failed to fetch users',
+                    ip: ip.toString(),
+                }, token);
+                toast.error('An error has occurred');
+
             }
-            toast.error('An error has occurred');
         }).catch((err) => {
             toast.error('An error has occurred');
         });

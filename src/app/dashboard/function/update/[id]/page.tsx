@@ -7,7 +7,8 @@ import { CreateFunctionRequest } from '@/types/Function/CreateFunctionRequest'
 import { ErrorResponse, ValidationErrorResponse } from '@/types/shared/ValidationError'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-
+import { getIp, logAuditAction } from '@/services/Audit/AuditService'
+import { useAuthToken } from '@/hooks/useAuthToken'
 // New Form
 import { PackagePlus } from 'lucide-react'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -59,18 +60,33 @@ function FunctionUpdateForm({ params }: any) {
 
     const router = useRouter();
     const { id } = params;
+    const token = useAuthToken();
 
     useEffect(() => {
         const fetchFunction = async () => {
+            const ip = await getIp();
             try {
-                const res = await getFunction(id);
+                const res = await getFunction(id, token);
                 if (res.status === 200) {
                     const data = await res.json();
                     data.moduleId = data.module.id;
                     setFunction(data);
                     form.reset(data);
+                    await logAuditAction({
+                        functionName: 'SEC-FUNCTIONS-READ',
+                        action: 'get Function',
+                        description: 'Successfully fetched function',
+                        observation: `Function name: ${data.name}`,
+                        ip: ip.toString(),
+                    }, token);
 
                 } else {
+                    await logAuditAction({
+                        functionName: 'SEC-FUNCTIONS-READ',
+                        action: 'get Function',
+                        description: 'Failed to fetch function',
+                        ip: ip.toString(),
+                    }, token);
                     router.push("/dashboard/function");
                     toast.error("Function not found");
                 }
@@ -80,15 +96,29 @@ function FunctionUpdateForm({ params }: any) {
         };
 
         const getModulesHandler = async () => {
-            await getModules().then((res) => {
+            const ip = await getIp();
+            await getModules(token).then(async (res) => {
                 if (res.status === 200) {
+                    await logAuditAction({
+                        functionName: 'SEC-MODULES-READ',
+                        action: 'get Modules',
+                        description: 'Successfully fetched modules',
+                        ip: ip.toString(),
+                    }, token);
                     return res.json().then((data) => {
                         setModules(data);
                     });
+                } else {
+                    await logAuditAction({
+                        functionName: 'SEC-MODULES-READ',
+                        action: 'get Modules',
+                        description: 'Failed to fetch modules',
+                        ip: ip.toString(),
+                    }, token);
+                    toast.error("An error has occurred");
                 }
-                window.alert('Error');
             }).catch((err) => {
-                window.alert('Error');
+                toast.error("An error has occurred");
             });
         };
 
@@ -100,12 +130,26 @@ function FunctionUpdateForm({ params }: any) {
     }, []);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        const ip = await getIp();
         try {
-            const res = await updateFunction(params.id, data);
+            const res = await updateFunction(params.id, data, token);
             if (res.status === 200) {
+                await logAuditAction({
+                    functionName: 'SEC-FUNCTIONS-UPDATE',
+                    action: 'update Function',
+                    description: 'Successfully updated function',
+                    observation: `Function name: ${data.name}`,
+                    ip: ip.toString(),
+                }, token);
                 toast.success("Funtion updated successfully");
                 router.push("/dashboard/function");
             } else {
+                await logAuditAction({
+                    functionName: 'SEC-FUNCTIONS-UPDATE',
+                    action: 'update Function',
+                    description: 'Failed to update function',
+                    ip: ip.toString(),
+                }, token);
                 const errorData: ValidationErrorResponse = await res.json();
                 if (errorData.error == 'ValidationException') {
                     setErrorResponse(null);
@@ -131,8 +175,8 @@ function FunctionUpdateForm({ params }: any) {
     };
 
     const formSchema = z.object({
-        name: z.string().min(3, {
-            message: 'The name must be at least 3 characters',
+        name: z.string().min(5, {
+            message: 'The name must be at least 5 characters',
         }).max(50, {
             message: 'The name must be less than 50 characters',
         }),

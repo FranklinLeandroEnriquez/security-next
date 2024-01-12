@@ -5,6 +5,8 @@ import { CreateRoleRequest } from "@/types/Role/CreateRoleRequest"
 import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { getIp, logAuditAction } from "@/services/Audit/AuditService"
+import { useAuthToken } from "@/hooks/useAuthToken"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -40,15 +42,29 @@ function RoleCreateForm() {
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null)
 
     const router = useRouter()
+    const token = useAuthToken()
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const ip = await getIp()
         try {
-            const res = await createRole(values)
+            const res = await createRole(values, token)
             if (res.status === 201) {
+                await logAuditAction({
+                    functionName: 'SEC-ROLES-CREATE',
+                    action: 'create Role',
+                    description: 'Successfully created role',
+                    observation: `Role name: ${values.name}`,
+                    ip: ip.toString(),
+                }, token)
                 toast.success("Role created successfully")
                 return router.push("/dashboard/role")
             }
-
+            await logAuditAction({
+                functionName: 'SEC-ROLES-CREATE',
+                action: 'create Role',
+                description: 'Failed to create role',
+                ip: ip.toString(),
+            }, token)
             const data: ValidationErrorResponse = await res.json()
             if (data.error == 'ValidationException') {
                 setErrorResponse(null)

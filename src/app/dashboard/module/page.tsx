@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
 import { FileBarChart2 } from "lucide-react";
+import { getIp, logAuditAction } from '@/services/Audit/AuditService';
+import { useAuthToken } from '@/hooks/useAuthToken';
 import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions';
@@ -19,15 +21,32 @@ function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
 
     const router = useRouter();
+    const token = useAuthToken();
     const userFunctions = useUserFunctions();
     const isFunctionCreate = userFunctions?.includes('SEC-MODULES-CREATE') || false;
 
     const deleteModuleHandler = async (id: number) => {
-        await deleteModule(id).then((res) => {
+        const ip = await getIp();
+        await deleteModule(id, token).then(async (res) => {
             if (res.status === 200) {
+                await logAuditAction({
+                    functionName: 'SEC-MODULES-DELETE',
+                    action: 'delete Module',
+                    description: 'Successfully deleted module',
+                    observation: `Module id: ${id}`,
+                    ip: ip.toString(),
+                }, token);
                 getModulesHandler();
                 toast.success("Module deleted successfully");
+
             } else {
+                await logAuditAction({
+                    functionName: 'SEC-MODULES-DELETE',
+                    action: 'delete Module',
+                    description: 'Failed to delete Module',
+                    ip: ip.toString(),
+                }, token);
+
                 toast.error('Error deleting module have functions');
             }
         }).catch((err) => {
@@ -44,15 +63,32 @@ function Page() {
     }
 
     const getModulesHandler = async () => {
-        await getModules().then((res) => {
+        const ip = await getIp();
+        await getModules(token).then(async (res) => {
             if (res.status === 200) {
+                await logAuditAction({
+                    functionName: 'SEC-MODULES-READ',
+                    action: 'get Modules',
+                    description: 'Successfully fetched modules',
+                    ip: ip.toString(),
+
+                }, token);
                 return res.json().then((data) => {
                     setModules(data);
                 });
+
+            } else {
+                await logAuditAction({
+                    functionName: 'SEC-MODULES-READ',
+                    action: 'get Modules',
+                    description: 'Failed to fetch modules',
+                    ip: ip.toString(),
+                }, token);
+
+                toast.error('An error has occurred');
             }
-            window.alert('Error');
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('An error has occurred');
         });
     }
 

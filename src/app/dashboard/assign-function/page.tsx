@@ -17,6 +17,8 @@ import CustomSelect from "@/components/ui/select-filter"
 import { Function } from "@/types/Function/columns"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { getIp, logAuditAction } from "@/services/Audit/AuditService"
+import { useAuthToken } from "@/hooks/useAuthToken"
 import validFunctions from '@/providers/ValidateFunctions';
 
 function AssignFunction() {
@@ -26,36 +28,59 @@ function AssignFunction() {
     const [roleFunctions, setRoleFunctions] = useState<FunctionResponse[]>([])
 
     const router = useRouter()
+    const token = useAuthToken()
 
     const getRolesHandler = async () => {
-        const res = await getRoles()
+        const ip = await getIp()
+        const res = await getRoles(token)
         if (res.status === 200) {
             const data = await res.json()
             // Filtrar roles con status igual a true
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
             setRoles(filteredRoles);
+            logAuditAction({
+                functionName: 'SEC-ROLES-READ',
+                action: 'get roles',
+                description: 'Successfully fetched roles',
+                ip: ip.toString(),
+            }, token);
         } else {
             toast.error('An error has occurred')
         }
     }
 
     const getFunctionsOfRoleHandler = async (roleId: number) => {
-        const res = await getFunctionsOfRole(roleId)
+        const ip = await getIp()
+        const res = await getFunctionsOfRole(roleId, token)
         if (res.status === 200) {
             const data = await res.json()
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
             setRoleFunctions(filteredFunctions)
+            logAuditAction({
+                functionName: 'SEC-FUNCTIONS-TO-ROLE-READ',
+                action: 'get role functions',
+                description: 'Successfully fetched role functions',
+                observation: `Role ID: ${roleId}`,
+                ip: ip.toString(),
+            }, token);
         } else {
             toast.error('An error has occurred')
         }
     }
 
     const getFunctionsHandler = async () => {
-        const res = await getFunctions()
+        const ip = await getIp()
+        const res = await getFunctions(token)
         if (res.status === 200) {
             const data = await res.json()
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
             setAvailableFunctions(filteredFunctions)
+            logAuditAction({
+                functionName: 'SEC-FUNCTIONS-READ',
+                action: 'get functions',
+                description: 'Successfully fetched functions',
+                ip: ip.toString(),
+            }, token);
         } else {
             toast.error('An error has occurred')
         }
@@ -88,13 +113,27 @@ function AssignFunction() {
 
 
     const handleAssignFunctions = async () => {
+        const ip = await getIp()
         if (selectedRole) {
             const functionIds = roleFunctions.map(f => f.id)
             try {
-                const res = await assignFunctions(selectedRole, { roleId: selectedRole, functionIds });
+                const res = await assignFunctions(selectedRole, { roleId: selectedRole, functionIds }, token);
                 if (res.status === 201) {
+                    logAuditAction({
+                        functionName: 'SEC-FUNCTIONS-TO-ROLE-UPDATE',
+                        action: 'assign functions to role',
+                        description: 'Successfully assigned functions to role',
+                        observation: `Role ID: ${selectedRole}`,
+                        ip: ip.toString(),
+                    }, token);
                     toast.success("Functions assigned successfully");
                 } else {
+                    await logAuditAction({
+                        functionName: 'SEC-FUNCTIONS-TO-ROLE-UPDATE',
+                        action: 'assign functions to role',
+                        description: 'Failed to assign functions to role',
+                        ip: ip.toString(),
+                    }, token);
                     const errorData = await res.json();
                     toast.error("Error assigning functions")
                 }

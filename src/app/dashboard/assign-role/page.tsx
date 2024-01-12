@@ -16,6 +16,8 @@ import CustomSelect from "@/components/ui/select-filter";
 import { Role } from "@/types/Role/columns";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { getIp, logAuditAction } from "@/services/Audit/AuditService";
+import { useAuthToken } from "@/hooks/useAuthToken";
 import validFunctions from '@/providers/ValidateFunctions';
 import exp from "constants";
 
@@ -26,35 +28,64 @@ function AssignRole() {
     const [userRoles, setUserRoles] = useState<RoleResponse[]>([]);
 
     const router = useRouter();
+    const token = useAuthToken();
 
     const getUsersHandler = async () => {
-        const res = await getUsers();
+        const ip = await getIp();
+        const res = await getUsers(token);
         if (res.status === 200) {
             const data = await res.json();
             const filteredUsers: UserResponse[] = data.filter((user: UserResponse) => user.status === true);
             setUsers(filteredUsers);
+            logAuditAction({
+                functionName: 'SEC-USERS-READ',
+                action: 'get users',
+                description: 'Successfully fetched users',
+                ip: ip.toString(),
+            }, token);
         } else {
+            logAuditAction({
+                functionName: 'SEC-USERS-READ',
+                action: 'get users',
+                description: 'Failed to fetch users',
+                ip: ip.toString(),
+            }, token);
             toast.error('An error has occurred');
         }
     }
 
     const getRolesOfUserHandler = async (userId: number) => {
-        const res = await getRolesOfUser(userId);
+        const ip = await getIp();
+        const res = await getRolesOfUser(userId, token);
         if (res.status === 200) {
             const data = await res.json();
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
             setUserRoles(filteredRoles);
+            await logAuditAction({
+                functionName: 'SEC-ROLES-TO-USER-READ',
+                action: 'get user roles',
+                description: 'Successfully fetched user roles',
+                observation: `User ID: ${userId}`,
+                ip: ip.toString(),
+            }, token);
         } else {
             toast.error('An error has occurred');
         }
     }
 
     const getRolesHandler = async () => {
-        const res = await getRoles();
+        const ip = await getIp();
+        const res = await getRoles(token);
         if (res.status === 200) {
             const data = await res.json();
             const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
             setAvailableRoles(filteredRoles);
+            await logAuditAction({
+                functionName: 'SEC-ROLES-READ',
+                action: 'get roles',
+                description: 'Successfully fetched roles',
+                ip: ip.toString(),
+            }, token);
         } else {
             toast.error('An error has occurred');
         }
@@ -87,13 +118,27 @@ function AssignRole() {
 
 
     const handleAssignRoles = async () => {
+        const ip = await getIp();
         if (selectedUser) {
             const roleIds = userRoles.map(r => r.id);
             try {
-                const res = await assignRoles(selectedUser, { userId: selectedUser, roleIds });
+                const res = await assignRoles(selectedUser, { userId: selectedUser, roleIds }, token);
                 if (res.status === 201) {
+                    await logAuditAction({
+                        functionName: 'SEC-ROLES-TO-USER-UPDATE',
+                        action: 'assign roles to user',
+                        description: 'Successfully assigned roles to user',
+                        observation: `User ID: ${selectedUser}`,
+                        ip: ip.toString(),
+                    }, token);
                     toast.success('Roles assgined successfully');
                 } else {
+                    await logAuditAction({
+                        functionName: 'SEC-ROLES-TO-USER-UPDATE',
+                        action: 'assign roles to user',
+                        description: 'Failed to assign roles to user',
+                        ip: ip.toString(),
+                    }, token);
                     const errorData = await res.json();
                     toast.error('Error assigning roles');
                 }

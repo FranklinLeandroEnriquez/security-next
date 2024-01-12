@@ -9,6 +9,8 @@ import { ErrorResponse, ValidationErrorResponse } from '@/types/shared/Validatio
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Blocks } from 'lucide-react'
+import { getIp,logAuditAction } from '@/services/Audit/AuditService';
+import { useAuthToken } from '@/hooks/useAuthToken';
 
 // New Form
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -60,14 +62,28 @@ function FunctionCreateFormpage() {
 
     const router = useRouter();
 
+    const token = useAuthToken();
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const ip = await getIp();
         try {
-            const res = await createFunction(values);
+            const res = await createFunction(values, token);
             if (res.status === 201) {
+                await logAuditAction({
+                    functionName: 'SEC-FUNCTIONS-CREATE',
+                    action: 'create Function',
+                    description: 'Successfully created function',
+                    observation: `Function name: ${values.name}`,
+                    ip: ip.toString(),
+                }, token);
                 toast.success("Function created successfully");
                 return router.push("/dashboard/function");
             }
-
+            await logAuditAction({
+                functionName: 'SEC-FUNCTIONS-CREATE',
+                action: 'create Function',
+                description: 'Failed to create function',
+                ip: ip.toString(),
+            }, token);
             const data: ValidationErrorResponse = await res.json();
             if (data.error == 'ValidationException') {
                 setErrorResponse(null);
@@ -90,8 +106,8 @@ function FunctionCreateFormpage() {
     };
 
     const formSchema = z.object({
-        name: z.string().min(3, {
-            message: 'The name must be at least 3 characters',
+        name: z.string().min(5, {
+            message: 'The name must be at least 5 characters',
         }).max(50, {
             message: 'The name must be less than 50 characters',
         }),
@@ -109,15 +125,30 @@ function FunctionCreateFormpage() {
     });
 
     const getModulesHandler = async () => {
-        await getModules().then((res) => {
+        const ip = await getIp();
+        await getModules(token).then((res) => {
             if (res.status === 200) {
+                logAuditAction({
+                    functionName: 'SEC-MODULES-READ',
+                    action: 'get Modules',
+                    description: 'Successfully fetched modules',
+                    ip: ip.toString(),
+                }, token);
                 return res.json().then((data) => {
                     setModules(data);
                 });
+            } else {
+                logAuditAction({
+                    functionName: 'SEC-MODULES-READ',
+                    action: 'get Modules',
+                    description: 'Failed to fetch modules',
+                    ip: ip.toString(),
+                }, token);
+                toast.error('An error has occurred');
             }
-            window.alert('Error');
+            
         }).catch((err) => {
-            window.alert('Error');
+            toast.error('An error has occurred');
         });
     }
 
