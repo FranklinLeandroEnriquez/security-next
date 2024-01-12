@@ -20,6 +20,8 @@ import validFunctions from '@/providers/ValidateFunctions';
 import exp from "constants";
 import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
+import validFunctions from '@/providers/ValidateFunctions';
+import exp from "constants";
 
 function AssignRole() {
     const [users, setUsers] = useState<UserResponse[]>([]);
@@ -209,5 +211,7 @@ function AssignRole() {
         </>
     );
 };
+
+export default validFunctions(AssignRole, 'SEC-ROLES-TO-USER-READ');
 
 export default validFunctions(AssignRole, 'SEC-ROLES-TO-USER-READ');

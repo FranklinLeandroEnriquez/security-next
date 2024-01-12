@@ -2,6 +2,7 @@
 
 import { DataTable } from '@/components/data-table'
 import { useColumns, Role } from '@/types/Role/columns'
+import { useColumns, Role } from '@/types/Role/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteRole, getRoles } from "@/services/Role/RoleService";
@@ -16,6 +17,9 @@ import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions';
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
+import { useSessionAuth } from '@/hooks/useSessionAuth';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import validFunctions from '@/providers/ValidateFunctions';
 
 function Page() {
     const [roles, setRoles] = useState<RoleResponse[]>([] as RoleResponse[]);
@@ -28,6 +32,11 @@ function Page() {
 
 
     const token = useAuthToken();
+
+    const userFunctions = useUserFunctions();
+    const isFunctionCreate = userFunctions?.includes('SEC-ROLES-CREATE') || false;
+
+
 
     const deleteRoleHandler = async (id: number) => {
         const ip = await getIp();
@@ -115,9 +124,16 @@ function Page() {
                     columns={useColumns(updateRoleHandler, deleteRoleHandler)}
                     data={roles}
                     filteredColumn='name' />
+                <DataTable<Role, string>
+                    canCreate={isFunctionCreate}
+                    onCreate={createRoleHandler}
+                    columns={useColumns(updateRoleHandler, deleteRoleHandler)}
+                    data={roles}
+                    filteredColumn='name' />
             </MaxWidthWrapper>
         </>
     )
 }
 
+export default validFunctions(Page, 'SEC-ROLES-READ');
 export default validFunctions(Page, 'SEC-ROLES-READ');

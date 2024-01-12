@@ -20,6 +20,7 @@ import { toast } from "sonner"
 import validFunctions from '@/providers/ValidateFunctions';
 import { getIp, logAuditAction } from "@/services/Audit/AuditService"
 import { useAuthToken } from "@/hooks/useAuthToken"
+import validFunctions from '@/providers/ValidateFunctions';
 
 function AssignFunction() {
     const [roles, setRoles] = useState<RoleResponse[]>([])
@@ -227,5 +228,7 @@ function AssignFunction() {
         </>
     )
 };
+
+export default validFunctions(AssignFunction, 'SEC-FUNCTIONS-TO-ROLE-READ');;
 
 export default validFunctions(AssignFunction, 'SEC-FUNCTIONS-TO-ROLE-READ');
