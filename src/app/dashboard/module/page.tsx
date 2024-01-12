@@ -22,7 +22,7 @@ export default function Page() {
     
     const deleteModuleHandler = async (id: number) => {
         const ip = await getIp();
-        await deleteModule(id).then(async (res) => {
+        await deleteModule(id, token).then(async (res) => {
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-MODULES-DELETE',
@@ -59,7 +59,7 @@ export default function Page() {
 
     const getModulesHandler = async () => {
         const ip = await getIp();
-        await getModules().then(async (res) => {
+        await getModules(token).then(async (res) => {
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-MODULES-READ',

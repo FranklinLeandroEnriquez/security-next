@@ -23,7 +23,7 @@ export default function Page() {
 
     const deleteFunctionHandler = async (id: number) => {
         const ip = await getIp();
-        await deleteFunction(id).then(async (res) => {
+        await deleteFunction(id, token).then(async (res) => {
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-FUNCTIONS-DELETE',
@@ -64,7 +64,7 @@ export default function Page() {
 
     const getFunctionsHandler = async () => {
         const ip = await getIp();
-        await getFunctions().then(async (res) => {
+        await getFunctions(token).then(async (res) => {
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-FUNCTIONS-READ',

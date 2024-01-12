@@ -64,7 +64,7 @@ export default function FunctionCreateFormpage() {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         const ip = await getIp();
         try {
-            const res = await createFunction(values);
+            const res = await createFunction(values, token);
             if (res.status === 201) {
                 await logAuditAction({
                     functionName: 'SEC-FUNCTIONS-CREATE',
@@ -124,7 +124,7 @@ export default function FunctionCreateFormpage() {
 
     const getModulesHandler = async () => {
         const ip = await getIp();
-        await getModules().then((res) => {
+        await getModules(token).then((res) => {
             if (res.status === 200) {
                 logAuditAction({
                     functionName: 'SEC-MODULES-READ',

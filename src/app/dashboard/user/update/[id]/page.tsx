@@ -48,7 +48,7 @@ export default function UserUpdateForm({ params }: any) {
           try {
             const ip = await getIp();
     
-            const res = await getUser(id);
+            const res = await getUser(id, token);
     
             if (res.status === 200) {
               await logAuditAction(
@@ -94,7 +94,7 @@ export default function UserUpdateForm({ params }: any) {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         const ip = await getIp();
         try {
-            await updateUser(params.id, data).then(async (res) => {
+            await updateUser(params.id, data, token).then(async (res) => {
                 if (res.status === 200) {
                     await logAuditAction({
                         functionName: 'SEC-USERS-UPDATE',

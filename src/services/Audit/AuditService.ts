@@ -1,8 +1,13 @@
 import { AuditRequest } from '@/types/Audit/AuditRequest';
 const HOST = process.env.NEXT_PUBLIC_API_HOST;
 
-export const getAudits = async () => {
-    return await fetch(`${HOST}/api/audit`, { cache: 'no-store' })
+export const getAudits = async (token: string) => {
+    return await fetch(`${HOST}/api/audit`,
+        {
+            cache: 'no-store',
+            headers: { authorization: `Bearer ${token}` }
+        }
+    );
 }
 
 export async function logAuditAction(audit: AuditRequest, token: string) {

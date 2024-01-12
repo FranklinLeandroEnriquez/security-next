@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 
 import Header from "@/components/Header"
 import React from 'react'
-import { getIp,logAuditAction } from "@/services/Audit/AuditService"
+import { getIp, logAuditAction } from "@/services/Audit/AuditService"
 import { useAuthToken } from "@/hooks/useAuthToken"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -50,7 +50,7 @@ export default function RoleUpdateForm({ params }: any) {
         const fetchRole = async () => {
             const ip = await getIp()
             try {
-                const res = await getRole(id);
+                const res = await getRole(id, token);
                 if (res.status === 200) {
                     const data = await res.json();
                     setRole(data);
@@ -83,7 +83,7 @@ export default function RoleUpdateForm({ params }: any) {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         const ip = await getIp()
         try {
-            const res = await updateRole(params.id, data)
+            const res = await updateRole(params.id, data, token)
             if (res.status === 200) {
                 await logAuditAction({
                     functionName: 'SEC-ROLES-UPDATE',
