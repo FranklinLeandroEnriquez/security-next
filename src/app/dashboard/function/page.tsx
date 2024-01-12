@@ -28,9 +28,6 @@ function Page() {
     const userFunctions = useUserFunctions();
     const isFunctionCreate = userFunctions?.includes('SEC-FUNCTIONS-CREATE') || false;
 
-    const userFunctions = useUserFunctions();
-    const isFunctionCreate = userFunctions?.includes('SEC-FUNCTIONS-CREATE') || false;
-
     const deleteFunctionHandler = async (id: number) => {
         const ip = await getIp();
         await deleteFunction(id, token).then(async (res) => {
@@ -111,9 +108,7 @@ function Page() {
             <MaxWidthWrapper className='mt-4'>
                 <DataTable<Function, string>
                     canCreate={isFunctionCreate}
-                    canCreate={isFunctionCreate}
                     onCreate={createFunctionHandler}
-                    columns={useColumns(updateFunctionHandler, deleteFunctionHandler)}
                     columns={useColumns(updateFunctionHandler, deleteFunctionHandler)}
                     data={functions}
                     filteredColumn='name'
@@ -122,7 +117,5 @@ function Page() {
         </>
     )
 };
-
-export default ValidFunctions(Page, 'SEC-FUNCTIONS-READ');;
 
 export default ValidFunctions(Page, 'SEC-FUNCTIONS-READ');
