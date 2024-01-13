@@ -13,7 +13,7 @@ export default function ValidFunctions(Component: any, functionToValidate: strin
 
         useEffect(() => {
             if (userFunctions && userFunctions.length > 0 && !hasValidFunction) {
-                router.push('/dashboard/user');
+                router.push('/dashboard/home');
             }
         }, [hasValidFunction, router, userFunctions]);
 

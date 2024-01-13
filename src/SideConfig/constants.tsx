@@ -25,12 +25,19 @@ export const useSidevarItems = (): SideNavItems[] => {
     const canReadRolesFunctionModulesReport = userFunctions?.includes('SEC-ROLES-FUNCTION-MODULES-REPORT') || false;
     const canReadModulesFunctionsReport = userFunctions?.includes('SEC-MODULES-FUNCTIONS-REPORT') || false;
     return [
+
         {
             title: "Dashboard",
             path: "/dashboard/",
             icon: <Settings size={20} color="#c59a1a" />,
             submenu: true,
             subMenuItems: [
+                {
+                    title: "Home",
+                    path: "/dashboard/home",
+                    icon: <Home size={20} />,
+                    canRead: true
+                },
                 {
                     title: "Users",
                     path: "/dashboard/user",
@@ -94,22 +101,22 @@ export const useSidevarItems = (): SideNavItems[] => {
                 },
                 {
                     title: "Users",
-                    path: "/home",
+                    path: "/dashboard/reports/users",
                     canRead: canReadAuditUserReport
                 },
                 {
                     title: "Roles",
-                    path: "/home",
+                    path: "/dashboard/reports/roles",
                     canRead: canReadRolesFunctionModulesReport
                 },
                 {
                     title: "Modules",
-                    path: "/home",
+                    path: "/dashboard/reports/modules",
                     canRead: canReadModulesFunctionsReport
                 },
                 {
                     title: "Functions",
-                    path: "/home",
+                    path: "/dashboard/reports/functions",
                     canRead: canReadUsersRolesFunctionsModulesReport
                 }
             ],

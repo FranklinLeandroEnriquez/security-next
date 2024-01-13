@@ -53,7 +53,7 @@ export default function Home() {
           }
           else {
             saveAuthResponse(data)
-            return router.push("/dashboard/user");
+            return router.push("/dashboard/home");
           }
 
         })

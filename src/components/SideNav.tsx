@@ -18,7 +18,7 @@ const SideNav = () => {
         <div className="z-50 top-0 outline-none left-0 md:w-60 bg-[#181817] h-screen flex-1 overflow-y-scroll text-white fixed border-r-[1.2px] border-[#232321] md:flex ">
             <div className="flex flex-col w-full h-full">
                 <Link
-                    href="/"
+                    href="/dashboard/home"
                     className=" flex flex-row space-x-2 items-center justify-center md:justify-start md:px-6 h-30 sticky top-0 z-[100] bg-[#181817] shadow-lg shadow-zinc-500/10"
                 >
                     <Image
