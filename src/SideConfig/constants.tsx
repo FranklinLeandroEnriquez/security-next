@@ -94,22 +94,22 @@ export const useSidevarItems = (): SideNavItems[] => {
                 },
                 {
                     title: "Users",
-                    path: "/",
+                    path: "/home",
                     canRead: canReadAuditUserReport
                 },
                 {
                     title: "Roles",
-                    path: "/",
+                    path: "/home",
                     canRead: canReadRolesFunctionModulesReport
                 },
                 {
                     title: "Modules",
-                    path: "/",
+                    path: "/home",
                     canRead: canReadModulesFunctionsReport
                 },
                 {
                     title: "Functions",
-                    path: "/",
+                    path: "/home",
                     canRead: canReadUsersRolesFunctionsModulesReport
                 }
             ],

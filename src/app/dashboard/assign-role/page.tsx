@@ -8,10 +8,9 @@ import { assignRoles } from "@/services/User/UserService";
 import { getRolesOfUser } from "@/services/User/UserService";
 import { getRoles } from "@/services/Role/RoleService";
 import { useEffect, useState } from "react";
-import { UsersRound } from 'lucide-react';
 import Header from "@/components/Header";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import ScrollableCheckboxList from "@/components/ui/scroll-area";
+import ScrollableCheckboxList from "@/components/ui/scroll-area"
 import CustomSelect from "@/components/ui/select-filter";
 import { Role } from "@/types/Role/columns";
 import { Button } from "@/components/ui/button";

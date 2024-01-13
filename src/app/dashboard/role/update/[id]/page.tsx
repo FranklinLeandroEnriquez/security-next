@@ -148,8 +148,8 @@ function RoleUpdateForm({ params }: any) {
     return (
         <>
             <Header title="Update Role" icon={<UserCog size={25} />} />
-            <div className="flex justify-center items-center mt-10">
-                <Card className="w-[40%]">
+            <div className="flex justify-center items-center">
+                <Card className="w-[40%] my-28">
                     <CardHeader>
                         <CardTitle>Update Role</CardTitle>
                         <CardDescription>Update Role - <strong>Security Module</strong></CardDescription>

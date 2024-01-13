@@ -4,6 +4,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { UserFunctionProvider, useUserFunctions } from '@/contexts/UserFunctionProvider';
 
 
+
 export default function DashboardLayout({
     children,
 }: {
@@ -13,16 +14,12 @@ export default function DashboardLayout({
     return (
         <AuthProvider>
             <UserFunctionProvider>
-                <div className='flex h-screen'>
-                    <Toaster richColors position="top-center" />
-                    <div className="relative flex flex-1 flex-col">
-                        <SideNav />
-                        <main>
-                            <div className='md:ml-60'>
-                                {children}
-                            </div>
-                        </main>
-                    </div>
+                <Toaster richColors position="top-center" />
+
+                <SideNav />
+
+                <div className='md:ml-60 pd-5'>
+                    {children}
                 </div>
             </UserFunctionProvider>
         </AuthProvider>

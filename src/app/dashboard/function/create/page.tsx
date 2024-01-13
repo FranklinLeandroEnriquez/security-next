@@ -9,7 +9,7 @@ import { ErrorResponse, ValidationErrorResponse } from '@/types/shared/Validatio
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Blocks } from 'lucide-react'
-import { getIp,logAuditAction } from '@/services/Audit/AuditService';
+import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 
 // New Form
@@ -146,7 +146,7 @@ function FunctionCreateFormpage() {
                 }, token);
                 toast.error('An error has occurred');
             }
-            
+
         }).catch((err) => {
             toast.error('An error has occurred');
         });
@@ -161,7 +161,7 @@ function FunctionCreateFormpage() {
         <>
             <Header title='Create Function' icon={<Blocks size={25} />} />
             <div className="flex justify-center items-center mt-10">
-                <Card className="w-[40%]">
+                <Card className="w-[40%] my-16">
                     <CardHeader>
                         <CardTitle>Create Function</CardTitle>
                         <CardDescription>

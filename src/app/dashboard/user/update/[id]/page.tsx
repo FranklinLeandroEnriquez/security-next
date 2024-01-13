@@ -173,10 +173,10 @@ function UserUpdateForm({ params }: any) {
         <>
             <Header title='Update User' icon={<UserRoundSearch size={26} />} />
 
-            <div className="flex justify-center items-center my-10">
+            <div className="flex justify-center items-center">
 
                 {/* {errorResponse?.message} */}
-                <Card className="w-[40%]">
+                <Card className="w-[40%] my-10">
                     <CardHeader>
                         <CardTitle>Update User</CardTitle>
                         <CardDescription>User Update - Security Module.</CardDescription>

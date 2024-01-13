@@ -6,7 +6,7 @@ import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/Validatio
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserPlus } from 'lucide-react';
-import { getIp,logAuditAction } from "@/services/Audit/AuditService";
+import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
 
 // New Form
@@ -124,10 +124,10 @@ function UserCreateForm() {
         <>
             <Header title='Create User' icon={<UserPlus size={26} />} />
 
-            <div className="flex justify-center items-center my-10">
+            <div className="flex justify-center items-center">
 
 
-                <Card className="w-[40%]">
+                <Card className="w-[40%] my-10">
                     {/* {errorResponse?.message && (
                         <div className="bg-red-100 border flex justify-center border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                             <strong className="font-bold">Error! </strong>
