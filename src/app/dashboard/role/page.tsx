@@ -108,7 +108,7 @@ function Page() {
     return (
         <>
             <Header title='All Roles' icon={<UserCheck />} />
-            <MaxWidthWrapper className='mt-4'>
+            <MaxWidthWrapper className='my-5'>
                 <DataTable<Role, string>
                     canCreate={isFunctionCreate}
                     onCreate={createRoleHandler}

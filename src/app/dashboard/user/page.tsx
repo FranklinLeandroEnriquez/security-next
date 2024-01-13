@@ -106,7 +106,7 @@ function Page() {
         <>
             <Header title='All Users' icon={<Users2Icon size={26} />} />
             <div>
-                <MaxWidthWrapper className='mt-4'>
+                <MaxWidthWrapper className='my-5'>
                     <DataTable<User, string>
                         canCreate={isFunctionCreateUser}
                         onCreate={createUserHandler}

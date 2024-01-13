@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { use, useContext, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogInIcon } from 'lucide-react'
 
@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AuthContext } from "@/contexts/AuthContext";
 import { useRouter } from 'next/navigation';
+import { useUserFunctions } from "@/contexts/UserFunctionProvider";
+import { useSessionAuth } from "@/hooks/useSessionAuth";
 
 
 const DropdownUser = () => {
@@ -19,7 +21,12 @@ const DropdownUser = () => {
 
   const authContext = useContext(AuthContext);
   const router = useRouter();
+  const userFunctions = useUserFunctions();
+  const { getAuthResponse } = useSessionAuth();
+  const authResponse = getAuthResponse();
 
+  const email = authResponse?.email;
+  const username = authResponse?.username;
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
@@ -48,14 +55,14 @@ const DropdownUser = () => {
   return (
     <div className="flex">
       <div className="flex items-center gap-4">
-        <span className="hidden text-right lg:block">
+        <span className="hidden text-right lg:block mr-2">
           <h3 className="block text-sm font-medium">
-            Thomas Anree
+            {username?.toUpperCase()}
           </h3>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{email}</span>
         </span>
 
-        <span className="h-12 w-12 rounded-full">
+        <span className="h-12 w-12 rounded-full flex items-center">
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
@@ -71,9 +78,6 @@ const DropdownUser = () => {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
             <DropdownMenuItem onClick={logoutHandler}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

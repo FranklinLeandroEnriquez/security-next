@@ -201,7 +201,7 @@ function FunctionUpdateForm({ params }: any) {
         <>
             <Header title='Update Function' icon={<PackagePlus size={25} />} />
             <div className="flex justify-center items-center mt-10">
-                <Card className="w-[40%]">
+                <Card className="w-[40%] my-16">
                     <CardHeader>
                         <CardTitle>Create Function</CardTitle>
                         <CardDescription>

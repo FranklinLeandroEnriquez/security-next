@@ -47,7 +47,7 @@ function ModuleCreateForm() {
     const token = useAuthToken();
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-       const ip = await getIp();
+        const ip = await getIp();
         try {
             const res = await createModule(values, token);
             if (res.status === 201) {
@@ -121,7 +121,7 @@ function ModuleCreateForm() {
             <Header title='Create Module' icon={<PieChart size={25} />} />
 
             <div className="flex justify-center items-center mt-10">
-                <Card className="w-[40%]">
+                <Card className="w-[40%] my-16">
                     <CardHeader>
                         <CardTitle>Create Module</CardTitle>
                         <CardDescription>

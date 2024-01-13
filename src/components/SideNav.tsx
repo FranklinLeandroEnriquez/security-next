@@ -1,37 +1,40 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, Ghost } from 'lucide-react';
-
+import { ChevronDown } from 'lucide-react';
+import { CSSTransition } from 'react-transition-group';
 import { useSidevarItems } from '@/SideConfig/constants';
 import { SideNavItems } from '@/SideConfig/types';
 import { Button, buttonVariants } from './ui/button';
+import Image from 'next/image';
+
+const SUBMENU_TRANSITION_TIMEOUT = 300;
 
 const SideNav = () => {
     return (
-        <div className="md:w-60 bg-[#1E1E1E] h-screen flex-1 text-white fixed border-r hidden md:flex">
-            <div className="flex flex-col w-full">
+        <div className="z-50 top-0 outline-none left-0 md:w-60 bg-[#181817] h-screen flex-1 overflow-y-scroll text-white fixed border-r-[1.2px] border-[#232321] md:flex ">
+            <div className="flex flex-col w-full h-full">
                 <Link
                     href="/"
-                    className="flex flex-row space-x-3 items-center justify-center md:justify-start md:px-6 border-b  h-12 w-full"
+                    className=" flex flex-row space-x-2 items-center justify-center md:justify-start md:px-6 h-30 sticky top-0 z-[100] bg-[#181817] shadow-lg shadow-zinc-500/10"
                 >
-                    <span className="h-7 w-7  rounded-lg" />
-                    <span className="font-bold text-base hidden md:flex">SECURITY UTN</span>
+                    <Image
+                        src="/images/logo.png"
+                        alt="Background UTN"
+                        width={30}
+                        height={30}
+                        className="object-cover object-center hidden md:block filter grayscale"
+                    />
+                    <span className="h-16" />
+                    <span className="text-base hidden md:flex">SECURITY UTN</span>
                 </Link>
 
-                {/* <div className="mt-1 flex flex-col space-y-2 md:px-6 ">
-
-                    {useSidevarItems().map((item, idx) => {
-                        return item.subMenuItems?.map((subItem, subIdx) => subItem.canRead ? <MenuItem key={`${idx}-${subIdx}`} item={subItem} /> : null);
-                    })}
-                </div> */}
-
-                <div className="mt-1 flex flex-col space-y-2 md:px-6 ">
+                <div className="flex flex-col space-y-3 px-3 py-5">
                     {useSidevarItems().filter(item => item.canRead).map((item, idx) => {
-                        return <MenuItem key={idx} item={item} />;
+                        return <MenuItem key={`menu-item-${idx}`} item={item} />;
                     })}
                 </div>
             </div>
@@ -41,6 +44,7 @@ const SideNav = () => {
 
 export default SideNav;
 
+// ...
 const MenuItem = ({ item }: { item: SideNavItems }) => {
     const pathname = usePathname();
     const [subMenuOpen, setSubMenuOpen] = useState(true);
@@ -48,35 +52,41 @@ const MenuItem = ({ item }: { item: SideNavItems }) => {
         setSubMenuOpen(!subMenuOpen);
     };
 
+    const isSubItemActive = item.subMenuItems?.some(subItem => pathname.startsWith(subItem.path));
+
     return (
-        <div className="">
+        <div className="p-2">
             {item.submenu ? (
                 <>
-                    <button
+                    <Button variant="ghost"
                         onClick={toggleSubMenu}
-                        className={`flex flex-row items-center p-2 rounded-lg text-white hover-bg-[#36342e] w-full justify-between hover:bg-[#36342e] ${pathname.includes(item.path) ? '' : ''
-                            }`}
+                        className={`flex flex-row items-center p-2 rounded-lg text-white hover:bg-yellow-500 hover:text-black w-full justify-between ${isSubItemActive ? 'bg-[#353535]' : ''}`}
                     >
                         <div className="flex flex-row space-x-3 items-center">
                             {item.icon}
-                            <span className="font-semibold text-base  flex">{item.title}</span>
+                            <span className="text-base  flex">{item.title}</span>
                         </div>
 
-                        <div className={`${subMenuOpen ? 'rotate-180' : ''} flex`}>
+                        <div className={`${subMenuOpen ? 'rotate-180' : ''} transition-transform duration-300 flex`}>
                             <ChevronDown color="white" size={25} />
                         </div>
-                    </button>
+                    </Button>
 
-                    {subMenuOpen && (
-                        <div className="my-1 ml-3 flex flex-col space-y-2">
+                    <CSSTransition
+                        in={subMenuOpen}
+                        timeout={SUBMENU_TRANSITION_TIMEOUT}
+                        classNames="menu-secondary"
+                        unmountOnExit
+                    >
+                        <div className="mt-4 ml-4 flex flex-col space-y-2">
                             {item.subMenuItems?.filter(subItem => subItem.canRead).map((subItem, idx) => {
                                 return (
                                     <Link
-                                        key={idx}
+                                        key={`sub-item-${idx}`}
                                         href={subItem.path}
-                                        className={`${subItem.path === pathname ? `${buttonVariants()} bg-[#c59a1a] ml-3 w-[83%]` : ` ${buttonVariants({ variant: "ghost" })} ml-3 w-[83%]  hover:bg-[#c59a1a]`}`}
+                                        className={`${pathname.startsWith(subItem.path) ? `custom-class ${buttonVariants()} bg-yellow-500 ml-3 w-[83%] transition-colors duration-200` : `custom-class ${buttonVariants({ variant: "ghost" })} ml-3 w-[83%]  hover:bg-[#353535] transition-colors duration-200`}`}
                                     >
-                                        <div className="flex flex-row space-x-2 flex-auto">
+                                        <div className="flex flex-row space-x-2 items-center justify-start flex-auto">
                                             {subItem.icon}
                                             <span>{subItem.title}</span>
                                         </div>
@@ -84,19 +94,18 @@ const MenuItem = ({ item }: { item: SideNavItems }) => {
                                 );
                             })}
                         </div>
-                    )}
+                    </CSSTransition>
                 </>
             ) : (
-
                 <Link
                     href={item.path}
-                    className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-[#36342e] ${item.path === pathname ? 'bg-[#36342e]' : ''
-                        }`}
+                    className={`flex flex-row space-x-4 items-center rounded-lg hover:bg-[#c1be95] ${pathname.startsWith(item.path) ? 'bg-[#30300a]' : ''}`}
                 >
                     {item.icon}
-                    <span className="font-semibold text-base flex">{item.title}</span>
+                    <span className=" text-base flex">{item.title}</span>
                 </Link>
             )}
         </div>
     );
 };
+// ...

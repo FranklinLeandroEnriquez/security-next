@@ -104,7 +104,7 @@ function Page() {
     return (
         <>
             <Header title='All Functions' icon={<FunctionSquare size={25} />} />
-            <MaxWidthWrapper className='mt-4'>
+            <MaxWidthWrapper>
                 <DataTable<Function, string>
                     canCreate={isFunctionCreate}
                     onCreate={createFunctionHandler}

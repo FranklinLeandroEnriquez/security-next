@@ -108,8 +108,8 @@ function RoleCreateForm() {
     return (
         <>
             <Header title="Create Role" icon={<SquareUserRoundIcon size={25} />} />
-            <div className="flex justify-center items-center mt-10">
-                <Card className="w-[40%]">
+            <div className="flex justify-center items-center">
+                <Card className="w-[40%] my-28">
                     <CardHeader>
                         <CardTitle>Create Role</CardTitle>
                         <CardDescription>Role Creation - Security Module</CardDescription>

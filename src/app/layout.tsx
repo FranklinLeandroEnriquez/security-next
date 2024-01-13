@@ -1,6 +1,6 @@
 
-import { Inter } from "next/font/google"
-import Image from 'next/image'
+import { Inter, Plus_Jakarta_Sans } from "next/font/google"
+
 import '../styles/globals.css'
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -11,6 +11,7 @@ export const metadata = {
 }
 
 const inter = Inter({ subsets: ['latin'] })
+const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'] })
 
 export default async function RootLayout({
   children,
@@ -23,7 +24,8 @@ export default async function RootLayout({
     <html lang="en" className='h-full'>
       <body
         className={cn(
-          'relative z-10 h-full font-sans antialiased',
+          // 'relative z-10 h-full font-sans antialiased',
+          'h-full m-0 p-0 font-sans antialiased',
           inter.className
         )}>
         <ThemeProvider
@@ -32,10 +34,8 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className='flex flex-col min-h-screen'>
-            <div className='flex-grow flex-1'>
-              {children}
-            </div>
+          <main>
+            {children}
           </main>
         </ThemeProvider>
       </body>
