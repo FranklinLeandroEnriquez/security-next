@@ -1,3 +1,4 @@
+import { CSVLink } from 'react-csv';
 import {
     ColumnDef,
     flexRender,
@@ -97,6 +98,19 @@ export function DataTable<TData, TValue>({
         },
         initialState: { pagination: { pageSize: 7 } },
     })
+    const exportData = data.map((row) =>
+        columns.reduce((acc: Record<string, any>, column) => {
+            const accessorKey = (column as any).accessorKey;
+            if (accessorKey && accessorKey !== 'actions') {
+                let cellValue = (row as Record<string, any>)[accessorKey];
+                if (cellValue && typeof cellValue === 'object' && cellValue.name) {
+                    cellValue = cellValue.name;  // Use the 'name' property if it's an object
+                }
+                acc[accessorKey] = cellValue;
+            }
+            return acc;
+        }, {})
+    );
 
     return (
         <>
@@ -121,6 +135,10 @@ export function DataTable<TData, TValue>({
                 }
 
             </div>
+            {/* Enlace a CSV */}
+            <CSVLink data={exportData} filename="table_data.csv" separator=';'>
+                <Button variant='link'>Export to CSV</Button>
+            </CSVLink>
             {/* table */}
             <div className="rounded-md border">
                 <Table>
