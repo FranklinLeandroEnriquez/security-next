@@ -4,6 +4,4 @@ export interface CreateUserRequest {
     email: string;
 
     dni: string;
-
-    password: string;
 }
