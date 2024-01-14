@@ -76,6 +76,7 @@ export function DataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
+    const [rowSelection, setRowSelection] = React.useState({})
     const table = useReactTable({
         data,
         columns,
@@ -91,10 +92,12 @@ export function DataTable<TData, TValue>({
         globalFilterFn: fuzzyFilter,
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
+        onRowSelectionChange: setRowSelection,
         state: {
             columnFilters,
             globalFilter,
             sorting,
+            rowSelection,
         },
         initialState: { pagination: { pageSize: 7 } },
     })
@@ -124,9 +127,17 @@ export function DataTable<TData, TValue>({
                         className="max-w-sm"
                     />
                 </div>
+
                 {/* Crear */}
                 {onCreate && canCreate ?
-                    (<div className="">
+                    (<div className=" flex justify-center items-center">
+                        {/* Enlace a CSV */}
+                        <div className='mr-3'>
+                            <CSVLink data={exportData} filename="table_data.csv" separator=';'>
+                                <Button variant='ghost'>Export to CSV</Button>
+                            </CSVLink>
+                        </div>
+                        {/* table */}
                         <Button onClick={onCreate}>
                             <span> Create </span>
                         </Button>
@@ -135,11 +146,7 @@ export function DataTable<TData, TValue>({
                 }
 
             </div>
-            {/* Enlace a CSV */}
-            <CSVLink data={exportData} filename="table_data.csv" separator=';'>
-                <Button variant='link'>Export to CSV</Button>
-            </CSVLink>
-            {/* table */}
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
