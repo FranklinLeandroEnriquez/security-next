@@ -110,6 +110,9 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
                     </span>
                 )
             },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
+            },
         },
         {
             accessorKey: "username",
@@ -123,6 +126,9 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
                         {row.getValue("username")}
                     </span>
                 )
+            },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
             },
         },
         {
@@ -138,6 +144,9 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
                     </span>
                 )
             },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
+            },
         },
         {
             accessorKey: "dni",
@@ -151,6 +160,9 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
                         {row.getValue("dni")}
                     </span>
                 )
+            },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
             },
         },
         {
@@ -175,9 +187,6 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
                         <span>{status.label}</span>
                     </div>
                 )
-            },
-            filterFn: (row, id, value) => {
-                return value.includes(row.getValue(id))
             },
         },
 

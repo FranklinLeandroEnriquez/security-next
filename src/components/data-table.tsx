@@ -49,6 +49,38 @@ interface DataTableProps<TData, TValue> {
     canCreate?: boolean
 }
 
+interface Row {
+    isSelected: boolean;
+    original: {
+        id: string;
+        username: string;
+        email: string;
+        dni: string;
+        status: boolean;
+
+    };
+}
+
+const handleGenerateReport = (rows: Row[]) => {
+
+    // console.log('handleGenerateReport called with rows:', rows);
+
+    const selectedRows = rows.filter((row) => row.isSelected);
+    // console.log('selectedRows:', selectedRows);
+
+    const report = selectedRows.map((row) => {
+        // Procesa la información de cada fila según tus necesidades
+        return {
+            id: row.original.id,
+            username: row.original.username,
+            email: row.original.email,
+            dni: row.original.dni,
+            status: row.original.status,
+        };
+    });
+    console.log('report:', report);
+};
+
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     // Rank the item
@@ -125,8 +157,15 @@ export function DataTable<TData, TValue>({
                     />
                     <DataTableToolbar table={table} />
                 </div>
-
-
+                <Button onClick={() => {
+                    const rows: Row[] = table.getRowModel().rows.map(row => ({
+                        isSelected: row.getIsSelected(),
+                        original: row.original
+                    }));
+                    handleGenerateReport(rows);
+                }}>
+                    Generar informe
+                </Button>
                 {/* Crear */}
                 {onCreate && canCreate ?
                     (<div className=" flex justify-center items-center">
