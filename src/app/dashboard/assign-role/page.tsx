@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
 import validFunctions from '@/providers/ValidateFunctions';
-import exp from "constants";
+import { getRolesOfUserHandler } from "@/handlers/userRolesHandler"
 
 function AssignRole() {
     const [users, setUsers] = useState<UserResponse[]>([]);
@@ -53,24 +53,24 @@ function AssignRole() {
         }
     }
 
-    const getRolesOfUserHandler = async (userId: number) => {
-        const ip = await getIp();
-        const res = await getRolesOfUser(userId, token);
-        if (res.status === 200) {
-            const data = await res.json();
-            const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
-            setUserRoles(filteredRoles);
-            await logAuditAction({
-                functionName: 'SEC-ROLES-TO-USER-READ',
-                action: 'get user roles',
-                description: 'Successfully fetched user roles',
-                observation: `User ID: ${userId}`,
-                ip: ip.toString(),
-            }, token);
-        } else {
-            toast.error('An error has occurred');
-        }
-    }
+    // const getRolesOfUserHandler = async (userId: number) => {
+    //     const ip = await getIp();
+    //     const res = await getRolesOfUser(userId, token);
+    //     if (res.status === 200) {
+    //         const data = await res.json();
+    //         const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
+    //         setUserRoles(filteredRoles);
+    //         await logAuditAction({
+    //             functionName: 'SEC-ROLES-TO-USER-READ',
+    //             action: 'get user roles',
+    //             description: 'Successfully fetched user roles',
+    //             observation: `User ID: ${userId}`,
+    //             ip: ip.toString(),
+    //         }, token);
+    //     } else {
+    //         toast.error('An error has occurred');
+    //     }
+    // }
 
     const getRolesHandler = async () => {
         const ip = await getIp();
@@ -92,7 +92,7 @@ function AssignRole() {
 
     const handleUserChange = (userId: number) => {
         setSelectedUser(userId);
-        getRolesOfUserHandler(userId);
+        getRolesOfUserHandler(userId, token, setUserRoles);
         getRolesHandler();
     };
 

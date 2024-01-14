@@ -24,13 +24,11 @@ import { Button } from "./ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
 import React from "react"
-import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
 
 import {
     RankingInfo,
     rankItem,
-    compareItems,
 } from '@tanstack/match-sorter-utils'
 
 declare module '@tanstack/table-core' {
@@ -45,52 +43,24 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     onCreate?: () => void
-    filteredColumn: string
     canCreate?: boolean
+    onRowSelectionChange?: (rows: Row<TData>[]) => void;
 }
 
-interface Row {
+// ESTO ES PARA MANEJAR GENERADOR DE INFORMES
+interface Row<T> {
     isSelected: boolean;
-    original: {
-        id: string;
-        username: string;
-        email: string;
-        dni: string;
-        status: boolean;
-
-    };
+    data: T;
 }
-
-const handleGenerateReport = (rows: Row[]) => {
-
-    // console.log('handleGenerateReport called with rows:', rows);
-
-    const selectedRows = rows.filter((row) => row.isSelected);
-    // console.log('selectedRows:', selectedRows);
-
-    const report = selectedRows.map((row) => {
-        // Procesa la información de cada fila según tus necesidades
-        return {
-            id: row.original.id,
-            username: row.original.username,
-            email: row.original.email,
-            dni: row.original.dni,
-            status: row.original.status,
-        };
-    });
-    console.log('report:', report);
-};
 
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     // Rank the item
     const itemRank = rankItem(row.getValue(columnId), value)
-
     // Store the itemRank info
     addMeta({
         itemRank,
     })
-
     // Return if the item should be filtered in/out
     return itemRank.passed
 }
@@ -100,6 +70,7 @@ export function DataTable<TData, TValue>({
     data,
     onCreate,
     canCreate: canCreate,
+    onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -130,6 +101,16 @@ export function DataTable<TData, TValue>({
         },
         initialState: { pagination: { pageSize: 7 } },
     })
+
+    const handleGenerateReport = (rows: Row<TData>[]) => {
+        const selectedRows = rows.filter((row) => row.isSelected);
+        const report = selectedRows.map((row) => {
+            return row.data;
+        });
+        console.log('report:', report);
+    };
+
+    //Generar cvs
     const exportData = data.map((row) =>
         columns.reduce((acc: Record<string, any>, column) => {
             const accessorKey = (column as any).accessorKey;
@@ -143,6 +124,7 @@ export function DataTable<TData, TValue>({
             return acc;
         }, {})
     );
+    //fin generar cvs
 
     return (
         <>
@@ -158,9 +140,9 @@ export function DataTable<TData, TValue>({
                     <DataTableToolbar table={table} />
                 </div>
                 <Button onClick={() => {
-                    const rows: Row[] = table.getRowModel().rows.map(row => ({
+                    const rows: Row<TData>[] = table.getRowModel().rows.map(row => ({
                         isSelected: row.getIsSelected(),
-                        original: row.original
+                        data: row.original
                     }));
                     handleGenerateReport(rows);
                 }}>
@@ -182,13 +164,11 @@ export function DataTable<TData, TValue>({
                     </div>)
                     : ""
                 }
-
             </div>
 
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
-
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -232,10 +212,10 @@ export function DataTable<TData, TValue>({
             </div>
             {/* pagination */}
             <DataTablePagination table={table} />
-            <div>
+            {/* <div>
                 <label>Row Selection State:</label>
                 <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
-            </div>
+            </div> */}
         </>
     )
 }

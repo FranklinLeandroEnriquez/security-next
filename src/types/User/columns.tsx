@@ -180,13 +180,16 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
                 }
 
                 return (
-                    <div className="flex items-center">
+                    <div className="flex justify-center items-center">
                         {status.icon && (
                             <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                         )}
                         <span>{status.label}</span>
                     </div>
                 )
+            },
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
             },
         },
 

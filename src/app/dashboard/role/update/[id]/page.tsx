@@ -79,7 +79,7 @@ function RoleUpdateForm({ params }: any) {
         }
 
         fetchRole();
-    }, [id]);
+    }, []);
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         const ip = await getIp()
@@ -166,6 +166,19 @@ function RoleUpdateForm({ params }: any) {
                                             <FormLabel>Role Name</FormLabel>
                                             <FormControl>
                                                 <Input placeholder="Write a role name"{...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Status</FormLabel>
+                                            <FormControl>
+                                                <Input type="checkbox" checked={field.value ? true : false} {...field} value={field.value ? "true" : "false"} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

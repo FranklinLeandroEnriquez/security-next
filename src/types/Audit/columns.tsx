@@ -10,6 +10,10 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
+import { Checkbox } from "@/components/registry/new-york/ui/checkbox"
+import { DataTableColumnHeader } from "@/components/Table/data-table-column-header";
+import { statuses } from "@/components/Table/data/data";
+
 export type Audit = {
     id: number;
     action: string;
@@ -25,7 +29,32 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
     (id: number) => void): ColumnDef<Audit>[] =>
     [
         {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                    className="translate-y-[2px]"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                    className="translate-y-[2px]"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
+        {
             id: "actions",
+            header: 'Actions',
             cell: ({ row }) => {
                 const audit = row.original
 
@@ -51,35 +80,138 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
         },
         {
             accessorKey: "id",
-            header: "ID",
-        },
-        {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="ID" />
+            ),
+            cell: ({ row }) => {
+                const id = row.original
+                return (
+                    <span className="font-normal">
+                        {String(row.getValue("id"))}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
+            },
+        }, {
             accessorKey: "date",
-            header: "Date",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Date" />
+            ),
+            cell: ({ row }) => {
+                const id = row.original
+                return (
+                    <span className="max-w-[500px] font-normal">
+                        {String(row.getValue("date"))}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
+            },
         },
         {
             accessorKey: "user",
-            header: "User",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="User" />
+            ),
+            cell: ({ row }) => {
+                const id = row.original
+                return (
+                    <span className="max-w-[500px] truncate font-normal">
+                        {String(row.getValue("user"))}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
+            },
         },
         {
             accessorKey: "action",
-            header: "Action",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Action" />
+            ),
+            cell: ({ row }) => {
+                const audit = row.original
+                return (
+                    <span className="max-w-[500px] truncate font-normal">
+                        {audit.action}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
+            },
         },
         {
             accessorKey: "description",
-            header: "Description",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Description" />
+            ),
+            cell: ({ row }) => {
+                const audit = row.original
+                return (
+                    <span className="font-normal">
+                        {audit.description}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return (row.getValue(id) as string).includes(value)
+            },
         },
         {
             accessorKey: "observation",
-            header: "Observation",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Observation" />
+            ),
+            cell: ({ row }) => {
+                const audit = row.original
+                return (
+                    <span className="max-w-[100px] font-normal">
+                        {audit.observation}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
+            },
         },
         {
             accessorKey: "ip",
-            header: "IP",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="IP" />
+            ),
+            cell: ({ row }) => {
+                const audit = row.original
+                return (
+                    <span className="max-w-[100px] font-normal">
+                        {audit.ip}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
+            },
         },
         {
             accessorKey: "functionName",
-            header: "Function",
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Function" />
+            ),
+            cell: ({ row }) => {
+                const audit = row.original
+                return (
+                    <span className="max-w-[100px] font-normal">
+                        {audit.functionName}
+                    </span>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
+            },
         },
-        
+
     ]

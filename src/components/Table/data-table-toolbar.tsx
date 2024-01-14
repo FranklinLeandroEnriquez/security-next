@@ -4,7 +4,6 @@ import { Cross2Icon } from "@radix-ui/react-icons"
 import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/registry/new-york/ui/button"
-import { Input } from "@/components/registry/new-york/ui/input"
 import { DataTableViewOptions } from "@/components/Table/data-table-view-options"
 
 import { statuses } from "@/components/Table/data/data"
