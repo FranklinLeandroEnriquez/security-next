@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
 import React from "react"
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
 
 import {
     RankingInfo,
@@ -46,10 +47,9 @@ interface DataTableProps<TData, TValue> {
     onCreate?: () => void
     filteredColumn: string
     canCreate?: boolean
-    canUpdate?: boolean
-    canDelete?: boolean
-    canRead?: boolean
 }
+
+
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     // Rank the item
     const itemRank = rankItem(row.getValue(columnId), value)
@@ -67,10 +67,7 @@ export function DataTable<TData, TValue>({
     columns,
     data,
     onCreate,
-    filteredColumn,
     canCreate: canCreate,
-    canUpdate: canUpdate,
-    canDelete: canDelete
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -119,14 +116,16 @@ export function DataTable<TData, TValue>({
         <>
             <div className="flex justify-between mb-3">
                 {/* Global filter */}
-                <div>
+                <div className='flex justify-center items-center'>
                     <Input
                         placeholder="Global Filter..."
                         value={globalFilter}
                         onChange={(event) => setGlobalFilter(event.target.value)}
-                        className="max-w-sm"
+                        className="max-w-sm mr-5"
                     />
+                    <DataTableToolbar table={table} />
                 </div>
+
 
                 {/* Crear */}
                 {onCreate && canCreate ?
@@ -194,7 +193,10 @@ export function DataTable<TData, TValue>({
             </div>
             {/* pagination */}
             <DataTablePagination table={table} />
-
+            <div>
+                <label>Row Selection State:</label>
+                <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
+            </div>
         </>
     )
 }

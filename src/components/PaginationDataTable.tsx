@@ -29,10 +29,10 @@ export function DataTablePagination<TData>({
                 {table.getFilteredSelectedRowModel().rows.length} of{" "}
                 {table.getFilteredRowModel().rows.length} row(s) selected.
             </div>
-            <div>
+            {/* <div>
                 <label>Row Selection State:</label>
                 <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
-            </div>
+            </div> */}
 
             <div className="flex items-center space-x-6 lg:space-x-8">
                 <div className="flex items-center space-x-2">

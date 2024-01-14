@@ -13,8 +13,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
-import { Checkbox } from "@/components/ui/checkbox"
-
+import { DataTableColumnHeader } from "@/components/Table/data-table-column-header";
+import { statuses } from "@/components/Table/data/data";
+import { Checkbox } from "@/components/registry/new-york/ui/checkbox"
 
 export type User = {
     id: number;
@@ -31,6 +32,30 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
     const isFunctionDelete = userFunctions?.includes('SEC-USERS-DELETE') || false;
     const isFunctionUpdate = userFunctions?.includes('SEC-USERS-UPDATE') || false;
     return [
+        {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                    className="translate-y-[2px]"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                    className="translate-y-[2px]"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
         {
             id: "actions",
             header: 'Actions',
@@ -74,95 +99,87 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete:
         },
         {
             accessorKey: "id",
-            header: ({ column }) => {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="ID" />
+            ),
+            cell: ({ row }) => {
+                const id = row.original
                 return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        ID
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                    <span className="max-w-[500px] truncate font-normal">
+                        {row.getValue("id")}
+                    </span>
                 )
             },
         },
         {
             accessorKey: "username",
-            header: ({ column }) => {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Username" />
+            ),
+            cell: ({ row }) => {
+                const id = row.original
                 return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Username
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                    <span className="max-w-[500px] truncate font-normal">
+                        {row.getValue("username")}
+                    </span>
                 )
             },
-
         },
         {
             accessorKey: "email",
-            header: ({ column }) => {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Email" />
+            ),
+            cell: ({ row }) => {
+                const id = row.original
                 return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Email
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                    <span className="max-w-[500px] truncate font-normal">
+                        {row.getValue("email")}
+                    </span>
                 )
             },
         },
         {
             accessorKey: "dni",
-            header: ({ column }) => {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="DNI" />
+            ),
+            cell: ({ row }) => {
+                const id = row.original
                 return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        DNI
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                    <span className="max-w-[500px] truncate font-normal">
+                        {row.getValue("dni")}
+                    </span>
                 )
             },
         },
         {
             accessorKey: "status",
-            header: ({ column }) => {
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Status" />
+            ),
+            cell: ({ row }) => {
+                const status = statuses.find(
+                    (status) => status.value === row.getValue("status")
+                )
+
+                if (!status) {
+                    return null
+                }
+
                 return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Status
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center">
+                        {status.icon && (
+                            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                        )}
+                        <span>{status.label}</span>
+                    </div>
                 )
             },
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
+            },
         },
-        {
-            id: "select",
-            header: ({ table }) => (
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
-                />
-            ),
-            cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label="Select row"
-                />
-            ),
-        }
 
     ]
 }
