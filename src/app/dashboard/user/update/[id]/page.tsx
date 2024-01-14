@@ -70,7 +70,6 @@ function UserUpdateForm({ params }: any) {
                     form.setValue("username", data.username);
                     form.setValue("email", data.email);
                     form.setValue("dni", data.dni);
-                    form.setValue("password", data.password);
                     form.setValue("status", data.status);
                 } else {
                     await logAuditAction(
@@ -149,12 +148,12 @@ function UserUpdateForm({ params }: any) {
         email: z.string().email({
             message: "Email is not valid.",
         }),
-        dni: z.string().min(10, {
-            message: "DNI must be at least 10 characters.",
-        }),
-        password: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
-        }),
+        dni: z.string()
+            .min(10, {
+                message: "DNI must be at least 10 characters.",
+            }).max(15, {
+                message: "DNI must be at least 15 characters.",
+            }),
         status: z.boolean(),
     })
 
@@ -164,7 +163,6 @@ function UserUpdateForm({ params }: any) {
             username: "",
             email: "",
             dni: "",
-            password: "",
             status: true,
         },
     })
@@ -220,19 +218,6 @@ function UserUpdateForm({ params }: any) {
                                             <FormLabel>DNI</FormLabel>
                                             <FormControl>
                                                 <Input placeholder="Enter your DNI" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Password</FormLabel>
-                                            <FormControl>
-                                                <Input type="password" placeholder="Enter your password" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
