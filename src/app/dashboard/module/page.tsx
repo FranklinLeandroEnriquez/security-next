@@ -105,7 +105,8 @@ function Page() {
                     onCreate={createModuleHandler}
                     columns={useColumns(updateModuleHandler, deleteModuleHandler)}
                     data={modules}
-                    filteredColumn='name'
+                    moduleName='Modules'
+                    description='Modules of the system'
                 />
             </MaxWidthWrapper>
         </>

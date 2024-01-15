@@ -110,7 +110,8 @@ function Page() {
                     onCreate={createFunctionHandler}
                     columns={useColumns(updateFunctionHandler, deleteFunctionHandler)}
                     data={functions}
-                    filteredColumn='name'
+                    moduleName='Functions'
+                    description='Functions of the system'
                 />
             </MaxWidthWrapper>
         </>

@@ -114,7 +114,9 @@ function Page() {
                     onCreate={createRoleHandler}
                     columns={useColumns(updateRoleHandler, deleteRoleHandler)}
                     data={roles}
-                    filteredColumn='name' />
+                    moduleName='Roles'
+                    description='Roles of the system'
+                    />
             </MaxWidthWrapper>
         </>
     )

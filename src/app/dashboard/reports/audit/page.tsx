@@ -57,7 +57,8 @@ export default function AuditReport() {
                 <DataTable<Audit, string>
                     columns={columns(updateRoleHandler, deleteRoleHandler)}
                     data={audits}
-                    filteredColumn='user'
+                    moduleName="Audit Trails"
+                    description="Audit Trails of the system"
                 />
             </MaxWidthWrapper>
         </>

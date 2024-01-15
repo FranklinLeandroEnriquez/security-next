@@ -120,6 +120,8 @@ function Page() {
             <div>
                 <MaxWidthWrapper className='my-5'>
                     <DataTable<User, string>
+                        moduleName="Users"
+                        description="Users of the system"
                         canCreate={isFunctionCreateUser}
                         onCreate={createUserHandler}
                         columns={useColumns(updateUserHandler, deleteUserHandler)}
