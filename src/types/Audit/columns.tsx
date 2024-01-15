@@ -12,7 +12,7 @@ import { MoreHorizontal } from "lucide-react";
 
 import { Checkbox } from "@/components/registry/new-york/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/Table/data-table-column-header";
-import { statuses } from "@/components/Table/data/data";
+import IndeterminateCheckbox from "@/components/Table/IndeterminateCheckbox";
 
 export type Audit = {
     id: number;
@@ -29,28 +29,28 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
     (id: number) => void): ColumnDef<Audit>[] =>
     [
         {
-            id: "select",
+            id: 'select',
             header: ({ table }) => (
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
-                    className="translate-y-[2px]"
+                <IndeterminateCheckbox
+                    {...{
+                        checked: table.getIsAllRowsSelected(),
+                        indeterminate: table.getIsSomeRowsSelected(),
+                        onChange: table.getToggleAllRowsSelectedHandler(),
+                    }}
                 />
             ),
             cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label="Select row"
-                    className="translate-y-[2px]"
-                />
+                <div className="px-1">
+                    <IndeterminateCheckbox
+                        {...{
+                            checked: row.getIsSelected(),
+                            disabled: !row.getCanSelect(),
+                            indeterminate: row.getIsSomeSelected(),
+                            onChange: row.getToggleSelectedHandler(),
+                        }}
+                    />
+                </div>
             ),
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             id: "actions",

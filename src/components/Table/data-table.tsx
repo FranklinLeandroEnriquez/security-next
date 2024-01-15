@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/table"
 import { Button } from "../ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTablePagination } from "../PaginationDataTable"
+import { DataTablePagination } from "./PaginationDataTable"
 import React, { useState } from "react"
 import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
+import { PDFGenerator } from "@/components/Table/PDFGeneratorProps"
 
 import {
     RankingInfo,
@@ -47,7 +48,6 @@ interface DataTableProps<TData, TValue> {
     description: string
     onCreate?: () => void
     canCreate?: boolean
-    onRowSelectionChange?: (rows: Row<TData>[]) => void;
 }
 
 // ESTO ES PARA MANEJAR GENERADOR DE INFORMES
@@ -75,15 +75,12 @@ export function DataTable<TData, TValue>({
     description,
     onCreate,
     canCreate: canCreate,
-    onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
-    const [isPdfPreviewOpen, setPdfPreviewOpen] = useState(false);
-    const [reportData, setReportData] = React.useState<TData[]>([]);
     const table = useReactTable({
         data,
         columns,
@@ -106,16 +103,10 @@ export function DataTable<TData, TValue>({
             sorting,
             rowSelection,
         },
-        initialState: { pagination: { pageSize: 7 } },
+        initialState: {
+            pagination: { pageSize: 5 },
+        },
     })
-
-    const handleGenerateReport = (rows: Row<TData>[]): TData[] => {
-        const selectedRows = rows.filter((row) => row.isSelected);
-        const report = selectedRows.map((row) => {
-            return row.data;
-        });
-        return report;
-    };
 
     //Generar cvs
     const exportData = data.map((row) =>
@@ -136,32 +127,14 @@ export function DataTable<TData, TValue>({
     return (
         <>
             <div className="flex justify-between mb-3">
-                {/* Global filter */}
-                <div className='flex justify-center items-center'>
-                    <Input
-                        placeholder="Global Filter..."
-                        value={globalFilter}
-                        onChange={(event) => setGlobalFilter(event.target.value)}
-                        className="max-w-sm mr-5"
-                    />
-                    <DataTableToolbar table={table} />
-                </div>
-                <Button onClick={() => {
-                    const rows: Row<TData>[] = table.getRowModel().rows.map(row => ({
-                        isSelected: row.getIsSelected(),
-                        data: row.original
-                    }));
-                    const report = handleGenerateReport(rows);
-                    setReportData(report);
-                }}>
-                    <PDFPreviewDialog
-                        title={moduleName}
-                        data={reportData}
-                        description={`${description} Report`}
-                        open={isPdfPreviewOpen}
-                        onOpenChange={setPdfPreviewOpen}
-                    />
-                </Button>
+                <DataTableToolbar table={table} />
+
+                {/* Reporte */}
+                <PDFGenerator
+                    table={table}
+                    moduleName={moduleName}
+                    description={description}
+                />
                 {/* Crear */}
                 {onCreate && canCreate ?
                     (<div className=" flex justify-center items-center">
@@ -226,10 +199,6 @@ export function DataTable<TData, TValue>({
             </div>
             {/* pagination */}
             <DataTablePagination table={table} />
-            {/* <div>
-                <label>Row Selection State:</label>
-                <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
-            </div> */}
         </>
     )
 }

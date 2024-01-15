@@ -126,7 +126,6 @@ function Page() {
                         onCreate={createUserHandler}
                         columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
-
                     />
                 </MaxWidthWrapper>
             </div>
