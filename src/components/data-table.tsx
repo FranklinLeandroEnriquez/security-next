@@ -1,4 +1,5 @@
 import { CSVLink } from 'react-csv';
+import PDFPreviewDialog from '@/components/ui/ModalReport';
 import {
     ColumnDef,
     flexRender,
@@ -23,7 +24,7 @@ import {
 import { Button } from "./ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
-import React from "react"
+import React, { useState } from "react"
 import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
 
 import {
@@ -42,6 +43,8 @@ declare module '@tanstack/table-core' {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    moduleName: string
+    description: string
     onCreate?: () => void
     canCreate?: boolean
     onRowSelectionChange?: (rows: Row<TData>[]) => void;
@@ -68,6 +71,8 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 export function DataTable<TData, TValue>({
     columns,
     data,
+    moduleName,
+    description,
     onCreate,
     canCreate: canCreate,
     onRowSelectionChange,
@@ -77,6 +82,8 @@ export function DataTable<TData, TValue>({
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
+    const [isPdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+    const [reportData, setReportData] = React.useState<TData[]>([]);
     const table = useReactTable({
         data,
         columns,
@@ -102,12 +109,12 @@ export function DataTable<TData, TValue>({
         initialState: { pagination: { pageSize: 7 } },
     })
 
-    const handleGenerateReport = (rows: Row<TData>[]) => {
+    const handleGenerateReport = (rows: Row<TData>[]): TData[] => {
         const selectedRows = rows.filter((row) => row.isSelected);
         const report = selectedRows.map((row) => {
             return row.data;
         });
-        console.log('report:', report);
+        return report;
     };
 
     //Generar cvs
@@ -144,9 +151,16 @@ export function DataTable<TData, TValue>({
                         isSelected: row.getIsSelected(),
                         data: row.original
                     }));
-                    handleGenerateReport(rows);
+                    const report = handleGenerateReport(rows);
+                    setReportData(report);
                 }}>
-                    Generar informe
+                    <PDFPreviewDialog
+                        title={moduleName}
+                        data={reportData}
+                        description={`${description} Report`}
+                        open={isPdfPreviewOpen}
+                        onOpenChange={setPdfPreviewOpen}
+                    />
                 </Button>
                 {/* Crear */}
                 {onCreate && canCreate ?
