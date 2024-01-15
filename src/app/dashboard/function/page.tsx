@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '@/components/data-table'
+import { DataTable } from '@/components/Table/data-table'
 import { useColumns, Function } from '@/types/Function/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from "@/types/shared/ValidationError"

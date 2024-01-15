@@ -5,7 +5,7 @@ import { getAudits } from "@/services/Audit/AuditService";
 import { AuditResponse } from "@/types/Audit/AuditResponse";
 import { useEffect, useState } from "react"
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { DataTable } from "@/components/data-table";
+import { DataTable } from "@/components/Table/data-table";
 import { Audit, columns } from "@/types/Audit/columns";
 import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
@@ -17,7 +17,7 @@ export default function AuditReport() {
     const token = useAuthToken();
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     useEffect(() => {
-        getAudits(token).then(async(res): Promise<void> => {
+        getAudits(token).then(async (res): Promise<void> => {
             const ip = await getIp();
             if (res.status === 200) {
                 logAuditAction({

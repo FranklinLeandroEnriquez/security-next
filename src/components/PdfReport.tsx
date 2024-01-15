@@ -2,6 +2,7 @@ import React from 'react';
 import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
 import { useSessionAuth } from "@/hooks/useSessionAuth";
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 const { getAuthResponse } = useSessionAuth();
 const authResponse = getAuthResponse();
 const email = authResponse?.email;

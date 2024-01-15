@@ -21,9 +21,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTablePagination } from "./PaginationDataTable"
+import { DataTablePagination } from "../PaginationDataTable"
 import React, { useState } from "react"
 import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
 
