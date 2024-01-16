@@ -20,7 +20,7 @@ import Image from 'next/image';
 import { useState } from "react"
 import { useSessionAuth } from "@/hooks/useSessionAuth"
 import { toast } from "sonner";
-import { ErrorResponse } from "@/types/shared/ValidationError"
+import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError"
 import { Toaster } from "@/components/ui/sonner"
 import { useRouter } from "next/navigation";
 
@@ -42,8 +42,16 @@ export default function Home() {
     await authenticate(login).then(async res => {
       if (res.status != 201) {
         await res.json().then((data: ErrorResponse) => {
-          toast.error(data.message.toString());
+          if (data.error === 'ValidationException') {
+            const valdationError = data as any as ValidationErrorResponse;
+            valdationError.message.forEach((error) => {
+              toast.error(error.errors);
+            });
+          } else {
+            toast.error(data.message.toString());
+          }
         })
+
       }
       else {
         await res.json().then((data: AuthResponse) => {
@@ -60,6 +68,12 @@ export default function Home() {
       }
     })
   }
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
 
 
   return <>
@@ -115,25 +129,13 @@ export default function Home() {
                       password: e.target.value
                     })
                   }}
-                  value={login.password} />
+                  value={login.password}
+                  onKeyDown={handleKeyPress}
+                />
               </div>
-              {/* <div className="flex items-center space-x-2">
-                <Checkbox id="terms" />
-                <label
-                  htmlFor="terms"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Remember me
-                </label>
-              </div> */}
             </CardContent>
             <CardFooter className="flex flex-col">
               <Button className="w-full" onClick={(e) => { handleLogin() }}>Login</Button>
-              {/* <p className="mt-2 text-xs text-center text-gray-700">
-                {" "}
-                Create an account?{" "}
-                <span className=" text-blue-600 hover:underline">Sign up</span>
-              </p> */}
             </CardFooter>
           </Card>
         </div>
