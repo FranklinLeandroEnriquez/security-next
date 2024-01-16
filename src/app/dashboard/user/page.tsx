@@ -80,8 +80,9 @@ function Page() {
                     description: 'Failed to fetch users',
                     ip: ip.toString(),
                 }, token);
-                toast.error('An error has occurred while sending the audit log');
 
+                const errorData: ErrorResponse = await res.json();
+                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('An error has occurred');
