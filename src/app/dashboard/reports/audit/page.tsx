@@ -11,13 +11,13 @@ import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
 import { ErrorResponse } from "@/types/shared/ValidationError";
 import { toast } from "sonner";
+import validFunctions from '@/providers/ValidateFunctions'
 
-export default function AuditReport() {
+function Page () {
     const [audits, setAudits] = useState<AuditResponse[]>([]);
     const token = useAuthToken();
-    const [errors, setErrors] = useState<ErrorResponse | null>(null);
     useEffect(() => {
-        getAudits(token).then(async(res): Promise<void> => {
+        getAudits(token).then(async (res): Promise<void> => {
             const ip = await getIp();
             if (res.status === 200) {
                 logAuditAction({
@@ -37,10 +37,6 @@ export default function AuditReport() {
                     ip: ip.toString(),
                 }, token);
                 const errorData: ErrorResponse = await res.json();
-                if (errorData.error === 'ErrorResponse') {
-                    setErrors(errorData);
-                    toast.error(errorData.message.toString());
-                }
                 toast.error(errorData.message.toString());
             }
         });
@@ -63,3 +59,5 @@ export default function AuditReport() {
         </>
     );
 }
+
+export default validFunctions(Page, 'SEC-AUDIT-READ');
