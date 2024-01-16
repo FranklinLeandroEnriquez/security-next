@@ -3,7 +3,7 @@
 import React, { FunctionComponent, ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { AuthContext, AuthContextType } from '@/contexts/AuthContext';
-import { verifyToken } from '@/services/Auth/AuthService';
+import { getFunctionsUser } from '@/services/Auth/AuthService';
 import { usePathname } from 'next/navigation'
 // import { Progress } from "@/components/ui/progress"
 import { useRouter } from 'next/navigation'
@@ -33,16 +33,26 @@ export const AuthProvider: FunctionComponent<AuthProviderProps> = ({ children })
             router.push('/login')
         } else {
             setTimeout(() => {
-                verifyToken(auth.token).then((response) => {
+                getFunctionsUser(auth.token).then((response) => {
                     if (response.status !== 200) {
                         clearAuthResponse();
                         router.push('/login')
+                    } else {
+                        response.json().then((data: string[]) => {
+                            const authResponse = contextValue.getAuthResponse();
+                            if (authResponse === null) {
+                                router.push('/login');
+                            } else {
+                                authResponse.functions = data;
+                                saveAuthResponse(authResponse);
+                            }
+                        });
                     }
                     setLoading(false);
                 });
             }, 200);
         }
-    }, []);
+    }, [pathname]);
 
 
     // React.useEffect(() => {
