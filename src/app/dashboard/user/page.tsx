@@ -18,8 +18,6 @@ import { useAuthToken } from '@/hooks/useAuthToken';
 
 function Page() {
     const [users, setUsers] = useState<UserResponse[]>([]);
-    const [errors, setErrors] = useState<ErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
     const token = useAuthToken();
 
@@ -48,13 +46,7 @@ function Page() {
                     ip: ip.toString(),
                 }, token);
                 const errorData: ErrorResponse = await res.json();
-                if (errorData.error === 'ErrorResponse') {
-                    setErrorResponse(null);
-                    setErrors(errorData);
-                    toast.error(errorData.message.toString());
-                } else {
-                    toast.error(errorData.message.toString());
-                }
+                toast.error(errorData.message.toString());
             }
         }); // Aquí es donde faltaba la llave de cierre
     };
@@ -88,7 +80,7 @@ function Page() {
                     description: 'Failed to fetch users',
                     ip: ip.toString(),
                 }, token);
-                toast.error('An error has occurred');
+                toast.error('An error has occurred while sending the audit log');
 
             }
         }).catch((err) => {
