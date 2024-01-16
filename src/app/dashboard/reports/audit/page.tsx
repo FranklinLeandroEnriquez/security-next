@@ -12,8 +12,9 @@ import { useAuthToken } from "@/hooks/useAuthToken";
 import { ErrorResponse } from "@/types/shared/ValidationError";
 import { toast } from "sonner";
 import validFunctions from '@/providers/ValidateFunctions'
+import { FootprintsIcon } from "lucide-react";
 
-function Page () {
+function Page() {
     const [audits, setAudits] = useState<AuditResponse[]>([]);
     const token = useAuthToken();
     useEffect(() => {
@@ -48,14 +49,17 @@ function Page () {
 
     return (
         <>
-            <Header title='Audit Trails' />
-            <MaxWidthWrapper className='mt-4'>
-                <DataTable<Audit, string>
-                    columns={columns(updateRoleHandler, deleteRoleHandler)}
-                    data={audits}
-                    filteredColumn='user'
-                />
-            </MaxWidthWrapper>
+            <Header title='Audit Trails' icon={<FootprintsIcon size={26} />} />
+            <div>
+                <MaxWidthWrapper className='mt-4'>
+                    <DataTable<Audit, string>
+                        columns={columns(updateRoleHandler, deleteRoleHandler)}
+                        data={audits}
+                        filteredColumn='user'
+                    />
+                </MaxWidthWrapper>
+            </div>
+
         </>
     );
 }
