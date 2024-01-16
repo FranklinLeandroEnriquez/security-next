@@ -38,8 +38,6 @@ import validFunctions from '@/providers/ValidateFunctions'
 function UserUpdateForm({ params }: any) {
 
     const [user, setUser] = useState<UpdateUserRequest>({} as UpdateUserRequest);
-    const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
 
     const router = useRouter();
     const token = useAuthToken();
@@ -114,21 +112,13 @@ function UserUpdateForm({ params }: any) {
                     ip: ip.toString(),
                 }, token);
                 await res.json().then((data: ValidationErrorResponse) => {
-                    if (data.error == 'ValidationException') {
-                        setErrorResponse(null);
-                        setErrors(data);
+                    if (data.error === 'ValidationException') {
+                        data.message.forEach((error) => {
+                            toast.error(error.errors);
+                        });
+                    } else {
                         toast.error(data.message.toString());
                     }
-                    setErrors(null);
-                    setErrorResponse({
-                        error: data.error,
-                        message: data.message.toString(),
-                        statusCode: data.statusCode,
-                        path: data.path,
-                        date: data.date,
-                    });
-                    toast.error(data.message.toString());
-
                 });
 
             }).catch((err) => {

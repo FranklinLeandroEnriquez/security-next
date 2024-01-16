@@ -49,8 +49,7 @@ import validFunctions from '@/providers/ValidateFunctions';
 function FunctionUpdateForm({ params }: any) {
 
     const [functionn, setFunction] = useState<UpdateFunctionRequest>({} as UpdateFunctionRequest);
-    const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
+
     interface Module {
         id: number;
         name: string;
@@ -88,10 +87,12 @@ function FunctionUpdateForm({ params }: any) {
                         ip: ip.toString(),
                     }, token);
                     router.push("/dashboard/function");
-                    toast.error("Function not found");
+
+                    const errorData: ErrorResponse = await res.json();
+                    toast.error(errorData.message.toString());
                 }
             } catch (err) {
-                toast.error("Error to get function");
+                toast.error("Error while fetching function");
             }
         };
 
@@ -115,7 +116,9 @@ function FunctionUpdateForm({ params }: any) {
                         description: 'Failed to fetch modules',
                         ip: ip.toString(),
                     }, token);
-                    toast.error("An error has occurred");
+
+                    const errorData: ErrorResponse = await res.json();
+                    toast.error(errorData.message.toString());
                 }
             }).catch((err) => {
                 toast.error("An error has occurred");
@@ -150,21 +153,13 @@ function FunctionUpdateForm({ params }: any) {
                     description: 'Failed to update function',
                     ip: ip.toString(),
                 }, token);
-                const errorData: ValidationErrorResponse = await res.json();
-                if (errorData.error == 'ValidationException') {
-                    setErrorResponse(null);
-                    setErrors(errorData);
-                    toast.error(errorData.message.toString());
-                } else {
-                    setErrors(null);
-                    setErrorResponse({
-                        error: errorData.error,
-                        message: errorData.message.toString(),
-                        statusCode: errorData.statusCode,
-                        path: errorData.path,
-                        date: errorData.date,
+                const data: ValidationErrorResponse = await res.json();
+                if (data.error === 'ValidationException') {
+                    data.message.forEach((error) => {
+                        toast.error(error.errors);
                     });
-                    toast.error(errorData.message.toString());
+                } else {
+                    toast.error(data.message.toString());
                 }
             }
         } catch (error) {

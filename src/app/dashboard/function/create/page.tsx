@@ -50,9 +50,6 @@ import validFunctions from '@/providers/ValidateFunctions';
 
 function FunctionCreateFormpage() {
 
-    const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
-
     interface Module {
         id: number;
         name: string;
@@ -85,23 +82,15 @@ function FunctionCreateFormpage() {
                 ip: ip.toString(),
             }, token);
             const data: ValidationErrorResponse = await res.json();
-            if (data.error == 'ValidationException') {
-                setErrorResponse(null);
-                setErrors(data);
-                toast.error(data.message.toString());
-            } else {
-                setErrors(null);
-                setErrorResponse({
-                    error: data.error,
-                    message: data.message.toString(),
-                    statusCode: data.statusCode,
-                    path: data.path,
-                    date: data.date,
+            if (data.error === 'ValidationException') {
+                data.message.forEach((error) => {
+                    toast.error(error.errors);
                 });
+            } else {
                 toast.error(data.message.toString());
             }
         } catch (err) {
-            toast.error("Error to create function");
+            toast.error("Error while creating function");
         }
     };
 
@@ -126,7 +115,7 @@ function FunctionCreateFormpage() {
 
     const getModulesHandler = async () => {
         const ip = await getIp();
-        await getModules(token).then((res) => {
+        await getModules(token).then(async (res) => {
             if (res.status === 200) {
                 logAuditAction({
                     functionName: 'SEC-MODULES-READ',
@@ -144,7 +133,9 @@ function FunctionCreateFormpage() {
                     description: 'Failed to fetch modules',
                     ip: ip.toString(),
                 }, token);
-                toast.error('An error has occurred');
+
+                const errorData: ErrorResponse = await res.json();
+                toast.error(errorData.message.toString());
             }
 
         }).catch((err) => {

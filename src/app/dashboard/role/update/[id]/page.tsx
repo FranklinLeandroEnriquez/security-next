@@ -40,8 +40,7 @@ import validFunctions from '@/providers/ValidateFunctions'
 function RoleUpdateForm({ params }: any) {
 
     const [role, setRole] = useState<UpdateRoleRequest>({} as UpdateRoleRequest)
-    const [errors, setErrors] = useState<ValidationErrorResponse | null>(null)
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null)
+
 
     const router = useRouter()
     const { id } = params
@@ -71,7 +70,9 @@ function RoleUpdateForm({ params }: any) {
                         ip: ip.toString(),
                     }, token)
                     router.push("/dashboard/role");
-                    toast.error("Role not found");
+
+                    const errorData: ErrorResponse = await res.json();
+                    toast.error(errorData.message.toString());
                 }
             } catch (err) {
                 toast.error("Error to get role");
@@ -102,21 +103,14 @@ function RoleUpdateForm({ params }: any) {
                     description: 'Failed to update role',
                     ip: ip.toString(),
                 }, token)
+                
                 const data: ValidationErrorResponse = await res.json()
-                if (data.error == 'ValidationException') {
-                    setErrorResponse(null)
-                    setErrors(data)
-                    toast.error(data.message.toString())
+                if (data.error === 'ValidationException') {
+                    data.message.forEach((error) => {
+                        toast.error(error.errors);
+                    });
                 } else {
-                    setErrors(null)
-                    setErrorResponse({
-                        error: data.error,
-                        message: data.message.toString(),
-                        statusCode: data.statusCode,
-                        path: data.path,
-                        date: data.date
-                    })
-                    toast.error(data.message.toString())
+                    toast.error(data.message.toString());
                 }
             }
 
