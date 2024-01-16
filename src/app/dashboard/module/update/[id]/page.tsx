@@ -70,7 +70,10 @@ function ModuleUpdateFomr({ params }: any) {
                         ip: ip.toString(),
                     }, token);
                     router.push("/dashboard/module");
-                    toast.error("Module not found");
+
+                    const errorData: ErrorResponse = await res.json();
+                    toast.error(errorData.message.toString());
+
                 }
             } catch (err) {
                 toast.error("Error to get module");
@@ -102,19 +105,11 @@ function ModuleUpdateFomr({ params }: any) {
                     ip: ip.toString(),
                 }, token);
                 const data: ValidationErrorResponse = await res.json();
-                if (data.error == 'ValidationException') {
-                    setErrorResponse(null);
-                    setErrors(data);
-                    toast.error(data.message.toString());
-                } else {
-                    setErrors(null);
-                    setErrorResponse({
-                        error: data.error,
-                        message: data.message.toString(),
-                        statusCode: data.statusCode,
-                        path: data.path,
-                        date: data.date,
+                if (data.error === 'ValidationException') {
+                    data.message.forEach((error) => {
+                        toast.error(error.errors);
                     });
+                } else {
                     toast.error(data.message.toString());
                 }
             }
