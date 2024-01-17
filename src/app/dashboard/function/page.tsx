@@ -39,7 +39,7 @@ function Page() {
                     observation: `Function id: ${id}`,
                     ip: ip.toString(),
                 }, token);
-
+                toast.success('Function deleted successfully');
                 return getFunctionsHandler();
             } else {
                 await logAuditAction({
@@ -48,12 +48,8 @@ function Page() {
                     description: 'Failed to delete function',
                     ip: ip.toString(),
                 }, token);
+
                 const errorData: ErrorResponse = await res.json();
-                if (errorData.error === 'ErrorResponse') {
-                    setErrorResponse(null);
-                    setErrors(errorData);
-                    toast.error(errorData.message.toString());
-                }
                 toast.error(errorData.message.toString());
             }
         }).catch((err) => {
@@ -90,7 +86,9 @@ function Page() {
                     description: 'Failed to fetch functions',
                     ip: ip.toString(),
                 }, token);
-                toast.error('An error has occurred');
+                
+                const errorData: ErrorResponse = await res.json();
+                toast.error(errorData.message.toString());
 
             }
         }).catch((err) => {

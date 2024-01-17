@@ -13,6 +13,7 @@ import { MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/registry/new-york/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/Table/data-table-column-header";
 import IndeterminateCheckbox from "@/components/Table/IndeterminateCheckbox";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 export type Audit = {
     id: number;
@@ -213,5 +214,6 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                 return value.includes(row.getValue(id))
             },
         },
+
 
     ]

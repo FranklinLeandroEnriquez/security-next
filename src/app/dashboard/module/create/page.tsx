@@ -69,19 +69,11 @@ function ModuleCreateForm() {
             }, token);
 
             const data: ValidationErrorResponse = await res.json();
-            if (data.error == 'ValidationException') {
-                setErrorResponse(null);
-                setErrors(data);
-                toast.error(data.message.toString());
-            } else {
-                setErrors(null);
-                setErrorResponse({
-                    error: data.error,
-                    message: data.message.toString(),
-                    statusCode: data.statusCode,
-                    path: data.path,
-                    date: data.date,
+            if (data.error === 'ValidationException') {
+                data.message.forEach((error) => {
+                    toast.error(error.errors);
                 });
+            } else {
                 toast.error(data.message.toString());
             }
         } catch (err) {

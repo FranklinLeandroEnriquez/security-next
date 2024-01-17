@@ -19,8 +19,6 @@ import validFunctions from '@/providers/ValidateFunctions';
 
 function Page() {
     const [roles, setRoles] = useState<RoleResponse[]>([] as RoleResponse[]);
-    const [errors, setErrors] = useState<ErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
     const router = useRouter();
     const token = useAuthToken();
 
@@ -52,11 +50,6 @@ function Page() {
                     ip: ip.toString(),
                 }, token);
                 const errorData: ErrorResponse = await res.json();
-                if (errorData.error === 'ErrorResponse') {
-                    setErrorResponse(null);
-                    setErrors(errorData);
-                    toast.error(errorData.message.toString());
-                }
                 toast.error(errorData.message.toString());
             }
         }).catch((err) => {
@@ -94,7 +87,8 @@ function Page() {
                     ip: ip.toString(),
                 }, token);
 
-                toast.error('An error has occurred');
+                const errorData: ErrorResponse = await res.json();
+                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('An error has occurred');

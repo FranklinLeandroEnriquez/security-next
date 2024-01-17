@@ -18,6 +18,7 @@ import { useAuthToken } from '@/hooks/useAuthToken';
 import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions';
+import { ErrorResponse } from '@/types/shared/ValidationError';
 
 function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
@@ -51,7 +52,8 @@ function Page() {
                     ip: ip.toString(),
                 }, token);
 
-                toast.error('Error deleting module have functions');
+                const errorData: ErrorResponse = await res.json();
+                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('Error deleting module');
@@ -89,7 +91,8 @@ function Page() {
                     ip: ip.toString(),
                 }, token);
 
-                toast.error('An error has occurred');
+                const errorData: ErrorResponse = await res.json();
+                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('An error has occurred');

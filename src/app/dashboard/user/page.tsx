@@ -60,13 +60,7 @@ function Page() {
                     ip: ip.toString(),
                 }, token);
                 const errorData: ErrorResponse = await res.json();
-                if (errorData.error === 'ErrorResponse') {
-                    setErrorResponse(null);
-                    setErrors(errorData);
-                    toast.error(errorData.message.toString());
-                } else {
-                    toast.error(errorData.message.toString());
-                }
+                toast.error(errorData.message.toString());
             }
         });
     };
@@ -100,8 +94,9 @@ function Page() {
                     description: 'Failed to fetch users',
                     ip: ip.toString(),
                 }, token);
-                toast.error('An error has occurred');
 
+                const errorData: ErrorResponse = await res.json();
+                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('An error has occurred');

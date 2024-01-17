@@ -37,11 +37,6 @@ import { toast } from "sonner";
 import validFunctions from '@/providers/ValidateFunctions';
 
 function UserCreateForm() {
-
-    const [user, setUser] = useState<CreateUserRequest>({} as CreateUserRequest);
-    const [errors, setErrors] = useState<ValidationErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
-
     const router = useRouter();
     const token = useAuthToken();
 
@@ -68,19 +63,11 @@ function UserCreateForm() {
                 }, token);
 
                 await res.json().then((data: ValidationErrorResponse) => {
-                    if (data.error == 'ValidationException') {
-                        setErrorResponse(null);
-                        setErrors(data);
-                        toast.error(data.message.toString());
-                    } else {
-                        setErrors(null);
-                        setErrorResponse({
-                            error: data.error,
-                            message: data.message.toString(),
-                            statusCode: data.statusCode,
-                            path: data.path,
-                            date: data.date,
+                    if (data.error === 'ValidationException') {
+                        data.message.forEach((error) => {
+                            toast.error(error.errors);
                         });
+                    } else {
                         toast.error(data.message.toString());
                     }
                 });
@@ -102,12 +89,12 @@ function UserCreateForm() {
         email: z.string().email({
             message: "Email is not valid.",
         }),
-        dni: z.string().min(10, {
-            message: "DNI must be at least 10 characters.",
-        }),
-        password: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
-        }),
+        dni: z.string()
+            .min(10, {
+                message: "DNI must be at least 10 characters.",
+            }).max(15, {
+                message: "DNI must be at most 15 characters."
+            }),
     })
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -116,7 +103,6 @@ function UserCreateForm() {
             username: "",
             email: "",
             dni: "",
-            password: "",
         },
     })
 
@@ -176,19 +162,6 @@ function UserCreateForm() {
                                             <FormLabel>DNI</FormLabel>
                                             <FormControl>
                                                 <Input placeholder="Enter your DNI" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Password</FormLabel>
-                                            <FormControl>
-                                                <Input type="password" placeholder="Enter your password" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

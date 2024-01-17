@@ -19,6 +19,8 @@ import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
 import validFunctions from '@/providers/ValidateFunctions';
 import { getRolesOfUserHandler } from "@/handlers/userRolesHandler"
+import exp from "constants";
+import { ErrorResponse } from "@/types/shared/ValidationError";
 
 function AssignRole() {
     const [users, setUsers] = useState<UserResponse[]>([]);
@@ -49,7 +51,9 @@ function AssignRole() {
                 description: 'Failed to fetch users',
                 ip: ip.toString(),
             }, token);
-            toast.error('An error has occurred');
+
+            const errorData: ErrorResponse = await res.json();
+            toast.error(errorData.message.toString());
         }
     }
 
@@ -86,7 +90,8 @@ function AssignRole() {
                 ip: ip.toString(),
             }, token);
         } else {
-            toast.error('An error has occurred');
+            const errorData: ErrorResponse = await res.json();
+            toast.error(errorData.message.toString());
         }
     }
 
@@ -138,8 +143,9 @@ function AssignRole() {
                         description: 'Failed to assign roles to user',
                         ip: ip.toString(),
                     }, token);
-                    const errorData = await res.json();
-                    toast.error('Error assigning roles');
+
+                    const errorData: ErrorResponse = await res.json();
+                    toast.error(errorData.message.toString());
                 }
             } catch (err) {
                 toast.error('An error has occurred');
