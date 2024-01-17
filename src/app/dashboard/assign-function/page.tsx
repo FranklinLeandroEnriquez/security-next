@@ -20,6 +20,7 @@ import { toast } from "sonner"
 import { getIp, logAuditAction } from "@/services/Audit/AuditService"
 import { useAuthToken } from "@/hooks/useAuthToken"
 import validFunctions from '@/providers/ValidateFunctions';
+import { ErrorResponse } from "@/types/shared/ValidationError"
 
 function AssignFunction() {
     const [roles, setRoles] = useState<RoleResponse[]>([])
@@ -45,7 +46,8 @@ function AssignFunction() {
                 ip: ip.toString(),
             }, token);
         } else {
-            toast.error('An error has occurred')
+            const errorData: ErrorResponse = await res.json();
+            toast.error(errorData.message.toString());
         }
     }
 
@@ -64,7 +66,8 @@ function AssignFunction() {
                 ip: ip.toString(),
             }, token);
         } else {
-            toast.error('An error has occurred')
+            const errorData: ErrorResponse = await res.json();
+            toast.error(errorData.message.toString());
         }
     }
 
@@ -82,7 +85,8 @@ function AssignFunction() {
                 ip: ip.toString(),
             }, token);
         } else {
-            toast.error('An error has occurred')
+            const errorData: ErrorResponse = await res.json();
+            toast.error(errorData.message.toString());
         }
     }
 
@@ -134,8 +138,8 @@ function AssignFunction() {
                         description: 'Failed to assign functions to role',
                         ip: ip.toString(),
                     }, token);
-                    const errorData = await res.json();
-                    toast.error("Error assigning functions")
+                    const errorData: ErrorResponse = await res.json();
+                    toast.error(errorData.message.toString());
                 }
             } catch (err) {
                 toast.error("An error has occurred")
