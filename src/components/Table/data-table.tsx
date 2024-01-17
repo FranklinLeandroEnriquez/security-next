@@ -48,6 +48,8 @@ interface DataTableProps<TData, TValue> {
     onCreate?: () => void
     canCreate?: boolean
     onRowSelectionChange?: (rows: Row<TData>[]) => void;
+    onGenerateReport?: (ids: number[]) => void;
+    reportData?: any[];
 }
 
 // ESTO ES PARA MANEJAR GENERADOR DE INFORMES
@@ -76,6 +78,8 @@ export function DataTable<TData, TValue>({
     onCreate,
     canCreate: canCreate,
     onRowSelectionChange,
+    onGenerateReport,
+    reportData
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -83,7 +87,7 @@ export function DataTable<TData, TValue>({
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
     const [isPdfPreviewOpen, setPdfPreviewOpen] = useState(false);
-    const [reportData, setReportData] = React.useState<TData[]>([]);
+    // const [reportData, setReportData] = React.useState<TData[]>([]);
     const table = useReactTable({
         data,
         columns,
@@ -117,8 +121,13 @@ export function DataTable<TData, TValue>({
         return report;
     };
 
+    const rowData: Row<TData>[] = table.getRowModel().rows.map(row => ({
+        isSelected: row.getIsSelected(),
+        data: row.original
+    }));
+
     //Generar cvs
-    const exportData = data.map((row) =>
+    const exportData = handleGenerateReport(rowData).map((row) =>
         columns.reduce((acc: Record<string, any>, column) => {
             const accessorKey = (column as any).accessorKey;
             if (accessorKey && accessorKey !== 'actions') {
@@ -147,16 +156,12 @@ export function DataTable<TData, TValue>({
                     <DataTableToolbar table={table} />
                 </div>
                 <Button onClick={() => {
-                    const rows: Row<TData>[] = table.getRowModel().rows.map(row => ({
-                        isSelected: row.getIsSelected(),
-                        data: row.original
-                    }));
-                    const report = handleGenerateReport(rows);
-                    setReportData(report);
+                    const selectedIds = rowData.filter(row => row.isSelected).map(row => (row.data as { id: string }).id);
+                    onGenerateReport && onGenerateReport(selectedIds.map(id => parseInt(id, 10)));
                 }}>
                     <PDFPreviewDialog
                         title={moduleName}
-                        data={reportData}
+                        data={reportData || []}
                         description={`${description} Report`}
                         open={isPdfPreviewOpen}
                         onOpenChange={setPdfPreviewOpen}
