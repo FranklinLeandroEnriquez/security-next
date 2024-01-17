@@ -6,6 +6,7 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from "@/types/shared/ValidationError"
 import { deleteFunction, getFunctions } from "@/services/Function/FunctionService";
 import { FunctionResponse } from "@/types/Function/FunctionResponse";
+// import { ModuleResponse } from "@/types/Module/ModuleResponse";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useContext } from "react";
 import Header from '@/components/Header';
@@ -21,6 +22,7 @@ function Page() {
     const [functions, setFunctions] = useState<FunctionResponse[]>([] as FunctionResponse[]);
     const [errors, setErrors] = useState<ErrorResponse | null>(null);
     const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
+    const [reportData, setReportData] = useState<any[]>([] as any[]);
     const router = useRouter();
     const token = useAuthToken();
 
@@ -97,6 +99,28 @@ function Page() {
         });
     }
 
+    const groupByFunctionWithIds = async (ids: number[]) => {
+        await getFunctionsHandler();
+        const filteredFunctions = functions.filter(func => ids.includes(func.id));
+        return filteredFunctions.map(func => ({
+            id: func.id,
+            name: func.name,
+            module: func.module.name,
+        }));
+    };
+    
+    const handleGenerateReport = async (ids: number[]) => {
+        const functionDataWithIds = await groupByFunctionWithIds(ids);
+        const report = functionDataWithIds.map((functionData) => {
+            return {
+                functionId: functionData.id,
+                functionName: functionData.name,
+                moduleName: functionData.module,
+            };
+        });
+        setReportData(report);
+    }
+
     useEffect(() => {
         getFunctionsHandler();
     }, []);
@@ -112,6 +136,8 @@ function Page() {
                     data={functions}
                     moduleName='Functions'
                     description='Functions of the system'
+                    onGenerateReport={handleGenerateReport}
+                    reportData={reportData}
                 />
             </MaxWidthWrapper>
         </>
