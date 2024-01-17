@@ -55,7 +55,8 @@ function Page() {
                     <DataTable<Audit, string>
                         columns={columns(updateRoleHandler, deleteRoleHandler)}
                         data={audits}
-                        filteredColumn='user'
+                        moduleName="Audit Trails"
+                        description="List of all audit trails"
                     />
                 </MaxWidthWrapper>
             </div>

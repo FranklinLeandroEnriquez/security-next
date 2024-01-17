@@ -8,7 +8,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 
 import { Checkbox } from "@/components/registry/new-york/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/Table/data-table-column-header";
