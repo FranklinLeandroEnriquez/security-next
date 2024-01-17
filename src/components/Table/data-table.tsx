@@ -1,4 +1,5 @@
 import { CSVLink } from 'react-csv';
+import PDFPreviewDialog from '@/components/ui/ModalReport';
 import {
     ColumnDef,
     flexRender,
@@ -20,16 +21,16 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
-import React from "react"
-import { useUserFunctions } from '@/contexts/UserFunctionProvider';
+import React, { useState } from "react"
+import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
+import { PDFGenerator } from "@/components/Table/PDFGeneratorProps"
 
 import {
     RankingInfo,
     rankItem,
-    compareItems,
 } from '@tanstack/match-sorter-utils'
 
 declare module '@tanstack/table-core' {
@@ -43,22 +44,26 @@ declare module '@tanstack/table-core' {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    moduleName: string
+    description: string
     onCreate?: () => void
-    filteredColumn: string
     canCreate?: boolean
-    canUpdate?: boolean
-    canDelete?: boolean
-    canRead?: boolean
 }
+
+// ESTO ES PARA MANEJAR GENERADOR DE INFORMES
+interface Row<T> {
+    isSelected: boolean;
+    data: T;
+}
+
+
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     // Rank the item
     const itemRank = rankItem(row.getValue(columnId), value)
-
     // Store the itemRank info
     addMeta({
         itemRank,
     })
-
     // Return if the item should be filtered in/out
     return itemRank.passed
 }
@@ -66,16 +71,16 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 export function DataTable<TData, TValue>({
     columns,
     data,
+    moduleName,
+    description,
     onCreate,
-    filteredColumn,
     canCreate: canCreate,
-    canUpdate: canUpdate,
-    canDelete: canDelete
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
+    const [rowSelection, setRowSelection] = React.useState({})
     const table = useReactTable({
         data,
         columns,
@@ -91,13 +96,19 @@ export function DataTable<TData, TValue>({
         globalFilterFn: fuzzyFilter,
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
+        onRowSelectionChange: setRowSelection,
         state: {
             columnFilters,
             globalFilter,
             sorting,
+            rowSelection,
         },
-        initialState: { pagination: { pageSize: 7 } },
+        initialState: {
+            pagination: { pageSize: 5 },
+        },
     })
+
+    //Generar cvs
     const exportData = data.map((row) =>
         columns.reduce((acc: Record<string, any>, column) => {
             const accessorKey = (column as any).accessorKey;
@@ -111,39 +122,40 @@ export function DataTable<TData, TValue>({
             return acc;
         }, {})
     );
+    //fin generar cvs
 
     return (
         <>
             <div className="flex justify-between mb-3">
-                {/* Global filter */}
-                <div>
-                    <Input
-                        placeholder="Global Filter..."
-                        value={globalFilter}
-                        onChange={(event) => setGlobalFilter(event.target.value)}
-                        className="max-w-sm"
-                    />
-                </div>
+                <DataTableToolbar table={table} />
+
+                {/* Reporte */}
+                <PDFGenerator
+                    table={table}
+                    moduleName={moduleName}
+                    description={description}
+                />
                 {/* Crear */}
                 {onCreate && canCreate ?
-                    (<div className="">
+                    (<div className=" flex justify-center items-center">
+                        {/* Enlace a CSV */}
+                        <div className='mr-3'>
+                            <CSVLink data={exportData} filename="table_data.csv" separator=';'>
+                                <Button variant='ghost'>Export to CSV</Button>
+                            </CSVLink>
+                        </div>
+                        {/* table */}
                         <Button onClick={onCreate}>
                             <span> Create </span>
                         </Button>
                     </div>)
                     : ""
                 }
-
             </div>
-            {/* Enlace a CSV */}
-            <CSVLink data={exportData} filename="table_data.csv" separator=';'>
-                <Button variant='link'>Export to CSV</Button>
-            </CSVLink>
-            {/* table */}
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
-
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -187,7 +199,6 @@ export function DataTable<TData, TValue>({
             </div>
             {/* pagination */}
             <DataTablePagination table={table} />
-
         </>
     )
 }

@@ -1,11 +1,17 @@
 'use client';
 
-import { DataTable } from '@/components/data-table'
+import { DataTable } from '@/components/Table/data-table'
 import { useColumns, User } from '@/types/User/columns'
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteUser, getUsers } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
+//Obtener los roles del usuario
+import { RoleResponse } from "@/types/Role/RoleResponse";
+import { getRolesOfUser } from "@/services/User/UserService";
+import { getRoles } from "@/services/Role/RoleService";
+import { getRolesOfUserHandler } from "@/handlers/userRolesHandler"
+
 import { useRouter } from 'next/navigation';
 import { use, useEffect, useState } from "react";
 import Header from '@/components/Header';
@@ -16,8 +22,16 @@ import validFunctions from '@/providers/ValidateFunctions'
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 
+type Row = {
+    isSelected: boolean;
+    user: User;
+}
+
 function Page() {
     const [users, setUsers] = useState<UserResponse[]>([]);
+    const [errors, setErrors] = useState<ErrorResponse | null>(null);
+    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
+
     const router = useRouter();
     const token = useAuthToken();
 
@@ -48,7 +62,7 @@ function Page() {
                 const errorData: ErrorResponse = await res.json();
                 toast.error(errorData.message.toString());
             }
-        }); // Aquí es donde faltaba la llave de cierre
+        });
     };
 
     const updateUserHandler = async (id: number) => {
@@ -93,7 +107,7 @@ function Page() {
         getUsersLocal();
     }, []);
 
-
+    //Obtener los roles del usuario
 
     return (
         <>
@@ -101,11 +115,13 @@ function Page() {
             <div>
                 <MaxWidthWrapper className='my-5'>
                     <DataTable<User, string>
+                        moduleName="Users"
+                        description="Users of the system"
                         canCreate={isFunctionCreateUser}
                         onCreate={createUserHandler}
                         columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
-                        filteredColumn='username' />
+                    />
                 </MaxWidthWrapper>
             </div>
         </>

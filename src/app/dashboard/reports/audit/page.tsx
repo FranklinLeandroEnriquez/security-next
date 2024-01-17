@@ -5,7 +5,7 @@ import { getAudits } from "@/services/Audit/AuditService";
 import { AuditResponse } from "@/types/Audit/AuditResponse";
 import { useEffect, useState } from "react"
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { DataTable } from "@/components/data-table";
+import { DataTable } from "@/components/Table/data-table";
 import { Audit, columns } from "@/types/Audit/columns";
 import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
@@ -55,7 +55,8 @@ function Page() {
                     <DataTable<Audit, string>
                         columns={columns(updateRoleHandler, deleteRoleHandler)}
                         data={audits}
-                        filteredColumn='user'
+                        moduleName="Audit Trails"
+                        description="List of all audit trails"
                     />
                 </MaxWidthWrapper>
             </div>
