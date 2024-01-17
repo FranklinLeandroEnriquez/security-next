@@ -108,14 +108,14 @@ export function DataTablePagination<TData>({
                 </div>
 
             </div>
-            <div>
+            {/* <div>
                 <label>Row Selection State:</label>
                 <ul>
                     {table.getSelectedRowModel().flatRows.map((el) => {
                         return <li key={el.id}>{JSON.stringify(el.original)}</li>
                     })}
                 </ul>
-            </div>
+            </div> */}
         </>
     )
 }
