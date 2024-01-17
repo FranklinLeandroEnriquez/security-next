@@ -142,7 +142,7 @@ function Page() {
         }, {} as Record<number, { module: ModuleResponse, functions: FunctionResponse[] }>);
         return Object.values(grouped);
     };
-    
+
     const handleGenerateReport = async (ids: number[]) => {
         const moduleDataWithIds = await groupByModuleWithIds(ids);
         const report = moduleDataWithIds.map((moduleData) => {
@@ -169,8 +169,8 @@ function Page() {
                     data={modules}
                     moduleName='Modules'
                     description='Modules of the system'
-                    onGenerateReport={handleGenerateReport}
-                    reportData={reportData}
+                // onGenerateReport={handleGenerateReport}
+                // reportData={reportData}
                 />
             </MaxWidthWrapper>
         </>

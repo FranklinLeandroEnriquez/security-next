@@ -106,7 +106,7 @@ function Page() {
             module: func.module.name,
         }));
     };
-    
+
     const handleGenerateReport = async (ids: number[]) => {
         const functionDataWithIds = await groupByFunctionWithIds(ids);
         const report = functionDataWithIds.map((functionData) => {
@@ -134,8 +134,8 @@ function Page() {
                     data={functions}
                     moduleName='Functions'
                     description='Functions of the system'
-                    onGenerateReport={handleGenerateReport}
-                    reportData={reportData}
+                // onGenerateReport={handleGenerateReport}
+                // reportData={reportData}
                 />
             </MaxWidthWrapper>
         </>

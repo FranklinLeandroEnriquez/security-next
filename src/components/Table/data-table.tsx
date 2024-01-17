@@ -48,9 +48,6 @@ interface DataTableProps<TData, TValue> {
     description: string
     onCreate?: () => void
     canCreate?: boolean
-    onRowSelectionChange?: (rows: Row<TData>[]) => void;
-    onGenerateReport?: (ids: number[]) => void;
-    reportData?: any[];
 }
 
 // ESTO ES PARA MANEJAR GENERADOR DE INFORMES
@@ -78,16 +75,12 @@ export function DataTable<TData, TValue>({
     description,
     onCreate,
     canCreate: canCreate,
-    onRowSelectionChange,
-    onGenerateReport,
-    reportData
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
-    const [isPdfPreviewOpen, setPdfPreviewOpen] = useState(false);
     const table = useReactTable({
         data,
         columns,
