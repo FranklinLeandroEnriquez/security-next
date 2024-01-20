@@ -99,6 +99,24 @@ export function DataTableToolbar<TData>({
           />
         )}
 
+        {getColumn("functionName") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("functionName")}
+            title="Function"
+            options={
+              table.getCoreRowModel().rows.map((row: any) => row.original["functionName"])
+                .filter((user: string, index: number, self: string[]) =>
+                  self.findIndex(u => u === user) === index)
+                .map((user: string) => {
+                  return {
+                    label: user,
+                    value: user,
+                  }
+                })
+            }
+          />
+        )}
+
         {isFiltered && (
           <Button
             variant="ghost"
