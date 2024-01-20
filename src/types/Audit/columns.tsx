@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/registry/new-york/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/Table/data-table-column-header";
 import IndeterminateCheckbox from "@/components/Table/IndeterminateCheckbox";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { AuditResponse } from "./AuditResponse";
 
 export type Audit = {
     id: number;
@@ -117,15 +118,15 @@ export const columns = (handleUpdate: (id: number) => void, handleDelete:
                 <DataTableColumnHeader column={column} title="User" />
             ),
             cell: ({ row }) => {
-                const id = row.original
+                const audit = row.original
                 return (
                     <span className="max-w-[500px] truncate font-normal">
-                        {String(row.getValue("user"))}
+                        {audit.user}
                     </span>
                 )
             },
             filterFn: (row, id, value) => {
-                return (row.getValue(id) as string).includes(value)
+                return value.includes(row.getValue(id))
             },
         },
         {
