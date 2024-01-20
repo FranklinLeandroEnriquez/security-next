@@ -141,9 +141,8 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete: (id
                     <span>{module_.module.name}</span>
                 )
             },
-            // no funciona
             filterFn: (row, id, value) => {
-                return (row.getValue(id) as string).includes(value)
+                return value.includes((row.getValue(id) as ModuleResponse).name)
             },
 
         },

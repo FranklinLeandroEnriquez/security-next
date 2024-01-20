@@ -14,6 +14,7 @@ import {
   rankItem,
 } from '@tanstack/match-sorter-utils'
 import { Input } from "@/components/registry/new-york/ui/input"
+import { ModuleResponse } from "@/types/Module/ModuleResponse"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -52,6 +53,26 @@ export function DataTableToolbar<TData>({
             options={statuses}
           />
         )}
+
+        {table.getColumn("module") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("module")}
+            title="Module"
+            options={
+              table.getCoreRowModel().rows.map((row: any) => row.original["module"])
+                .filter((module: ModuleResponse, index: number, self: ModuleResponse[]) =>
+                  self.findIndex(m => m.name === module.name) === index)
+                .map((module: ModuleResponse) => {
+                  return {
+                    label: module.name,
+                    value: module.name,
+                  }
+                })
+
+            }
+          />
+        )}
+        
         {isFiltered && (
           <Button
             variant="ghost"
