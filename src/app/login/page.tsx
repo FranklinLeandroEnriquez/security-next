@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { ErrorResponse, ValidationErrorResponse } from "@/types/shared/ValidationError"
 import { Toaster } from "@/components/ui/sonner"
 import { useRouter } from "next/navigation";
+import { getIp, logAuditAction } from "@/services/Audit/AuditService"
 
 
 export default function Home() {
@@ -51,20 +52,30 @@ export default function Home() {
             toast.error(data.message.toString());
           }
         })
-
       }
       else {
-        await res.json().then((data: AuthResponse) => {
+        await res.json().then(async (data: AuthResponse) => {
           if (!data.functions.includes("SEC-LOGIN")) {
             toast.error("You don't have permission to access");
             return;
           }
           else {
             saveAuthResponse(data)
+            const token = data.token;
+            const ip = await getIp();
+            await logAuditAction({
+              functionName: 'SEC-LOGIN',
+              action: 'LOGIN',
+              description: 'Login successfully',
+              ip: ip.toString(),
+            }, token);
+
             return router.push("/dashboard/home");
           }
 
         })
+
+
       }
     })
   }
