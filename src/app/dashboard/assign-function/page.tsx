@@ -20,6 +20,7 @@ import { toast } from "sonner"
 import { getIp, logAuditAction } from "@/services/Audit/AuditService"
 import { useAuthToken } from "@/hooks/useAuthToken"
 import validFunctions from '@/providers/ValidateFunctions';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import { ErrorResponse } from "@/types/shared/ValidationError"
 
 function AssignFunction() {
@@ -30,6 +31,12 @@ function AssignFunction() {
 
     const router = useRouter()
     const token = useAuthToken()
+
+    const userFunctions = useUserFunctions();
+    const isAssingUpdate = userFunctions?.includes('SEC-FUNCTIONS-TO-ROLE-UPDATE') || false;
+    const isAssignRead = userFunctions?.includes('SEC-FUNCTIONS-TO-ROLE-READ') || false;
+    const isRoleRead = userFunctions?.includes('SEC-ROLES-READ') || false;
+    const isFunctionRead = userFunctions?.includes('SEC-FUNCTIONS-READ') || false;
 
     const getRolesHandler = async () => {
         const ip = await getIp()
@@ -171,18 +178,18 @@ function AssignFunction() {
         <>
             <Header title="Assing Functions" />
             <MaxWidthWrapper className="mt-8">
-                <CustomSelect
+                {isRoleRead && ( <CustomSelect
                     options={[
                         { label: "Select a role...", value: 0 },
                         ...roles.map((role) => ({ label: role.name, value: role.id }))
                     ]}
                     onSelect={(selectedValue) => handleRoleChange(selectedValue)}
                     placeholder="Select a role..."
-                />
+                />)}               
 
                 {selectedRole && (
                     <div className="flex space-x-4 mt-4">
-                        <div className="flex-1 p-4 border rounded">
+                        {isFunctionRead && (<div className="flex-1 p-4 border rounded">
                             <label>Available Functions:</label>
                             <div className="max-h-72 overflow-y-auto border p-4 mb-4">
                                 {groupByModule(availableFunctions).map((group, index) => (
@@ -202,9 +209,9 @@ function AssignFunction() {
                                     </Accordion>
                                 ))}
                             </div>
-                        </div>
+                        </div>)}
 
-                        <div className="flex-1 p-4 border rounded">
+                        {isAssignRead && ( <div className="flex-1 p-4 border rounded">
                             <label>Role Functions:</label>
                             <ScrollableCheckboxList<Function>
                                 items={roleFunctions}
@@ -218,13 +225,13 @@ function AssignFunction() {
                                     </>
                                 )}
                             />
-                        </div>
+                        </div>)}
                     </div>
                 )}
                 <div className="flex justify-center">
-                    <Button onClick={handleAssignFunctions} className="mt-2 w-1/3">
+                    {isAssingUpdate && (<Button onClick={handleAssignFunctions} className="mt-2 w-1/3">
                         Assign
-                    </Button>
+                    </Button>)}
                 </div>
             </MaxWidthWrapper>
 
