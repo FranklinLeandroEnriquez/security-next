@@ -48,6 +48,8 @@ interface DataTableProps<TData, TValue> {
     description: string
     onCreate?: () => void
     canCreate?: boolean
+    onSelectionChange?: (selectedRows: number[]) => void;
+    reportRelationData?: TData[];
 }
 
 // ESTO ES PARA MANEJAR GENERADOR DE INFORMES
@@ -75,12 +77,15 @@ export function DataTable<TData, TValue>({
     description,
     onCreate,
     canCreate: canCreate,
+    onSelectionChange,
+    reportRelationData,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
+    const [generatePdfClicked, setGeneratePdfClicked] = React.useState(false);
     const table = useReactTable({
         data,
         columns,
@@ -124,6 +129,18 @@ export function DataTable<TData, TValue>({
     );
     //fin generar cvs
 
+    React.useEffect(() => {
+        if (onSelectionChange) {
+            const selectedRowIds = Object.entries(rowSelection)
+                .filter(([key, value]) => value)
+                .map(([key]) => (data[parseInt(key)] as any).id);
+            if (selectedRowIds.length > 0) {
+                onSelectionChange(selectedRowIds);
+            }
+        }
+        setGeneratePdfClicked(false);
+    }, [rowSelection]);
+
     return (
         <>
             <div className="flex justify-between mb-3">
@@ -134,7 +151,10 @@ export function DataTable<TData, TValue>({
                     table={table}
                     moduleName={moduleName}
                     description={description}
+                    reportRelationData={reportRelationData}
+                    setGeneratePdfClicked={setGeneratePdfClicked}
                 />
+
                 {/* Crear */}
                 {onCreate && canCreate ?
                     (<div className=" flex justify-center items-center">

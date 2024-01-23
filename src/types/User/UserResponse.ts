@@ -1,3 +1,5 @@
+import { RoleResponse } from "../Role/RoleResponse";
+
 export interface UserResponse {
     id: number;
     username: string;
@@ -5,4 +7,5 @@ export interface UserResponse {
     dni: string;
     status: boolean;
     password: string;
+    roles?: RoleResponse[];
 }

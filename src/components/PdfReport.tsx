@@ -90,20 +90,20 @@ interface PDFComponentProps {
 const PDFComponent: React.FC<PDFComponentProps> = ({ title, data, description }) => {
     const renderData = (data: Record<string, any>, depth = 0) => {
         return Object.entries(data).map(([key, value]) => {
+            const isKeyANumber = !isNaN(Number(key));
             if (typeof value === 'object' && value !== null) {
                 return (
                     <React.Fragment key={key}>
-                        <Text style={{ ...styles.item, marginLeft: depth * 20 }}>
-                            <Text style={styles.key}>{key}: </Text>
-                        </Text>
+                        {!isKeyANumber && <Text style={{ ...styles.item, marginLeft: depth * 20, fontSize: 14, marginBottom: 10 }}><Text style={styles.key}>{key}: </Text></Text>}
                         {renderData(value, depth + 1)}
+                        <View style={{ marginTop: 10 }} />
                     </React.Fragment>
                 );
             } else {
                 return (
-                    <Text key={key} style={{ ...styles.item, marginLeft: depth * 20 }}>
-                        <Text style={styles.key}>{key}: </Text>
-                        {value}
+                    <Text key={key} style={{ ...styles.item, marginLeft: depth * 20, fontSize: 12, marginBottom: 5 }}>
+                        {!isKeyANumber && <Text style={styles.key}>{key}: </Text>}
+                        {typeof value === 'boolean' ? value.toString() : value}
                     </Text>
                 );
             }

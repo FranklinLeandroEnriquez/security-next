@@ -15,10 +15,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import React from "react"
+import React from 'react';
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>
+    id?: number;
 }
 
 
@@ -58,9 +59,9 @@ export function DataTablePagination<TData>({
                         </Select>
                         <br />
                         {/* <div>
-                        {Object.keys(rowSelection).length} of{' '}
-                        {table.getPreFilteredRowModel().rows.length} Total Rows Selected
-                    </div> */}
+                            {Object.keys(rowSelection).length} of{' '}
+                            {table.getPreFilteredRowModel().rows.length} Total Rows Selected
+                        </div> */}
                         <hr />
                     </div>
                     <div className="flex w-[100px] items-center justify-center text-sm font-medium">
@@ -108,14 +109,14 @@ export function DataTablePagination<TData>({
                 </div>
 
             </div>
-            {/* <div>
+            <div>
                 <label>Row Selection State:</label>
                 <ul>
                     {table.getSelectedRowModel().flatRows.map((el) => {
-                        return <li key={el.id}>{JSON.stringify(el.original)}</li>
+                        return <li key={(el.original as any).id}>{JSON.stringify((el.original as any).id)}</li>
                     })}
                 </ul>
-            </div> */}
+            </div>
         </>
     )
 }
