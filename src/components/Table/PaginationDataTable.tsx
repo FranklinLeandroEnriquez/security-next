@@ -22,7 +22,6 @@ interface DataTablePaginationProps<TData> {
     id?: number;
 }
 
-
 export function DataTablePagination<TData>({
     table,
 }: DataTablePaginationProps<TData>) {
@@ -31,7 +30,6 @@ export function DataTablePagination<TData>({
         <>
             <div className="mb-4 mt-4 flex items-center justify-between px-2">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    {/* {Object.keys(rowSelection).length} of{' '} */}
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
                     {table.getFilteredRowModel().rows.length} row(s) selected.
                 </div>
@@ -57,12 +55,6 @@ export function DataTablePagination<TData>({
                                 ))}
                             </SelectContent>
                         </Select>
-                        <br />
-                        {/* <div>
-                            {Object.keys(rowSelection).length} of{' '}
-                            {table.getPreFilteredRowModel().rows.length} Total Rows Selected
-                        </div> */}
-                        <hr />
                     </div>
                     <div className="flex w-[100px] items-center justify-center text-sm font-medium">
                         Page {table.getState().pagination.pageIndex + 1} of{" "}
@@ -109,14 +101,14 @@ export function DataTablePagination<TData>({
                 </div>
 
             </div>
-            <div>
+            {/* <div>
                 <label>Row Selection State:</label>
                 <ul>
                     {table.getSelectedRowModel().flatRows.map((el) => {
                         return <li key={(el.original as any).id}>{JSON.stringify((el.original as any).id)}</li>
                     })}
                 </ul>
-            </div>
+            </div> */}
         </>
     )
 }
