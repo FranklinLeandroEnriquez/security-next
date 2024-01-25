@@ -19,14 +19,13 @@ import { useAuthToken } from '@/hooks/useAuthToken';
 import React from 'react';
 import { RoleResponse } from '@/types/Role/RoleResponse';
 
-import { useReports } from '@/types/Reports/shared/content'
-
 import { FunctionResponse } from '@/types/Function/FunctionResponse';
 import { getFunctionsOfRole } from '@/services/Role/RoleService';
+import AllUsers from '@/types/Reports/users/allUsers';
 
 function Page() {
     const [users, setUsers] = useState<UserResponse[]>([]);
-    const [ids, setIds] = useState<number[]>([]);
+
 
     const router = useRouter();
     const token = useAuthToken();
@@ -136,19 +135,13 @@ function Page() {
         }
     }
 
-    // Llama a useReports en el cuerpo principal del componente
-    const reports = useReports(ids);
-
-    const handleSelectionChange = (selectedIds: number[]) => {
-        // Actualiza el estado ids cuando cambian las selecciones
-        setIds(selectedIds);
-    };
 
     useEffect(() => {
         getUsersLocal();
     }, []);
 
     //Obtener los roles del usuario
+    
 
     return (
         <>
@@ -162,7 +155,10 @@ function Page() {
                         onCreate={createUserHandler}
                         columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
-                        onGenerateReport={handleSelectionChange}
+                        reports={[{
+                            title: "All User Report",
+                            type: AllUsers
+                        }]}
                     />
                 </MaxWidthWrapper>
             </div>

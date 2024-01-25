@@ -19,7 +19,7 @@ import { DataTablePagination } from "./PaginationDataTable"
 import React, { useState } from "react"
 import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
 
-import { Report } from "@/types/Reports/shared/Report"
+import { ReporType, Report } from "@/types/Reports/shared/Report"
 
 import {
     RankingInfo,
@@ -43,7 +43,7 @@ interface DataTableProps<TData, TValue> {
     onCreate?: () => void
     canCreate?: boolean
     onGenerateReport?: (ids: number[]) => void;
-    reports?: Report[]
+    reports?: Report<TData>[]
     // reportData: any[];
 }
 
@@ -68,7 +68,6 @@ export function DataTable<TData, TValue>({
     description,
     onCreate,
     canCreate: canCreate,
-    onGenerateReport,
     reports,
     // reportData,
 }: DataTableProps<TData, TValue>) {
@@ -121,7 +120,7 @@ export function DataTable<TData, TValue>({
         }, {})
     );
     //fin generar cvs
-    console.log("array de reporte", reports)
+    // console.log("array de reporte", reports)
 
     return (
         <>
@@ -131,20 +130,17 @@ export function DataTable<TData, TValue>({
                 {/* Reporte */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button onClick={() => {
-                            const selectedIds = table.getSelectedRowModel().flatRows.map((row) => {
-                                const id = (row.original as any).id;
-                                return id;
-                            });
-                            onGenerateReport && onGenerateReport(selectedIds);
-                        }}>
+                        <Button>
                             Generar Reporte
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        {reports?.map((report, index) => (
+                        {reports?.map((report: Report<TData>, index) => (
                             <DropdownMenuItem key={index} onSelect={() => {
-                                setSelectedReport(report.type);
+                                const reportComponent = <report.type table={table}/>
+                                setSelectedReport(reportComponent);
+                                setPdfPreviewOpen(true);
+
                             }}>
                                 {report.title}
                             </DropdownMenuItem>

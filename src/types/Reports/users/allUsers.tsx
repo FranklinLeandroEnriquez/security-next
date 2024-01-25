@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
 import { UserResponse } from '@/types/User/UserResponse';
 import { getUser } from '@/services/User/UserService';
@@ -82,9 +82,22 @@ const styles = StyleSheet.create({
     },
 });
 
-const AllUsers: React.FC<ReporType> = ({ id }) => {
+export function AllUsers<TData>({
+    table,
+}: ReporType<TData>) {
+
+    const [users, setUsers] = React.useState<UserResponse[]>([]);
+    const [loading, setLoading] = React.useState(true);
 
     const token = useAuthToken();
+
+    const getIdSelectedItems = (): number[] => {
+        const selectedIds = table?.getSelectedRowModel().flatRows.map((row) => {
+            const id = (row.original as any).id;
+            return id as number;
+        });
+        return selectedIds || [];
+    }
 
     const getUserHandler = async (id: number): Promise<UserResponse> => {
         const res = await getUser(id, token);
@@ -135,6 +148,20 @@ const AllUsers: React.FC<ReporType> = ({ id }) => {
         });
     };
 
+
+    useEffect(() => {
+        const ids = getIdSelectedItems();
+        getUsersHandler(ids).then((users) => {
+            setUsers(users);
+            setLoading(false);
+        });
+    }, []);
+
+
+    // if (loading) {
+    //     return null
+    // }
+
     return (
         <Document>
             <Page style={styles.page}>
@@ -149,7 +176,11 @@ const AllUsers: React.FC<ReporType> = ({ id }) => {
                 </View>
                 <Text style={styles.description}>{"Descripcion del reporte de todos los usuarios"}</Text>
                 <View style={styles.content}>
-                    {renderData(getUsersHandler(id))}
+                    {users.map((user: UserResponse, index) => {
+                        return (
+                            renderData(user)
+                        );
+                    })}
                 </View>
             </Page>
         </Document>

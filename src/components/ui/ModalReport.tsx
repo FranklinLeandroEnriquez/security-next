@@ -11,6 +11,15 @@ interface PDFPreviewDialogProps {
 }
 
 const PDFPreviewDialog: React.FC<PDFPreviewDialogProps> = ({ ReportComponent, open, onOpenChange }) => {
+
+    // if (!ReportComponent) {
+    //     return (
+    //         <div className='flex justify-center items-center h-screen'>
+    //             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-yellow-500"></div>
+    //         </div>
+    //     )
+    // }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className='min-h-[20rem] h-[80vh] flex flex-col items-center'>
