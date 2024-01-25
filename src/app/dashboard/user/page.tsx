@@ -142,26 +142,24 @@ function Page() {
         }
     }
 
-    const handleSelectionChange = async (selectedRows: number[]) => {
-        if (selectedRows.length > 0) {
-            const userReports: UserResponse[] = [];
-            for (const row of selectedRows) {
-                try {
-                    const user = await getUserHandler(row);
-                    const roles = await getRolesOfUserHandler(row);
-                    const rolesWithFunctions = [];
-                    for (const role of roles) {
-                        const functions = await getFunctionsOfRoleHandler(role.id);
-                        rolesWithFunctions.push({ ...role, functions });
-                    }
-                    userReports.push({ ...user, roles: rolesWithFunctions });
-                } catch (error) {
-                    toast.error('An error has occurred while fetching user, roles or functions');
+    const handleSelectionChange = async (ids: number[]) => {
+        const userReports: UserResponse[] = [];
+        for (const row of ids) {
+            try {
+                const user = await getUserHandler(row);
+                const roles = await getRolesOfUserHandler(row);
+                const rolesWithFunctions = [];
+                for (const role of roles) {
+                    const functions = await getFunctionsOfRoleHandler(role.id);
+                    rolesWithFunctions.push({ ...role, functions });
                 }
+                userReports.push({ ...user, roles: rolesWithFunctions });
+            } catch (error) {
+                toast.error('An error has occurred while fetching user, roles or functions');
             }
-            setReportUserRoles(userReports);
-            // console.log(userReports);
         }
+        setReportUserRoles(userReports);
+        // console.log("Relacional", userReports);
     };
 
     useEffect(() => {
@@ -182,8 +180,11 @@ function Page() {
                         onCreate={createUserHandler}
                         columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
-                        onSelectionChange={handleSelectionChange}
-                        reportRelationData={reporUserRoles}
+                        onGenerateReport={handleSelectionChange}
+                        reportData={reporUserRoles}
+
+                    // onSelectionChange={handleSelectionChange}
+                    // reportRelationData={reporUserRoles}
                     />
                 </MaxWidthWrapper>
             </div>

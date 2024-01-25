@@ -14,6 +14,15 @@ import {
 } from "@tanstack/react-table"
 
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import {
     Table,
     TableBody,
     TableCell,
@@ -48,8 +57,8 @@ interface DataTableProps<TData, TValue> {
     description: string
     onCreate?: () => void
     canCreate?: boolean
-    onSelectionChange?: (selectedRows: number[]) => void;
-    reportRelationData?: TData[];
+    onGenerateReport?: (ids: number[]) => void;
+    reportData: any[];
 }
 
 // ESTO ES PARA MANEJAR GENERADOR DE INFORMES
@@ -77,15 +86,16 @@ export function DataTable<TData, TValue>({
     description,
     onCreate,
     canCreate: canCreate,
-    onSelectionChange,
-    reportRelationData,
+    onGenerateReport,
+    reportData,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
-    const [generatePdfClicked, setGeneratePdfClicked] = React.useState(false);
+    const [isPdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+    const [reportDataFormal, setReportDataFormal] = useState<TData[]>(data);
     const table = useReactTable({
         data,
         columns,
@@ -129,17 +139,22 @@ export function DataTable<TData, TValue>({
     );
     //fin generar cvs
 
+    const handleGenerateReport = (rows: Row<TData>[]): TData[] => {
+        const selectedRows = rows.filter((row) => row.isSelected);
+        const report = selectedRows.map((row) => {
+            return row.data;
+        });
+        return report;
+    };
+
+    const rowData: Row<TData>[] = table.getRowModel().rows.map(row => ({
+        isSelected: row.getIsSelected(),
+        data: row.original
+    }));
+
     React.useEffect(() => {
-        if (onSelectionChange) {
-            const selectedRowIds = Object.entries(rowSelection)
-                .filter(([key, value]) => value)
-                .map(([key]) => (data[parseInt(key)] as any).id);
-            if (selectedRowIds.length > 0) {
-                onSelectionChange(selectedRowIds);
-            }
-        }
-        setGeneratePdfClicked(false);
-    }, [rowSelection]);
+        setReportDataFormal(reportData);
+    }, [reportData]);
 
     return (
         <>
@@ -147,13 +162,42 @@ export function DataTable<TData, TValue>({
                 <DataTableToolbar table={table} />
 
                 {/* Reporte */}
-                <PDFGenerator
-                    table={table}
-                    moduleName={moduleName}
-                    description={description}
-                    reportRelationData={reportRelationData}
-                    setGeneratePdfClicked={setGeneratePdfClicked}
-                />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button>Generar Reporte</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem onSelect={() => {
+                            const rows: Row<TData>[] = table.getRowModel().rows.map(row => ({
+                                isSelected: row.getIsSelected(),
+                                data: row.original
+                            }));
+                            const report = handleGenerateReport(rows);
+                            setReportDataFormal(report);
+                            setPdfPreviewOpen(true);
+                            console.log("Individual", report);
+                        }}>
+                            Reporte Individual
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => {
+                            const selectedIds = rowData.filter(row => row.isSelected).map(row => (row.data as { id: string }).id);
+                            onGenerateReport && onGenerateReport(selectedIds.map(id => parseInt(id, 10)));
+                            setPdfPreviewOpen(true);
+                        }}>
+                            Reporte Relacional
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                    {reportDataFormal.length > 0 && (
+                        <PDFPreviewDialog
+                            title={moduleName}
+                            data={reportDataFormal}
+                            description={`${description} Report`}
+                            open={isPdfPreviewOpen}
+                            onOpenChange={setPdfPreviewOpen}
+                        />
+                    )}
+                </DropdownMenu>
+
 
                 {/* Crear */}
                 {onCreate && canCreate ?
