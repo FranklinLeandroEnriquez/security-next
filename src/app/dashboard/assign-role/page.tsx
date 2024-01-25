@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { getIp, logAuditAction } from "@/services/Audit/AuditService";
 import { useAuthToken } from "@/hooks/useAuthToken";
 import validFunctions from '@/providers/ValidateFunctions';
+import { useUserFunctions } from "@/contexts/UserFunctionProvider";
 import { getRolesOfUserHandler } from "@/handlers/userRolesHandler"
 import exp from "constants";
 import { ErrorResponse } from "@/types/shared/ValidationError";
@@ -30,6 +31,12 @@ function AssignRole() {
 
     const router = useRouter();
     const token = useAuthToken();
+
+    const userFunctions = useUserFunctions();
+    const isAssingUpdate = userFunctions?.includes('SEC-ROLES-TO-USER-UPDATE');
+    const isUserRead = userFunctions?.includes('SEC-USERS-READ');
+    const isRoleRead = userFunctions?.includes('SEC-ROLES-READ');
+    const isAssignRead = userFunctions?.includes('SEC-ROLES-TO-USER-READ');
 
     const getUsersHandler = async () => {
         const ip = await getIp();
@@ -161,18 +168,18 @@ function AssignRole() {
         <>
             <Header title="Assign Roles" />
             <MaxWidthWrapper className="mt-8">
-                <CustomSelect
+                {isUserRead&&( <CustomSelect
                     options={[
                         { label: 'Select a user...', value: 0 },
                         ...users.map((user) => ({ label: user.username, value: user.id })),
                     ]}
                     onSelect={(selectedValue) => handleUserChange(selectedValue)}
                     placeholder="Select a user..."
-                />
+                />)}
 
                 {selectedUser && (
                     <div className="flex space-x-4 mt-4"> {/* Agregamos mt-4 para agregar un margen en la parte superior */}
-                        <div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
+                        {isRoleRead&&( <div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
                             <label>Available Roles</label>
                             <ScrollableCheckboxList<Role>
                                 items={availableRoles.filter(role => !userRoles.some(userRole => userRole.id === role.id))}
@@ -186,9 +193,9 @@ function AssignRole() {
                                     </>
                                 )}
                             />
-                        </div>
+                        </div>)}
 
-                        <div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
+                        {isAssignRead&&(<div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
                             <label>User Roles</label>
                             <ScrollableCheckboxList<Role>
                                 items={userRoles}
@@ -202,13 +209,13 @@ function AssignRole() {
                                     </>
                                 )}
                             />
-                        </div>
+                        </div>)}
                     </div>
                 )}
                 <div className="flex justify-center">
-                    <Button onClick={handleAssignRoles} className="mt-8 w-1/3">
+                    {isAssingUpdate&&(<Button onClick={handleAssignRoles} className="mt-8 w-1/3">
                         Assign
-                    </Button>
+                    </Button>)}
                 </div>
             </MaxWidthWrapper>
         </>
