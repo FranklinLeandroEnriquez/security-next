@@ -1,6 +1,6 @@
 import { use, useContext, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LogInIcon } from 'lucide-react'
+import { LogOutIcon } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -53,36 +53,35 @@ const DropdownUser = () => {
   }
 
   return (
-    <div className="flex">
-      <div className="flex items-center gap-4">
-        <span className="hidden text-right lg:block mr-2">
-          <h3 className="block text-sm font-medium">
-            {username?.toUpperCase()}
-          </h3>
-          <span className="block text-xs">{email}</span>
-        </span>
-
-        <span className="h-12 w-12 rounded-full flex items-center">
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-        </span>
-      </div>
+    <div className="flex items-center gap-4">
+      <span className="hidden text-right lg:block mr-2">
+        <h3 className="block text-sm font-medium">
+          {username?.toUpperCase()}
+        </h3>
+        <span className="block text-xs">{email}</span>
+      </span>
       <div className="flex">
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <LogInIcon></LogInIcon>
+            <Avatar>
+              <AvatarFallback>{email?.slice(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem onClick={logoutHandler}>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={logoutHandler}>
+              <div className="flex items-center gap-3">
+                <LogOutIcon />
+                <nav>Logout</nav>
+              </div>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
     </div >
+
   );
 };
 
