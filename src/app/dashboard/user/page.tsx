@@ -18,17 +18,15 @@ import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 import React from 'react';
 import { RoleResponse } from '@/types/Role/RoleResponse';
-import { set } from 'zod';
+
+import { useReports } from '@/types/Reports/shared/content'
+
 import { FunctionResponse } from '@/types/Function/FunctionResponse';
 import { getFunctionsOfRole } from '@/services/Role/RoleService';
 
 function Page() {
     const [users, setUsers] = useState<UserResponse[]>([]);
-    const [user, setUser] = useState<UserResponse | null>(null);
-    const [errors, setErrors] = useState<ErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
-    const [selectedUserRoles, setSelectedUserRoles] = React.useState([]);
-    const [reporUserRoles, setReportUserRoles] = React.useState<UserResponse[]>([]);
+    const [ids, setIds] = useState<number[]>([]);
 
     const router = useRouter();
     const token = useAuthToken();
@@ -36,10 +34,6 @@ function Page() {
     const userFunctions = useUserFunctions();
 
     const isFunctionCreateUser = userFunctions?.includes('SEC-USERS-CREATE') || false;
-
-    const createObjectFromSelectedRows = () => {
-        const myObject = {};
-    };
 
     const deleteUserHandler = async (id: number) => {
         const ip = await getIp();
@@ -142,24 +136,12 @@ function Page() {
         }
     }
 
-    const handleSelectionChange = async (ids: number[]) => {
-        const userReports: UserResponse[] = [];
-        for (const row of ids) {
-            try {
-                const user = await getUserHandler(row);
-                const roles = await getRolesOfUserHandler(row);
-                const rolesWithFunctions = [];
-                for (const role of roles) {
-                    const functions = await getFunctionsOfRoleHandler(role.id);
-                    rolesWithFunctions.push({ ...role, functions });
-                }
-                userReports.push({ ...user, roles: rolesWithFunctions });
-            } catch (error) {
-                toast.error('An error has occurred while fetching user, roles or functions');
-            }
-        }
-        setReportUserRoles(userReports);
-        // console.log("Relacional", userReports);
+    // Llama a useReports en el cuerpo principal del componente
+    const reports = useReports(ids);
+
+    const handleSelectionChange = (selectedIds: number[]) => {
+        // Actualiza el estado ids cuando cambian las selecciones
+        setIds(selectedIds);
     };
 
     useEffect(() => {
@@ -181,10 +163,6 @@ function Page() {
                         columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
                         onGenerateReport={handleSelectionChange}
-                        reportData={reporUserRoles}
-
-                    // onSelectionChange={handleSelectionChange}
-                    // reportRelationData={reporUserRoles}
                     />
                 </MaxWidthWrapper>
             </div>

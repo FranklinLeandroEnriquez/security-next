@@ -1,6 +1,5 @@
 'use client';
-import { useContext } from 'react';
-import { UserFunctionProvider, useUserFunctions } from '@/contexts/UserFunctionProvider';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import {
     Home, Settings,
     User, UserCheck,
@@ -25,7 +24,6 @@ export const useSidevarItems = (): SideNavItems[] => {
     const canReadRolesFunctionModulesReport = userFunctions?.includes('SEC-ROLES-FUNCTION-MODULES-REPORT') || false;
     const canReadModulesFunctionsReport = userFunctions?.includes('SEC-MODULES-FUNCTIONS-REPORT') || false;
     return [
-
         {
             title: "Dashboard",
             path: "/dashboard/",

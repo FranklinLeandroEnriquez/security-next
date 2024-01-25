@@ -1,46 +1,31 @@
 import { CSVLink } from 'react-csv';
-import PDFPreviewDialog from '@/components/ui/ModalReport';
+import AllUsers from '@/types/Reports/users/allUsers';
 import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    SortingState,
-    getPaginationRowModel,
-    ColumnFiltersState,
-    getFilteredRowModel,
-    useReactTable,
-    getSortedRowModel,
-    FilterFn,
+    ColumnDef, flexRender, getCoreRowModel, SortingState, getPaginationRowModel, ColumnFiltersState,
+    getFilteredRowModel, useReactTable, getSortedRowModel, FilterFn,
 } from "@tanstack/react-table"
 
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+    DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+    Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table"
+
 import { Button } from "../ui/button"
-import { Input } from "@/components/ui/input"
 import { DataTablePagination } from "./PaginationDataTable"
 import React, { useState } from "react"
 import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
-import { PDFGenerator } from "@/components/Table/PDFGeneratorProps"
+
+import { Report } from "@/types/Reports/shared/Report"
 
 import {
     RankingInfo,
     rankItem,
 } from '@tanstack/match-sorter-utils'
+import PDFPreviewDialog from '../ui/ModalReport';
 
 declare module '@tanstack/table-core' {
     interface FilterFns {
@@ -58,7 +43,8 @@ interface DataTableProps<TData, TValue> {
     onCreate?: () => void
     canCreate?: boolean
     onGenerateReport?: (ids: number[]) => void;
-    reportData: any[];
+    reports?: Report[]
+    // reportData: any[];
 }
 
 // ESTO ES PARA MANEJAR GENERADOR DE INFORMES
@@ -67,15 +53,11 @@ interface Row<T> {
     data: T;
 }
 
-
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
     const itemRank = rankItem(row.getValue(columnId), value)
-    // Store the itemRank info
     addMeta({
         itemRank,
     })
-    // Return if the item should be filtered in/out
     return itemRank.passed
 }
 
@@ -87,7 +69,8 @@ export function DataTable<TData, TValue>({
     onCreate,
     canCreate: canCreate,
     onGenerateReport,
-    reportData,
+    reports,
+    // reportData,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -95,7 +78,7 @@ export function DataTable<TData, TValue>({
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
     const [isPdfPreviewOpen, setPdfPreviewOpen] = useState(false);
-    const [reportDataFormal, setReportDataFormal] = useState<TData[]>(data);
+    const [selectedReport, setSelectedReport] = useState<React.ReactElement>(() => <></>);
     const table = useReactTable({
         data,
         columns,
@@ -138,23 +121,7 @@ export function DataTable<TData, TValue>({
         }, {})
     );
     //fin generar cvs
-
-    const handleGenerateReport = (rows: Row<TData>[]): TData[] => {
-        const selectedRows = rows.filter((row) => row.isSelected);
-        const report = selectedRows.map((row) => {
-            return row.data;
-        });
-        return report;
-    };
-
-    const rowData: Row<TData>[] = table.getRowModel().rows.map(row => ({
-        isSelected: row.getIsSelected(),
-        data: row.original
-    }));
-
-    React.useEffect(() => {
-        setReportDataFormal(reportData);
-    }, [reportData]);
+    console.log("array de reporte", reports)
 
     return (
         <>
@@ -164,40 +131,31 @@ export function DataTable<TData, TValue>({
                 {/* Reporte */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button>Generar Reporte</Button>
+                        <Button onClick={() => {
+                            const selectedIds = table.getSelectedRowModel().flatRows.map((row) => {
+                                const id = (row.original as any).id;
+                                return id;
+                            });
+                            onGenerateReport && onGenerateReport(selectedIds);
+                        }}>
+                            Generar Reporte
+                        </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => {
-                            const rows: Row<TData>[] = table.getRowModel().rows.map(row => ({
-                                isSelected: row.getIsSelected(),
-                                data: row.original
-                            }));
-                            const report = handleGenerateReport(rows);
-                            setReportDataFormal(report);
-                            setPdfPreviewOpen(true);
-                            console.log("Individual", report);
-                        }}>
-                            Reporte Individual
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => {
-                            const selectedIds = rowData.filter(row => row.isSelected).map(row => (row.data as { id: string }).id);
-                            onGenerateReport && onGenerateReport(selectedIds.map(id => parseInt(id, 10)));
-                            setPdfPreviewOpen(true);
-                        }}>
-                            Reporte Relacional
-                        </DropdownMenuItem>
+                        {reports?.map((report, index) => (
+                            <DropdownMenuItem key={index} onSelect={() => {
+                                setSelectedReport(report.type);
+                            }}>
+                                {report.title}
+                            </DropdownMenuItem>
+                        ))}
                     </DropdownMenuContent>
-                    {reportDataFormal.length > 0 && (
-                        <PDFPreviewDialog
-                            title={moduleName}
-                            data={reportDataFormal}
-                            description={`${description} Report`}
-                            open={isPdfPreviewOpen}
-                            onOpenChange={setPdfPreviewOpen}
-                        />
-                    )}
+                    <PDFPreviewDialog
+                        ReportComponent={selectedReport}
+                        open={isPdfPreviewOpen}
+                        onOpenChange={setPdfPreviewOpen}
+                    />
                 </DropdownMenu>
-
 
                 {/* Crear */}
                 {onCreate && canCreate ?

@@ -4,8 +4,8 @@ export interface ReporType {
     id: number[]
 }
 
-export interface Report {
-    type: React.FC<ReporType>,
+export type Report = {
+    type: React.ReactElement,
     title: string,
 }
 
