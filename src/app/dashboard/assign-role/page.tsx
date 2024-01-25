@@ -179,7 +179,7 @@ function AssignRole() {
 
                 {selectedUser && (
                     <div className="flex space-x-4 mt-4"> {/* Agregamos mt-4 para agregar un margen en la parte superior */}
-                        {isRoleRead&&( <div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
+                        {isRoleRead&&( <div className="max-h-96 overflow-y-auto flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
                             <label>Available Roles</label>
                             <ScrollableCheckboxList<Role>
                                 items={availableRoles.filter(role => !userRoles.some(userRole => userRole.id === role.id))}
@@ -195,7 +195,7 @@ function AssignRole() {
                             />
                         </div>)}
 
-                        {isAssignRead&&(<div className="flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
+                        {isAssignRead&&(<div className="max-h-96 overflow-y-auto flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
                             <label>User Roles</label>
                             <ScrollableCheckboxList<Role>
                                 items={userRoles}

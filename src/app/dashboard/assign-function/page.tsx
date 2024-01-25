@@ -22,6 +22,7 @@ import { useAuthToken } from "@/hooks/useAuthToken"
 import validFunctions from '@/providers/ValidateFunctions';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import { ErrorResponse } from "@/types/shared/ValidationError"
+import { set } from "zod"
 
 function AssignFunction() {
     const [roles, setRoles] = useState<RoleResponse[]>([])
@@ -64,7 +65,7 @@ function AssignFunction() {
         if (res.status === 200) {
             const data = await res.json()
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
-            setRoleFunctions(filteredFunctions)
+            setRoleFunctions(filteredFunctions);
             logAuditAction({
                 functionName: 'SEC-FUNCTIONS-TO-ROLE-READ',
                 action: 'get role functions',
@@ -79,13 +80,13 @@ function AssignFunction() {
     }
 
     const getFunctionsHandler = async () => {
-        const ip = await getIp()
-        const res = await getFunctions(token)
+        const ip = await getIp();
+        const res = await getFunctions(token);
         if (res.status === 200) {
-            const data = await res.json()
+            const data = await res.json();
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
-            setAvailableFunctions(filteredFunctions)
-            logAuditAction({
+            setAvailableFunctions(filteredFunctions);
+            await logAuditAction({
                 functionName: 'SEC-FUNCTIONS-READ',
                 action: 'get functions',
                 description: 'Successfully fetched functions',
@@ -95,7 +96,8 @@ function AssignFunction() {
             const errorData: ErrorResponse = await res.json();
             toast.error(errorData.message.toString());
         }
-    }
+    };
+
 
     const handleRoleChange = (roleId: number) => {
         setSelectedRole(roleId);
@@ -104,29 +106,35 @@ function AssignFunction() {
     };
 
     const handleFunctionAssignment = (function_: FunctionResponse) => {
-        const newRoleFunctions = roleFunctions.some(f => f.id === function_.id)
-            ? roleFunctions.filter(f => f.id !== function_.id)
-            : [...roleFunctions, function_];
+        setRoleFunctions((currentRoleFunctions) => {
+            const isNewFunctionInRole = currentRoleFunctions.some(f => f.id === function_.id);
 
-        let newAvailableFunctions = availableFunctions;
-
-        if (!roleFunctions.some(f => f.id === function_.id)) {
-
-            if (!newAvailableFunctions.some(f => f.id === function_.id)) {
-                newAvailableFunctions = [...newAvailableFunctions, function_];
+            if (isNewFunctionInRole) {
+                // Deselect: remove from roleFunctions
+                return currentRoleFunctions.filter(f => f.id !== function_.id);
+            } else {
+                // Select: add to roleFunctions
+                return [...currentRoleFunctions, function_];
             }
-        }
+        });
 
-        setAvailableFunctions(newAvailableFunctions);
-        setRoleFunctions(newRoleFunctions);
-    };
+        setAvailableFunctions((currentAvailableFunctions) => {
+            const isFunctionAvailable = currentAvailableFunctions.some(f => f.id === function_.id);
 
-
+            if (isFunctionAvailable) {
+                // Function is already available, remove from availableFunctions
+                return currentAvailableFunctions.filter(f => f.id !== function_.id);
+            } else {
+                // Function is not available, add to availableFunctions
+                return [...currentAvailableFunctions, function_];
+            }
+        });
+    }
 
     const handleAssignFunctions = async () => {
-        const ip = await getIp()
+        const ip = await getIp();
         if (selectedRole) {
-            const functionIds = roleFunctions.map(f => f.id)
+            const functionIds = roleFunctions.map(f => f.id);
             try {
                 const res = await assignFunctions(selectedRole, { roleId: selectedRole, functionIds }, token);
                 if (res.status === 201) {
@@ -149,14 +157,15 @@ function AssignFunction() {
                     toast.error(errorData.message.toString());
                 }
             } catch (err) {
-                toast.error("An error has occurred")
+                toast.error("An error has occurred");
             }
         }
-    }
+    };
 
     const groupByModule = (functions: FunctionResponse[]) => {
-        const grouped = functions.reduce((acc, function_) => {
-            const moduleId = function_.module.id;
+        let grouped = functions.reduce((acc, function_) => {
+            let moduleId = function_.module?.id;
+            if (!moduleId) return acc;
             if (!acc[moduleId]) {
                 acc[moduleId] = {
                     module: function_.module,
@@ -171,72 +180,91 @@ function AssignFunction() {
     };
 
     useEffect(() => {
-        getRolesHandler()
-    }, [])
+        getRolesHandler();
+        getFunctionsHandler();
+    }, [roleFunctions]);
 
     return (
         <>
-            <Header title="Assing Functions" />
+            <Header title="Assign Functions" />
             <MaxWidthWrapper className="mt-8">
-                {isRoleRead && ( <CustomSelect
-                    options={[
-                        { label: "Select a role...", value: 0 },
-                        ...roles.map((role) => ({ label: role.name, value: role.id }))
-                    ]}
-                    onSelect={(selectedValue) => handleRoleChange(selectedValue)}
-                    placeholder="Select a role..."
-                />)}               
+                {isRoleRead && (
+                    <CustomSelect
+                        options={[
+                            { label: "Select a role...", value: 0 },
+                            ...roles.map((role) => ({ label: role.name, value: role.id }))
+                        ]}
+                        onSelect={(selectedValue) => handleRoleChange(selectedValue)}
+                        placeholder="Select a role..."
+                    />
+                )}
 
                 {selectedRole && (
                     <div className="flex space-x-4 mt-4">
-                        {isFunctionRead && (<div className="flex-1 p-4 border rounded">
-                            <label>Available Functions:</label>
-                            <div className="max-h-72 overflow-y-auto border p-4 mb-4">
-                                {groupByModule(availableFunctions).map((group, index) => (
-                                    <Accordion title={group.module.name} key={index}>
-                                        <ScrollableCheckboxList<FunctionResponse>
-                                            items={group.functions}
-                                            checkedItems={roleFunctions}
-                                            onChange={handleFunctionAssignment}
-                                            getKey={(function_) => function_.id.toString()}
-                                            renderItem={(function_) => (
-                                                <>
-                                                    <span>{function_.id}</span>
-                                                    <span className="ml-2">{function_.name}</span>
-                                                </>
-                                            )}
-                                        />
-                                    </Accordion>
-                                ))}
+                        {isFunctionRead && (
+                            <div className="flex-1 p-4 border rounded">
+                                <label>Available Functions:</label>
+                                <div className="max-h-96 overflow-y-auto border p-4 mb-4">
+                                    {groupByModule(availableFunctions).map((group, index) => (
+                                        group.functions.filter(func => !roleFunctions.some(selectedFunc => selectedFunc.id === func.id)).length > 0 && (
+                                            <Accordion title={group.module.name} key={index}>
+                                                <ScrollableCheckboxList<FunctionResponse>
+                                                    items={group.functions.filter(func => !roleFunctions.some(selectedFunc => selectedFunc.id === func.id))}
+                                                    checkedItems={roleFunctions}
+                                                    onChange={handleFunctionAssignment}
+                                                    getKey={(function_) => function_.id.toString()}
+                                                    renderItem={(function_) => (
+                                                        <>
+                                                            <span>{function_.id}</span>
+                                                            <span className="ml-2">{function_.name}</span>
+                                                        </>
+                                                    )}
+                                                />
+                                            </Accordion>
+                                        )
+                                    ))}
+                                </div>
                             </div>
-                        </div>)}
+                        )}
 
-                        {isAssignRead && ( <div className="flex-1 p-4 border rounded">
-                            <label>Role Functions:</label>
-                            <ScrollableCheckboxList<Function>
-                                items={roleFunctions}
-                                checkedItems={roleFunctions}
-                                onChange={handleFunctionAssignment}
-                                getKey={(function_) => function_.id.toString()}
-                                renderItem={(function_) => (
-                                    <>
-                                        <span>{function_.id}</span>
-                                        <span className="ml-2">{function_.name}</span>
-                                    </>
-                                )}
-                            />
-                        </div>)}
+                        {isAssignRead && (
+                            <div className="flex-1 p-4 border rounded">
+                                <label>Role Functions:</label>
+                                <div className="max-h-96 overflow-y-auto border p-4 mb-4">
+                                    {groupByModule(availableFunctions).map((group, index) => (
+                                        group.functions.filter(func => roleFunctions.some(selectedFunc => selectedFunc.id === func.id)).length > 0 && (
+                                            <Accordion title={group.module.name} key={index}>
+                                                <ScrollableCheckboxList<FunctionResponse>
+                                                    items={group.functions.filter(func => roleFunctions.some(selectedFunc => selectedFunc.id === func.id))}
+                                                    checkedItems={roleFunctions}
+                                                    onChange={handleFunctionAssignment}
+                                                    getKey={(function_) => function_.id.toString()}
+                                                    renderItem={(function_) => (
+                                                        <>
+                                                            <span>{function_.id}</span>
+                                                            <span className="ml-2">{function_.name}</span>
+                                                        </>
+                                                    )}
+                                                />
+                                            </Accordion>
+                                        )
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
                 <div className="flex justify-center">
-                    {isAssingUpdate && (<Button onClick={handleAssignFunctions} className="mt-2 w-1/3">
-                        Assign
-                    </Button>)}
+                    {isAssingUpdate && (
+                        <Button onClick={handleAssignFunctions} className="mt-2 w-1/3">
+                            Assign
+                        </Button>
+                    )}
                 </div>
             </MaxWidthWrapper>
-
         </>
-    )
+    );
 };
+
 
 export default validFunctions(AssignFunction, 'SEC-FUNCTIONS-TO-ROLE-READ');
