@@ -1,37 +1,38 @@
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import PDFComponent from '@/components/PdfReport';
 import { Button } from '@/components/ui/button';
-import { Type } from 'lucide-react';
 
 interface PDFPreviewDialogProps {
     ReportComponent: React.ReactElement,
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    date?: boolean;
 }
 
-const PDFPreviewDialog: React.FC<PDFPreviewDialogProps> = ({ ReportComponent, open, onOpenChange }) => {
-
-    // if (!ReportComponent) {
-    //     return (
-    //         <div className='flex justify-center items-center h-screen'>
-    //             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-yellow-500"></div>
-    //         </div>
-    //     )
-    // }
+const PDFPreviewDialog: React.FC<PDFPreviewDialogProps> = ({ ReportComponent, open, onOpenChange, date }) => {
+    const handleOpenChange = (open: boolean) => {
+        // Solo cambia el estado abierto/cerrado del modal si date es true y hay datos en ReportComponent
+        if (date && ReportComponent) {
+            onOpenChange(open);
+        }
+    };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent className='min-h-[20rem] h-[80vh] flex flex-col items-center'>
                 <div className='flex-grow w-full'>
-                    <PDFViewer className='w-full h-full '>
-                        {ReportComponent}
-                    </PDFViewer>
+                    {ReportComponent ? (
+                        <PDFViewer className='w-full h-full '>
+                            {ReportComponent}
+                        </PDFViewer>
+                    ) : (
+                        <div>Cargando...</div>
+                    )}
                 </div>
                 <div className='w-1/3 flex items-center justify-center'>
                     <Button variant='default'>
                         <PDFDownloadLink document={ReportComponent} fileName="report.pdf">
-                            {({ blob, url, loading, error }) =>
+                            {({ loading }) =>
                                 loading ? 'Loading document...' : 'Download'
                             }
                         </PDFDownloadLink>

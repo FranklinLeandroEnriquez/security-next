@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
 import { UserResponse } from '@/types/User/UserResponse';
 import { getUser } from '@/services/User/UserService';
@@ -87,43 +87,8 @@ export function AllUsers<TData>({
 }: ReporType<TData>) {
 
     const [users, setUsers] = React.useState<UserResponse[]>([]);
-    const [loading, setLoading] = React.useState(true);
 
     const token = useAuthToken();
-
-    const getIdSelectedItems = (): number[] => {
-        const selectedIds = table?.getSelectedRowModel().flatRows.map((row) => {
-            const id = (row.original as any).id;
-            return id as number;
-        });
-        return selectedIds || [];
-    }
-
-    const getUserHandler = async (id: number): Promise<UserResponse> => {
-        const res = await getUser(id, token);
-        if (res.status === 200) {
-            const data: UserResponse = await res.json();
-            return data;
-        } else {
-            const errorData: ErrorResponse = await res.json();
-            toast.error(errorData.message.toString());
-            throw new Error(errorData.message);
-        }
-    }
-
-    const getUsersHandler = async (ids: number[]): Promise<UserResponse[]> => {
-        const users: UserResponse[] = [];
-
-        for (const id of ids) {
-            try {
-                const user = await getUserHandler(id);
-                users.push(user);
-            } catch (error) {
-                console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
-            }
-        }
-        return users;
-    };
 
 
     const renderData = (data: Record<string, any>, depth = 0) => {
@@ -148,19 +113,47 @@ export function AllUsers<TData>({
         });
     };
 
+    const getIdSelectedItems = useCallback((): number[] => {
+        const selectedIds = table?.getSelectedRowModel().flatRows.map((row) => {
+            const id = (row.original as any).id;
+            return id as number;
+        });
+        return selectedIds || [];
+    }, [table]);
+
+    const getUserHandler = useCallback(async (id: number): Promise<UserResponse> => {
+        const res = await getUser(id, token);
+        if (res.status === 200) {
+            const data: UserResponse = await res.json();
+            return data;
+        } else {
+            const errorData: ErrorResponse = await res.json();
+            toast.error(errorData.message.toString());
+            throw new Error(errorData.message);
+        }
+    }, [token]);
+
+    const getUsersHandler = useCallback(async (ids: number[]): Promise<UserResponse[]> => {
+        const users: UserResponse[] = [];
+
+        for (const id of ids) {
+            try {
+                const user = await getUserHandler(id);
+                users.push(user);
+            } catch (error) {
+                console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
+            }
+        }
+        return users;
+    }, [getUserHandler]);
+
 
     useEffect(() => {
         const ids = getIdSelectedItems();
         getUsersHandler(ids).then((users) => {
             setUsers(users);
-            setLoading(false);
         });
-    }, []);
-
-
-    // if (loading) {
-    //     return null
-    // }
+    }, [getIdSelectedItems, getUsersHandler]);
 
     return (
         <Document>
