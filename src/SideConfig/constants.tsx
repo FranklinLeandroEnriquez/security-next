@@ -97,26 +97,6 @@ export const useSidevarItems = (): SideNavItems[] => {
                     icon: <Route size={20} />,
                     canRead: casReadAuditTrailReport
                 },
-                {
-                    title: "Users",
-                    path: "/dashboard/reports/users",
-                    canRead: canReadAuditUserReport
-                },
-                {
-                    title: "Roles",
-                    path: "/dashboard/reports/roles",
-                    canRead: canReadRolesFunctionModulesReport
-                },
-                {
-                    title: "Modules",
-                    path: "/dashboard/reports/modules",
-                    canRead: canReadModulesFunctionsReport
-                },
-                {
-                    title: "Functions",
-                    path: "/dashboard/reports/functions",
-                    canRead: canReadUsersRolesFunctionsModulesReport
-                }
             ],
             canRead: casReadAuditTrailReport || canReadAuditUserReport || canReadRolesFunctionModulesReport || canReadModulesFunctionsReport || canReadUsersRolesFunctionsModulesReport
         }

@@ -153,7 +153,7 @@ export function AllUsers<TData>({
         getUsersHandler(ids).then((users) => {
             setUsers(users);
         });
-    }, [getIdSelectedItems, getUsersHandler]);
+    }, []);
 
     return (
         <Document>

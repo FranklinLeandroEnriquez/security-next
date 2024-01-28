@@ -6,28 +6,16 @@ interface PDFPreviewDialogProps {
     ReportComponent: React.ReactElement,
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    date?: boolean;
 }
 
-const PDFPreviewDialog: React.FC<PDFPreviewDialogProps> = ({ ReportComponent, open, onOpenChange, date }) => {
-    const handleOpenChange = (open: boolean) => {
-        // Solo cambia el estado abierto/cerrado del modal si date es true y hay datos en ReportComponent
-        if (date && ReportComponent) {
-            onOpenChange(open);
-        }
-    };
-
+const PDFPreviewDialog: React.FC<PDFPreviewDialogProps> = ({ ReportComponent, open, onOpenChange }) => {
     return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className='min-h-[20rem] h-[80vh] flex flex-col items-center'>
                 <div className='flex-grow w-full'>
-                    {ReportComponent ? (
-                        <PDFViewer className='w-full h-full '>
-                            {ReportComponent}
-                        </PDFViewer>
-                    ) : (
-                        <div>Cargando...</div>
-                    )}
+                    <PDFViewer className='w-full h-full '>
+                        {ReportComponent}
+                    </PDFViewer>
                 </div>
                 <div className='w-1/3 flex items-center justify-center'>
                     <Button variant='default'>
