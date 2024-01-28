@@ -24,8 +24,8 @@ const SideNav = () => {
                     <Image
                         src="/images/logo.png"
                         alt="Background UTN"
-                        width={30}
-                        height={30}
+                        width={35}
+                        height={35}
                         className="object-cover object-center hidden md:block filter grayscale"
                     />
                     <span className="h-16" />

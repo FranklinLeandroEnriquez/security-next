@@ -1,37 +1,32 @@
 import { CSVLink } from 'react-csv';
-import PDFPreviewDialog from '@/components/ui/ModalReport';
+import AllUsers from '@/types/Reports/users/allUsers';
 import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    SortingState,
-    getPaginationRowModel,
-    ColumnFiltersState,
-    getFilteredRowModel,
-    useReactTable,
-    getSortedRowModel,
-    FilterFn,
+    ColumnDef, flexRender, getCoreRowModel, SortingState, getPaginationRowModel, ColumnFiltersState,
+    getFilteredRowModel, useReactTable, getSortedRowModel, FilterFn,
 } from "@tanstack/react-table"
 
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+    DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import { Button } from "@/components/registry/new-york/ui/button"
+
+import {
+    Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table"
-import { Button } from "../ui/button"
-import { Input } from "@/components/ui/input"
+
 import { DataTablePagination } from "./PaginationDataTable"
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import { DataTableToolbar } from '@/components/Table/data-table-toolbar';
-import { PDFGenerator } from "@/components/Table/PDFGeneratorProps"
+
+import { Report } from "@/types/Reports/shared/Report"
 
 import {
     RankingInfo,
     rankItem,
 } from '@tanstack/match-sorter-utils'
+import PDFPreviewDialog from '../ui/ModalReport';
 
 declare module '@tanstack/table-core' {
     interface FilterFns {
@@ -48,6 +43,8 @@ interface DataTableProps<TData, TValue> {
     description: string
     onCreate?: () => void
     canCreate?: boolean
+    onGenerateReport?: (ids: number[]) => void;
+    reports?: Report<TData>[]
 }
 
 // ESTO ES PARA MANEJAR GENERADOR DE INFORMES
@@ -56,31 +53,28 @@ interface Row<T> {
     data: T;
 }
 
-
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
     const itemRank = rankItem(row.getValue(columnId), value)
-    // Store the itemRank info
     addMeta({
         itemRank,
     })
-    // Return if the item should be filtered in/out
     return itemRank.passed
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    moduleName,
-    description,
     onCreate,
     canCreate: canCreate,
+    reports,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [rowSelection, setRowSelection] = React.useState({})
+    const [isPdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+    const [selectedReport, setSelectedReport] = useState<React.ReactElement>(() => <></>);
     const table = useReactTable({
         data,
         columns,
@@ -122,35 +116,69 @@ export function DataTable<TData, TValue>({
             return acc;
         }, {})
     );
-    //fin generar cvs
+
+    const handleSelectReport = (reportComponent: React.ReactElement) => {
+        setSelectedReport(reportComponent);
+        setPdfPreviewOpen(true);
+    };
 
     return (
         <>
             <div className="flex justify-between mb-3">
+                {/* ToolBar */}
                 <DataTableToolbar table={table} />
-
-                {/* Reporte */}
-                <PDFGenerator
-                    table={table}
-                    moduleName={moduleName}
-                    description={description}
-                />
-                {/* Crear */}
-                {onCreate && canCreate ?
-                    (<div className=" flex justify-center items-center">
-                        {/* Enlace a CSV */}
-                        <div className='mr-3'>
-                            <CSVLink data={exportData} filename="table_data.csv" separator=';'>
-                                <Button variant='ghost'>Export to CSV</Button>
-                            </CSVLink>
-                        </div>
-                        {/* table */}
-                        <Button onClick={onCreate}>
-                            <span> Create </span>
-                        </Button>
-                    </div>)
-                    : ""
-                }
+                {/* Exportar and Pdf*/}
+                <div className='flex justify-center items-center'>
+                    {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+                        <>
+                            <div className='mr-3'>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline"
+                                            size="lg"
+                                            className="ml-auto hidden h-8 lg:flex">
+                                            Generate Report
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuLabel>Options</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {reports?.map((report: Report<TData>, index) => (
+                                            <DropdownMenuItem key={index} onSelect={() =>
+                                                handleSelectReport(<report.type table={table} />)}>
+                                                {report.title}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                    <PDFPreviewDialog
+                                        ReportComponent={selectedReport}
+                                        open={isPdfPreviewOpen}
+                                        onOpenChange={setPdfPreviewOpen}
+                                    />
+                                </DropdownMenu>
+                            </div>
+                            <div className='mr-3'>
+                                <CSVLink data={exportData} filename="table_data.csv" separator=';'>
+                                    <Button variant="outline"
+                                        size="lg"
+                                        className="ml-auto hidden h-8 lg:flex">
+                                        Export to CSV
+                                    </Button>
+                                </CSVLink>
+                            </div>
+                        </>
+                    ) : ""}
+                    {/* Crear */}
+                    {onCreate && canCreate ?
+                        (<div className=" flex justify-center items-center">
+                            {/* table */}
+                            <Button onClick={onCreate}>
+                                <span> Create </span>
+                            </Button>
+                        </div>)
+                        : ""
+                    }
+                </div>
             </div>
 
             <div className="rounded-md border">

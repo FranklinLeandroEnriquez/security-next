@@ -6,31 +6,22 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { deleteUser, getUsers } from "@/services/User/UserService";
 import { UserResponse } from "@/types/User/UserResponse";
-//Obtener los roles del usuario
-import { RoleResponse } from "@/types/Role/RoleResponse";
-import { getRolesOfUser } from "@/services/User/UserService";
-import { getRoles } from "@/services/Role/RoleService";
-import { getRolesOfUserHandler } from "@/handlers/userRolesHandler"
 
 import { useRouter } from 'next/navigation';
-import { use, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from '@/components/Header';
 import { toast } from "sonner";
-import { Users2Icon } from 'lucide-react';
+import { FaUsers } from 'react-icons/fa';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions'
 import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
-
-type Row = {
-    isSelected: boolean;
-    user: User;
-}
+import React from 'react';
+import { userRports } from "@/types/Reports/users/userReports"
 
 function Page() {
     const [users, setUsers] = useState<UserResponse[]>([]);
-    const [errors, setErrors] = useState<ErrorResponse | null>(null);
-    const [errorResponse, setErrorResponse] = useState<ErrorResponse | null>(null);
+
 
     const router = useRouter();
     const token = useAuthToken();
@@ -94,9 +85,8 @@ function Page() {
                     description: 'Failed to fetch users',
                     ip: ip.toString(),
                 }, token);
+                toast.error('An error has occurred');
 
-                const errorData: ErrorResponse = await res.json();
-                toast.error(errorData.message.toString());
             }
         }).catch((err) => {
             toast.error('An error has occurred');
@@ -107,11 +97,9 @@ function Page() {
         getUsersLocal();
     }, []);
 
-    //Obtener los roles del usuario
-
     return (
         <>
-            <Header title='All Users' icon={<Users2Icon size={26} />} />
+            <Header title='All Users' icon={<FaUsers size={26} />} />
             <div>
                 <MaxWidthWrapper className='my-5'>
                     <DataTable<User, string>
@@ -121,6 +109,7 @@ function Page() {
                         onCreate={createUserHandler}
                         columns={useColumns(updateUserHandler, deleteUserHandler)}
                         data={users}
+                        reports={userRports()}
                     />
                 </MaxWidthWrapper>
             </div>

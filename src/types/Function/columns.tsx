@@ -81,13 +81,13 @@ export const useColumns = (handleUpdate: (id: number) => void, handleDelete: (id
                             }
                             {isFunctionUpdate ? (
                                 <DropdownMenuItem onClick={() => handleUpdate(function_.id)}>
-                                    Edit User
+                                    Edit Function
                                 </DropdownMenuItem>
                             ) : null}
 
                             {isFunctionDelete ? (
                                 <DropdownMenuItem onClick={() => handleDelete(function_.id)}>
-                                    Delete User
+                                    Delete Function
                                 </DropdownMenuItem>
                             ) : null}
                         </DropdownMenuContent>

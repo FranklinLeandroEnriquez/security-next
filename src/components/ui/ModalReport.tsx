@@ -1,35 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { PDFDownloadLink, Document, PDFViewer } from '@react-pdf/renderer';
-import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog'; // Asume que Dialog es el archivo donde tienes definidos tus componentes de diálogo
-import PDFComponent from '@/components/PdfReport'; // Asume que PDFComponent es el componente que genera tu PDF
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 interface PDFPreviewDialogProps {
-    title: string;
-    data: Record<string, any>;
-    description: string;
+    ReportComponent: React.ReactElement,
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-const PDFPreviewDialog: React.FC<PDFPreviewDialogProps> = ({ title, data, description,open, onOpenChange }) => {
+const PDFPreviewDialog: React.FC<PDFPreviewDialogProps> = ({ ReportComponent, open, onOpenChange }) => {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogTrigger>Ver PDF</DialogTrigger>
             <DialogContent className='min-h-[20rem] h-[80vh] flex flex-col items-center'>
                 <div className='flex-grow w-full'>
                     <PDFViewer className='w-full h-full '>
-                        <PDFComponent title={title} data={data} description={description}/>
+                        {ReportComponent}
                     </PDFViewer>
                 </div>
                 <div className='w-1/3 flex items-center justify-center'>
-                <Button variant='default'>
-                    <PDFDownloadLink document={<PDFComponent title={title} data={data} description={description} />} fileName="report.pdf">
-                        {({ blob, url, loading, error }) =>
-                            loading ? 'Loading document...' : 'Download'
-                        }
-                    </PDFDownloadLink>
-                </Button>
+                    <Button variant='default'>
+                        <PDFDownloadLink document={ReportComponent} fileName="report.pdf">
+                            {({ loading }) =>
+                                loading ? 'Loading document...' : 'Download'
+                            }
+                        </PDFDownloadLink>
+                    </Button>
                 </div>
             </DialogContent>
         </Dialog>

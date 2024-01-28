@@ -1,6 +1,5 @@
 'use client';
-import { useContext } from 'react';
-import { UserFunctionProvider, useUserFunctions } from '@/contexts/UserFunctionProvider';
+import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import {
     Home, Settings,
     User, UserCheck,
@@ -25,7 +24,6 @@ export const useSidevarItems = (): SideNavItems[] => {
     const canReadRolesFunctionModulesReport = userFunctions?.includes('SEC-ROLES-FUNCTION-MODULES-REPORT') || false;
     const canReadModulesFunctionsReport = userFunctions?.includes('SEC-MODULES-FUNCTIONS-REPORT') || false;
     return [
-
         {
             title: "Dashboard",
             path: "/dashboard/",
@@ -99,26 +97,6 @@ export const useSidevarItems = (): SideNavItems[] => {
                     icon: <Route size={20} />,
                     canRead: casReadAuditTrailReport
                 },
-                {
-                    title: "Users",
-                    path: "/dashboard/reports/users",
-                    canRead: canReadAuditUserReport
-                },
-                {
-                    title: "Roles",
-                    path: "/dashboard/reports/roles",
-                    canRead: canReadRolesFunctionModulesReport
-                },
-                {
-                    title: "Modules",
-                    path: "/dashboard/reports/modules",
-                    canRead: canReadModulesFunctionsReport
-                },
-                {
-                    title: "Functions",
-                    path: "/dashboard/reports/functions",
-                    canRead: canReadUsersRolesFunctionsModulesReport
-                }
             ],
             canRead: casReadAuditTrailReport || canReadAuditUserReport || canReadRolesFunctionModulesReport || canReadModulesFunctionsReport || canReadUsersRolesFunctionsModulesReport
         }
