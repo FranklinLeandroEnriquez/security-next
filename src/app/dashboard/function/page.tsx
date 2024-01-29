@@ -15,7 +15,7 @@ import { getIp, logAuditAction } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import ValidFunctions from '@/providers/ValidateFunctions';
-import exp from 'constants';
+import { functionReports } from '@/types/Reports/functions/functionReports';
 
 function Page() {
     const [functions, setFunctions] = useState<FunctionResponse[]>([] as FunctionResponse[]);
@@ -132,8 +132,7 @@ function Page() {
                     data={functions}
                     moduleName='Functions'
                     description='Functions of the system'
-                // onGenerateReport={handleGenerateReport}
-                // reportData={reportData}
+                    reports={functionReports()}
                 />
             </MaxWidthWrapper>
         </>

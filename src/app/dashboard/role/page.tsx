@@ -16,6 +16,7 @@ import { useAuthToken } from '@/hooks/useAuthToken';
 import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions';
+import { roleReports } from '@/types/Reports/roles/roleReports';
 
 function Page() {
     const [roles, setRoles] = useState<RoleResponse[]>([] as RoleResponse[]);
@@ -110,6 +111,7 @@ function Page() {
                     data={roles}
                     moduleName='Roles'
                     description='Roles of the system'
+                    reports={roleReports()}
                 />
             </MaxWidthWrapper>
         </>
