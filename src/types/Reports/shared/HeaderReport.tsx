@@ -68,21 +68,21 @@ const styles = StyleSheet.create({
         color: '#333',
     },
 });
-const { getAuthResponse } = useSessionAuth();
-const authResponse = getAuthResponse();
-const email = authResponse?.email;
-
-const currentDate = new Date();
-const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth()+1}/${currentDate.getFullYear()}`;
-
 interface ReportHeaderProps {
     data: any;
     dataType: string;
 }
 
-export const ReportHeader: React.FC<ReportHeaderProps> = ({ data, dataType }) => (
-    
-    <Document>
+export const ReportHeader: React.FC<ReportHeaderProps> = ({ data, dataType }) => {
+    const { getAuthResponse } = useSessionAuth();
+    const authResponse = getAuthResponse();
+    const email = authResponse?.email;
+
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth()+1}/${currentDate.getFullYear()}`;
+
+    return (
+        <Document>
             <Page style={styles.page}>
                 <View style={styles.headerContainer}>
                     <View style={styles.headerDetailColumn}>
@@ -100,6 +100,7 @@ export const ReportHeader: React.FC<ReportHeaderProps> = ({ data, dataType }) =>
                 </View>
             </Page>
         </Document>
-);
+    );
+};
 
-export default ReportHeader; 
+export default ReportHeader;

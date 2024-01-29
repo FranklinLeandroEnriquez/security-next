@@ -39,8 +39,8 @@ export function BasicModules<TData>({
 
         for (const id of ids) {
             try {
-                const module = await getModuleHandler(id);
-                modules.push(module);
+                const module_ = await getModuleHandler(id);
+                modules.push(module_);
             } catch (error) {
                 console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
             }
