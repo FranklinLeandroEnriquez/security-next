@@ -103,7 +103,21 @@ export function DataTable<TData, TValue>({
     })
 
     //Generar cvs
-    const exportData = data.map((row) =>
+    const handleGenerateReport = (rows: Row<TData>[]): TData[] => {
+        const selectedRows = rows.filter((row) => row.isSelected);
+        const report = selectedRows.map((row) => {
+            return row.data;
+        });
+        return report;
+    };
+
+    const rowData: Row<TData>[] = table.getRowModel().rows.map(row => ({
+        isSelected: row.getIsSelected(),
+        data: row.original
+    }));
+
+    //Generar cvs
+    const exportData = handleGenerateReport(rowData).map((row) =>
         columns.reduce((acc: Record<string, any>, column) => {
             const accessorKey = (column as any).accessorKey;
             if (accessorKey && accessorKey !== 'actions') {
@@ -116,6 +130,7 @@ export function DataTable<TData, TValue>({
             return acc;
         }, {})
     );
+    //fin generar cvs
 
     const handleSelectReport = (reportComponent: React.ReactElement) => {
         setSelectedReport(reportComponent);
