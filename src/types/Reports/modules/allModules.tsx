@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
-import { UserResponse } from '@/types/User/UserResponse';
-import { getUser } from '@/services/User/UserService';
+import { ModuleResponse } from '@/types/Module/ModuleResponse';
+import { getModule } from '@/services/Module/ModuleService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { toast } from 'sonner';
@@ -9,12 +8,10 @@ import { ReporType } from '@/types/Reports/shared/Report';
 import { renderData } from '@/types/Reports/shared/FormatData';
 import {ReportHeader} from "@/types/Reports/shared/HeaderReport";
 
-export function BasicUsers<TData>({
+export function BasicModules<TData>({
     table,
 }: ReporType<TData>) {
-
-    const [users, setUsers] = React.useState<UserResponse[]>([]);
-
+    const [modules, setModules] = React.useState<ModuleResponse[]>([]);
     const token = useAuthToken();
 
     const getIdSelectedItems = useCallback((): number[] => {
@@ -25,10 +22,10 @@ export function BasicUsers<TData>({
         return selectedIds || [];
     }, [table]);
 
-    const getUserHandler = useCallback(async (id: number): Promise<UserResponse> => {
-        const res = await getUser(id, token);
+    const getModuleHandler = useCallback(async (id: number): Promise<ModuleResponse> => {
+        const res = await getModule(id, token);
         if (res.status === 200) {
-            const data: UserResponse = await res.json();
+            const data: ModuleResponse = await res.json();
             return data;
         } else {
             const errorData: ErrorResponse = await res.json();
@@ -37,32 +34,32 @@ export function BasicUsers<TData>({
         }
     }, [token]);
 
-    const getUsersHandler = useCallback(async (ids: number[]): Promise<UserResponse[]> => {
-        const users: UserResponse[] = [];
+    const getModulesHandler = useCallback(async (ids: number[]): Promise<ModuleResponse[]> => {
+        const modules: ModuleResponse[] = [];
 
         for (const id of ids) {
             try {
-                const user = await getUserHandler(id);
-                users.push(user);
+                const module = await getModuleHandler(id);
+                modules.push(module);
             } catch (error) {
                 console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
             }
         }
-        return users;
-    }, [getUserHandler]);
+        return modules;
+    }, [getModuleHandler]);
 
-    const data = renderData(users, 0, "User");
+    const data = renderData(modules, 0, "Module");
 
     useEffect(() => {
         const ids = getIdSelectedItems();
-        getUsersHandler(ids).then((users) => {
-            setUsers(users);
+        getModulesHandler(ids).then((modules) => {
+            setModules(modules);
         });
     }, []);
 
     return (
-        <ReportHeader data={data} dataType={"Users"}/>
+        <ReportHeader data={data} dataType='Modules' />
     );
-};
+}
 
-export default BasicUsers;
+export default BasicModules;

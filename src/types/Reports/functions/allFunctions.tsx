@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
-import { UserResponse } from '@/types/User/UserResponse';
-import { getUser } from '@/services/User/UserService';
+import { FunctionResponse } from '@/types/Function/FunctionResponse';
+import { getFunction } from '@/services/Function/FunctionService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { toast } from 'sonner';
@@ -9,11 +8,11 @@ import { ReporType } from '@/types/Reports/shared/Report';
 import { renderData } from '@/types/Reports/shared/FormatData';
 import {ReportHeader} from "@/types/Reports/shared/HeaderReport";
 
-export function BasicUsers<TData>({
+export function BasicFunctions<TData>({
     table,
 }: ReporType<TData>) {
 
-    const [users, setUsers] = React.useState<UserResponse[]>([]);
+    const [functions, setFunctions] = React.useState<FunctionResponse[]>([]);
 
     const token = useAuthToken();
 
@@ -25,10 +24,10 @@ export function BasicUsers<TData>({
         return selectedIds || [];
     }, [table]);
 
-    const getUserHandler = useCallback(async (id: number): Promise<UserResponse> => {
-        const res = await getUser(id, token);
+    const getFunctionHandler = useCallback(async (id: number): Promise<FunctionResponse> => {
+        const res = await getFunction(id, token);
         if (res.status === 200) {
-            const data: UserResponse = await res.json();
+            const data: FunctionResponse = await res.json();
             return data;
         } else {
             const errorData: ErrorResponse = await res.json();
@@ -37,32 +36,31 @@ export function BasicUsers<TData>({
         }
     }, [token]);
 
-    const getUsersHandler = useCallback(async (ids: number[]): Promise<UserResponse[]> => {
-        const users: UserResponse[] = [];
+    const getFunctionsHandler = useCallback(async (ids: number[]): Promise<FunctionResponse[]> => {
+        const functions: FunctionResponse[] = [];
 
         for (const id of ids) {
             try {
-                const user = await getUserHandler(id);
-                users.push(user);
+                const function_ = await getFunctionHandler(id);
+                functions.push(function_);
             } catch (error) {
                 console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
             }
         }
-        return users;
-    }, [getUserHandler]);
+        return functions;
+    }, [getFunctionHandler]);
 
-    const data = renderData(users, 0, "User");
+    const data = renderData(functions, 0, "Function");
 
     useEffect(() => {
         const ids = getIdSelectedItems();
-        getUsersHandler(ids).then((users) => {
-            setUsers(users);
+        getFunctionsHandler(ids).then((functions) => {
+            setFunctions(functions);
         });
     }, []);
 
-    return (
-        <ReportHeader data={data} dataType={"Users"}/>
+    return(
+        <ReportHeader data={data} dataType='Functions' />
     );
-};
-
-export default BasicUsers;
+}
+export default BasicFunctions;
