@@ -19,6 +19,7 @@ import { useSessionAuth } from '@/hooks/useSessionAuth';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import validFunctions from '@/providers/ValidateFunctions';
 import { ErrorResponse } from '@/types/shared/ValidationError';
+import { moduleReports } from '@/types/Reports/modules/moduleReports';
 
 function Page() {
     const [modules, setModules] = useState<ModuleResponse[]>([] as ModuleResponse[]);
@@ -172,8 +173,7 @@ function Page() {
                     data={modules}
                     moduleName='Modules'
                     description='Modules of the system'
-                // onGenerateReport={handleGenerateReport}
-                // reportData={reportData}
+                    reports={moduleReports()}
                 />
             </MaxWidthWrapper>
         </>
