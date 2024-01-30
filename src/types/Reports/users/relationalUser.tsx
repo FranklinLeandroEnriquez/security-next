@@ -30,8 +30,6 @@ export function RelationalUsers<TData>({
     }, [table]);
 
     const groupByModule = (functions: FunctionResponse[]) => {
-        console.log("functions in groupByModule");
-        console.log(functions);
         let grouped = functions.reduce((acc, function_) => {
             let moduleId = function_.module?.id;
             if (!moduleId) return acc;
@@ -41,18 +39,20 @@ export function RelationalUsers<TData>({
                     functions: [],
                 };
             }
-            acc[moduleId].functions.push(function_);
+            // Desestructura el objeto de la función y omite la propiedad del módulo
+            const { module, ...functionWithoutModule } = function_;
+            acc[moduleId].functions.push(functionWithoutModule);
             return acc;
-        }, {} as Record<number, { module: ModuleResponse, functions: FunctionResponse[] }>);
-
+        }, {} as Record<number, { module: ModuleResponse, functions: Omit<FunctionResponse, 'module'>[] }>);
+    
+        console.log("grouped");
+        console.log(grouped);
         return Object.values(grouped);
     };
     const getFunctionsOfRoleHandler = useCallback(async (roleId: number): Promise<FunctionResponse[]> => {
         const res = await getFunctionsOfRole(roleId, token);
         if (res.status === 200) {
             const data: FunctionResponse[] = await res.json();
-            console.log("data");
-            console.log(data);
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
             console.log("filteredFunctions");
             console.log(filteredFunctions);
@@ -86,8 +86,6 @@ export function RelationalUsers<TData>({
                 // Fetch the functions of each role and group them by module
                 const rolesWithGroupedFunctions = await Promise.all(rolesData.map(async (role) => {
                     const functions = await getFunctionsOfRoleHandler(role.id);
-                    console.log("functions in getUserHandler");
-                    console.log(functions);
                     const groupedFunctions = groupByModule(functions);
                     return { ...role, modules: groupedFunctions };
                 }));
