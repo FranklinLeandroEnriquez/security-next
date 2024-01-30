@@ -27,7 +27,7 @@ export async function logAuditAction(audit: AuditRequest, token: string) {
 
 
 export const getIpWithTimeout = async (timeoutMs: number) => {
-    const ipifyPromise = fetch('https://api.ipify.org?format=json')
+    const ipifyPromise = fetch(`https://ipv4.seeip.org/jsonip`)
         .then(response => response.json())
         .then(data => data.ip)
         .catch(() => "0.0.0.0");
