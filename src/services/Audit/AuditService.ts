@@ -24,8 +24,31 @@ export async function logAuditAction(audit: AuditRequest, token: string) {
         throw new Error(`Failed to log audit action: ${response.statusText}`);
     }
 }
-export const getIp = async () => {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
+
+
+export const getIpWithTimeout = async (timeoutMs: number) => {
+    const ipifyPromise = fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => data.ip)
+        .catch(() => "0.0.0.0");
+
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+            reject(new Error('Timeout exceeded'));
+        }, timeoutMs);
+    });
+
+    return Promise.race([ipifyPromise, timeoutPromise]);
+}
+
+
+export async function getIp() {
+    const timeoutMs = 3000;
+    return getIpWithTimeout(timeoutMs)
+        .then(ip => {
+            return ip;
+        })
+        .catch(() => {
+            return "0.0.0.0"
+        });
 }
