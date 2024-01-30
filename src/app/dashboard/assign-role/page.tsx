@@ -5,7 +5,6 @@ import { UserResponse } from "@/types/User/UserResponse";
 import { RoleResponse } from "@/types/Role/RoleResponse";
 import { useRouter } from 'next/navigation';
 import { assignRoles } from "@/services/User/UserService";
-import { getRolesOfUser } from "@/services/User/UserService";
 import { getRoles } from "@/services/Role/RoleService";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
@@ -20,14 +19,15 @@ import { useAuthToken } from "@/hooks/useAuthToken";
 import validFunctions from '@/providers/ValidateFunctions';
 import { useUserFunctions } from "@/contexts/UserFunctionProvider";
 import { getRolesOfUserHandler } from "@/handlers/userRolesHandler"
-import exp from "constants";
 import { ErrorResponse } from "@/types/shared/ValidationError";
+import { Input } from "@/components/ui/input";
 
 function AssignRole() {
     const [users, setUsers] = useState<UserResponse[]>([]);
     const [selectedUser, setSelectedUser] = useState<number | null>(null);
     const [availableRoles, setAvailableRoles] = useState<RoleResponse[]>([]);
     const [userRoles, setUserRoles] = useState<RoleResponse[]>([]);
+    const [searchValue, setSearchValue] = useState('');
 
     const router = useRouter();
     const token = useAuthToken();
@@ -63,25 +63,6 @@ function AssignRole() {
             toast.error(errorData.message.toString());
         }
     }
-
-    // const getRolesOfUserHandler = async (userId: number) => {
-    //     const ip = await getIp();
-    //     const res = await getRolesOfUser(userId, token);
-    //     if (res.status === 200) {
-    //         const data = await res.json();
-    //         const filteredRoles: RoleResponse[] = data.filter((role: RoleResponse) => role.status === true);
-    //         setUserRoles(filteredRoles);
-    //         await logAuditAction({
-    //             functionName: 'SEC-ROLES-TO-USER-READ',
-    //             action: 'get user roles',
-    //             description: 'Successfully fetched user roles',
-    //             observation: `User ID: ${userId}`,
-    //             ip: ip.toString(),
-    //         }, token);
-    //     } else {
-    //         toast.error('An error has occurred');
-    //     }
-    // }
 
     const getRolesHandler = async () => {
         const ip = await getIp();
@@ -168,7 +149,7 @@ function AssignRole() {
         <>
             <Header title="Assign Roles" />
             <MaxWidthWrapper className="mt-8">
-                {isUserRead&&( <CustomSelect
+                {isUserRead && (<CustomSelect
                     options={[
                         { label: 'Select a user...', value: 0 },
                         ...users.map((user) => ({ label: user.username, value: user.id })),
@@ -179,24 +160,31 @@ function AssignRole() {
 
                 {selectedUser && (
                     <div className="flex space-x-4 mt-4"> {/* Agregamos mt-4 para agregar un margen en la parte superior */}
-                        {isRoleRead&&( <div className="max-h-96 overflow-y-auto flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
-                            <label>Available Roles</label>
+                        {isRoleRead && (<div className="max-h-96 overflow-y-auto flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
+                            <label className="font-bold">Available Roles</label>
+                            <Input
+                                type="text"
+                                value={searchValue}
+                                onChange={(e) => setSearchValue(e.target.value)}
+                                placeholder="Search roles..."
+                            />
                             <ScrollableCheckboxList<Role>
-                                items={availableRoles.filter(role => !userRoles.some(userRole => userRole.id === role.id))}
-                                checkedItems={userRoles}
-                                onChange={handleRoleAssignment}
-                                getKey={(role) => role.id.toString()}
-                                renderItem={(role) => (
-                                    <>
-                                        <span>{role.id}</span>
-                                        <span className="ml-2">{role.name}</span>
-                                    </>
-                                )}
+                                items={availableRoles.filter(role => !userRoles.some(userRole => userRole.id === role.id))
+                                    .filter(role => role.name.toLowerCase().includes(searchValue.toLowerCase()) || role.id.toString().includes(searchValue))}
+                            checkedItems={userRoles}
+                            onChange={handleRoleAssignment}
+                            getKey={(role) => role.id.toString()}
+                            renderItem={(role) => (
+                                <>
+                                    <span>{role.id}</span>
+                                    <span className="ml-2">{role.name}</span>
+                                </>
+                            )}
                             />
                         </div>)}
 
-                        {isAssignRead&&(<div className="max-h-96 overflow-y-auto flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
-                            <label>User Roles</label>
+                        {isAssignRead && (<div className="max-h-96 overflow-y-auto flex-1 p-4 border rounded"> {/* Utilizamos flex-1 para que ocupe el espacio restante y agregamos padding y bordes */}
+                            <label className="font-bold">User Roles</label>
                             <ScrollableCheckboxList<Role>
                                 items={userRoles}
                                 checkedItems={userRoles}
@@ -213,7 +201,7 @@ function AssignRole() {
                     </div>
                 )}
                 <div className="flex justify-center">
-                    {isAssingUpdate&&(<Button onClick={handleAssignRoles} className="mt-8 w-1/3">
+                    {isAssingUpdate && (<Button onClick={handleAssignRoles} className="mt-8 w-1/3">
                         Assign
                     </Button>)}
                 </div>

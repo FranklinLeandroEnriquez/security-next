@@ -14,7 +14,6 @@ import Header from "@/components/Header"
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import ScrollableCheckboxList from "@/components/ui/scroll-area"
 import CustomSelect from "@/components/ui/select-filter"
-import { Function } from "@/types/Function/columns"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { getIp, logAuditAction } from "@/services/Audit/AuditService"
@@ -22,13 +21,14 @@ import { useAuthToken } from "@/hooks/useAuthToken"
 import validFunctions from '@/providers/ValidateFunctions';
 import { useUserFunctions } from '@/contexts/UserFunctionProvider';
 import { ErrorResponse } from "@/types/shared/ValidationError"
-import { set } from "zod"
+import { Input } from "@/components/ui/input";
 
 function AssignFunction() {
     const [roles, setRoles] = useState<RoleResponse[]>([])
     const [selectedRole, setSelectedRole] = useState<number | null>(null)
     const [availableFunctions, setAvailableFunctions] = useState<FunctionResponse[]>([])
     const [roleFunctions, setRoleFunctions] = useState<FunctionResponse[]>([])
+    const [searchValue, setSearchValue] = useState('');
 
     const router = useRouter()
     const token = useAuthToken()
@@ -203,13 +203,21 @@ function AssignFunction() {
                     <div className="flex space-x-4 mt-4">
                         {isFunctionRead && (
                             <div className="flex-1 p-4 border rounded">
-                                <label>Available Functions:</label>
+                                <label className="font-bold">Available Functions:</label>
                                 <div className="max-h-96 overflow-y-auto border p-4 mb-4">
+                                    <Input
+                                        type="text"
+                                        value={searchValue}
+                                        onChange={(e) => setSearchValue(e.target.value)}
+                                        placeholder="Search functions..."
+                                        className="mb-4"
+                                    />
                                     {groupByModule(availableFunctions).map((group, index) => (
                                         group.functions.filter(func => !roleFunctions.some(selectedFunc => selectedFunc.id === func.id)).length > 0 && (
                                             <Accordion title={group.module.name} key={index}>
                                                 <ScrollableCheckboxList<FunctionResponse>
-                                                    items={group.functions.filter(func => !roleFunctions.some(selectedFunc => selectedFunc.id === func.id))}
+                                                    items={group.functions.filter(func => !roleFunctions.some(selectedFunc => selectedFunc.id === func.id))
+                                                        .filter(func => func.name.toLowerCase().includes(searchValue.toLowerCase()) || func.id.toString().includes(searchValue))}
                                                     checkedItems={roleFunctions}
                                                     onChange={handleFunctionAssignment}
                                                     getKey={(function_) => function_.id.toString()}
@@ -229,7 +237,7 @@ function AssignFunction() {
 
                         {isAssignRead && (
                             <div className="flex-1 p-4 border rounded">
-                                <label>Role Functions:</label>
+                                <label className="font-bold">Role Functions:</label>
                                 <div className="max-h-96 overflow-y-auto border p-4 mb-4">
                                     {groupByModule(availableFunctions).map((group, index) => (
                                         group.functions.filter(func => roleFunctions.some(selectedFunc => selectedFunc.id === func.id)).length > 0 && (
