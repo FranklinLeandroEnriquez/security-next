@@ -1,12 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
-import { FunctionResponse } from '@/types/Function/FunctionResponse';
 import { getFunction } from '@/services/Function/FunctionService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { toast } from 'sonner';
 import { ReporType } from '@/types/Reports/shared/Report';
 import { renderData } from '@/types/Reports/shared/FormatData';
-import {ReportHeader} from "@/types/Reports/shared/HeaderReport";
+import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
+
+
+export interface FunctionResponse {
+    id: number;
+    name: string;
+    status: boolean;
+}
 
 export function BasicFunctions<TData>({
     table,
@@ -28,7 +34,11 @@ export function BasicFunctions<TData>({
         const res = await getFunction(id, token);
         if (res.status === 200) {
             const data: FunctionResponse = await res.json();
-            return data;
+            return {
+                id: data.id,
+                name: data.name,
+                status: data.status
+            };
         } else {
             const errorData: ErrorResponse = await res.json();
             toast.error(errorData.message.toString());
@@ -42,6 +52,7 @@ export function BasicFunctions<TData>({
         for (const id of ids) {
             try {
                 const function_ = await getFunctionHandler(id);
+
                 functions.push(function_);
             } catch (error) {
                 console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
@@ -59,7 +70,7 @@ export function BasicFunctions<TData>({
         });
     }, []);
 
-    return(
+    return (
         <ReportHeader data={data} dataType='Functions' />
     );
 }
