@@ -7,11 +7,10 @@ import { ReporType } from '@/types/Reports/shared/Report';
 import { renderData } from '@/types/Reports/shared/FormatData';
 import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
 
-
 export interface FunctionResponse {
     id: number;
     name: string;
-    status: boolean;
+    status: boolean
 }
 
 export function BasicFunctions<TData>({
@@ -52,7 +51,6 @@ export function BasicFunctions<TData>({
         for (const id of ids) {
             try {
                 const function_ = await getFunctionHandler(id);
-
                 functions.push(function_);
             } catch (error) {
                 console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
