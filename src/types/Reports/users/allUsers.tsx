@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react';
-import { Document, Page, Text, StyleSheet, View } from '@react-pdf/renderer';
 import { UserResponse } from '@/types/User/UserResponse';
 import { getUser } from '@/services/User/UserService';
 import { useAuthToken } from '@/hooks/useAuthToken';
