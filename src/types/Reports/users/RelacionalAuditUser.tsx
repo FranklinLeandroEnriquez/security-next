@@ -10,10 +10,15 @@ import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
 import { UserResponse } from '@/types/User/UserResponse';
 import { getUser } from '@/services/User/UserService';
 
+interface UserAuditReport {
+    user: UserResponse;
+    audits: AuditResponse[];
+}
+
 export function RelacionalAuditUser<TData>({
     table,
 }: ReporType<TData>) {
-    const [audits, setAudits] = useState<AuditResponse[]>([]);
+    const [dataReport, setDataReport] = useState<UserAuditReport[]>([]);
     const token = useAuthToken();
 
     const getIdSelectedItems = useCallback((): number[] => {
@@ -36,77 +41,49 @@ export function RelacionalAuditUser<TData>({
         }
     }, [token]);
 
-    const getUsersHandler = useCallback(async (ids: number[]): Promise<UserResponse[]> => {
-        const users: UserResponse[] = [];
 
-        for (const id of ids) {
-            try {
-                const user = await getUserHandler(id);
-                users.push(user);
-            } catch (error) {
-                console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
-            }
-        }
-        return users;
-    }, [getUserHandler]);
-
-    const sizePagination = table?.getState().pagination.pageSize || 0;
-    const currentPage = table?.getState().pagination.pageIndex || 0;
-
-
-    const getAuditHandler = useCallback(async (id: number): Promise<AuditResponse & { users: UserResponse[] }> => {
-        const res = await getAudit(id, token);
-        if (res.status === 200) {
-            const data: AuditResponse = await res.json();
-            const skip = currentPage * sizePagination;
-            const take = sizePagination;
-            const userRes = await getAuditByUser(id, token, skip, take);
-            if (userRes.status === 200) {
-                const users: UserResponse[] = await userRes.json();
-                return {
-                    ...data,
-                    users
-                };
-            } else {
-                const errorData: ErrorResponse = await userRes.json();
-                toast.error(errorData.message.toString());
-                throw new Error(errorData.message);
-            }
+    const getAuditsByUserHandler = useCallback(async (userId: number): Promise<AuditResponse[]> => {
+        const userRes = await getAuditByUser(userId, token, 20);
+        if (userRes.status === 200) {
+            return await userRes.json()
         } else {
-            const errorData: ErrorResponse = await res.json();
+            const errorData: ErrorResponse = await userRes.json();
             toast.error(errorData.message.toString());
             throw new Error(errorData.message);
         }
     }, [token]);
 
-    const getAuditsHandler = useCallback(async (ids: number[]): Promise<AuditResponse[]> => {
-        const audits: AuditResponse[] = [];
+    const getDataReport = useCallback(async (ids: number[]): Promise<UserAuditReport[]> => {
+        const users: UserAuditReport[] = [];
 
         for (const id of ids) {
             try {
-                const audit_ = await getAuditHandler(id);
-                audits.push(audit_);
+                users.push({
+                    user: await getUserHandler(id),
+                    audits: await getAuditsByUserHandler(id)
+                });
             } catch (error) {
                 console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
             }
         }
-        return audits;
-    }, [getAuditHandler]);
+        return users;
+    }, [getUserHandler, getAuditsByUserHandler]);
 
-    const data = renderData(audits, 0, "Audit");
+
+
+    const data = renderData(dataReport, 0, "USER AUDIT");
 
     useEffect(() => {
         const ids = getIdSelectedItems();
-        getAuditsHandler(ids).then((audits) => {
-            // Ordena las auditorías de menor a mayor
-            const sortedAudits = audits.sort((a, b) => a.id - b.id);
-            setAudits(sortedAudits);
+        getDataReport(ids).then((dataReport) => {
+            setDataReport(dataReport);
+
         });
     }, []);
 
 
     return (
-        <ReportHeader data={data} dataType='Audits' />
+        <ReportHeader data={data} dataType='USER AUDIT' />
     );
 }
 

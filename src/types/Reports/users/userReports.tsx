@@ -14,7 +14,7 @@ export const userRports = (): Report<User>[] => {
             type: RelationalUsers
         },
         {
-            title: 'Relacional Audit User',
+            title: 'User Last 30 Audit Logs',
             type: RelacionalAuditUser
         }
     ]
