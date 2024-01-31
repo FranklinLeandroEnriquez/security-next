@@ -13,6 +13,7 @@ import { ErrorResponse } from "@/types/shared/ValidationError";
 import { toast } from "sonner";
 import validFunctions from '@/providers/ValidateFunctions'
 import { FootprintsIcon } from "lucide-react";
+import { auditReports } from "@/types/Reports/Audit/auditReports";
 
 function Page() {
     const [audits, setAudits] = useState<AuditResponse[]>([]);
@@ -57,6 +58,7 @@ function Page() {
                         data={audits}
                         moduleName="Audit Trails"
                         description="List of all audit trails"
+                        reports={auditReports()}
                     />
                 </MaxWidthWrapper>
             </div>

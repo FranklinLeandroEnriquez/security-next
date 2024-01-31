@@ -21,6 +21,15 @@ export const getModule = async (id: number, token: string) => {
     );
 }
 
+export const getFunctionsForModule = async (id: number, token: string) => {
+    return await fetch(`${HOST}/api/modules/${id}/functions`,
+        {
+            cache: 'no-store',
+            headers: { authorization: `Bearer ${token}` }
+        }
+    );
+}
+
 export const deleteModule = async (id: number, token: string) => {
     return await fetch(`${HOST}/api/modules/${id}`,
         {

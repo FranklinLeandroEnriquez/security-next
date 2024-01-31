@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
-import { getFunction } from '@/services/Function/FunctionService';
+import React, { useCallback, useEffect, useState } from 'react';
+import { AuditResponse } from '@/types/Audit/AuditResponse';
+import { getAudit } from '@/services/Audit/AuditService';
 import { useAuthToken } from '@/hooks/useAuthToken';
 import { ErrorResponse } from '@/types/shared/ValidationError';
 import { toast } from 'sonner';
@@ -7,18 +8,10 @@ import { ReporType } from '@/types/Reports/shared/Report';
 import { renderData } from '@/types/Reports/shared/FormatData';
 import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
 
-export interface FunctionResponse {
-    id: number;
-    name: string;
-    status: boolean
-}
-
-export function BasicFunctions<TData>({
+export function AllAudit<TData>({
     table,
 }: ReporType<TData>) {
-
-    const [functions, setFunctions] = React.useState<FunctionResponse[]>([]);
-
+    const [audits, setAudits] = useState<AuditResponse[]>([]);
     const token = useAuthToken();
 
     const getIdSelectedItems = useCallback((): number[] => {
@@ -29,15 +22,11 @@ export function BasicFunctions<TData>({
         return selectedIds || [];
     }, [table]);
 
-    const getFunctionHandler = useCallback(async (id: number): Promise<FunctionResponse> => {
-        const res = await getFunction(id, token);
+    const getAuditHandler = useCallback(async (id: number): Promise<AuditResponse> => {
+        const res = await getAudit(id, token);
         if (res.status === 200) {
-            const data: FunctionResponse = await res.json();
-            return {
-                id: data.id,
-                name: data.name,
-                status: data.status
-            };
+            const data: AuditResponse = await res.json();
+            return data;
         } else {
             const errorData: ErrorResponse = await res.json();
             toast.error(errorData.message.toString());
@@ -45,31 +34,35 @@ export function BasicFunctions<TData>({
         }
     }, [token]);
 
-    const getFunctionsHandler = useCallback(async (ids: number[]): Promise<FunctionResponse[]> => {
-        const functions: FunctionResponse[] = [];
+    const getAuditsHandler = useCallback(async (ids: number[]): Promise<AuditResponse[]> => {
+        const audits: AuditResponse[] = [];
 
         for (const id of ids) {
             try {
-                const function_ = await getFunctionHandler(id);
-                functions.push(function_);
+                const audit_ = await getAuditHandler(id);
+                audits.push(audit_);
             } catch (error) {
                 console.error(`Error obteniendo el usuario con ID ${id}: ${error}`);
             }
         }
-        return functions;
-    }, [getFunctionHandler]);
+        return audits;
+    }, [getAuditHandler]);
 
-    const data = renderData(functions, 0, "Function");
+    const data = renderData(audits, 0, "Audit");
 
     useEffect(() => {
         const ids = getIdSelectedItems();
-        getFunctionsHandler(ids).then((functions) => {
-            setFunctions(functions);
+        getAuditsHandler(ids).then((audits) => {
+            // Ordena las auditorías de menor a mayor
+            const sortedAudits = audits.sort((a, b) => a.id - b.id);
+            setAudits(sortedAudits);
         });
     }, []);
 
+
     return (
-        <ReportHeader data={data} dataType='Functions' />
+        <ReportHeader data={data} dataType='Audits' />
     );
 }
-export default BasicFunctions;
+
+export default AllAudit;
