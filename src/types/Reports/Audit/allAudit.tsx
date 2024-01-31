@@ -54,7 +54,9 @@ export function allAudit<TData>({
     useEffect(() => {
         const ids = getIdSelectedItems();
         getAuditsHandler(ids).then((audits) => {
-            setAudits(audits);
+            // Ordena las auditorías de menor a mayor
+            const sortedAudits = audits.sort((a, b) => a.id - b.id);
+            setAudits(sortedAudits);
         });
     }, []);
 
