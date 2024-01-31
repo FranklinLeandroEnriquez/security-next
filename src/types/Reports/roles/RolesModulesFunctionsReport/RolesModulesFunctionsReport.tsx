@@ -9,14 +9,17 @@ import { renderData } from '@/types/Reports/shared/FormatData';
 import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
 import { FunctionResponse } from '@/types/Function/FunctionResponse';
 import { ModuleResponse } from '@/types/Module/ModuleResponse';
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { styles } from './stylesReport';
 
 interface RolesModulesFunctionsReport {
     role: RoleResponse,
-    modules: {
+    dataRoles: {
         module: ModuleResponse,
         functions: Omit<FunctionResponse, 'module'>[],
     }[],
 }
+
 
 export function RolesModulesFunctionsReport<TData>({
     table,
@@ -50,8 +53,6 @@ export function RolesModulesFunctionsReport<TData>({
             return acc;
         }, {} as Record<number, { module: ModuleResponse, functions: Omit<FunctionResponse, 'module'>[] }>);
 
-        console.log("grouped");
-        console.log(grouped);
         return Object.values(grouped);
     };
 
@@ -60,8 +61,6 @@ export function RolesModulesFunctionsReport<TData>({
         if (res.status === 200) {
             const data: FunctionResponse[] = await res.json();
             const filteredFunctions: FunctionResponse[] = data.filter((function_: FunctionResponse) => function_.status === true);
-            console.log("filteredFunctions");
-            console.log(filteredFunctions);
             return filteredFunctions;
         } else {
             const errorData: ErrorResponse = await res.json();
@@ -78,7 +77,7 @@ export function RolesModulesFunctionsReport<TData>({
             const groupedFunctions = groupByModule(functions);
             return {
                 role: roleData,
-                modules: groupedFunctions,
+                dataRoles: groupedFunctions,
             };
         } else {
             const errorData: ErrorResponse = await res.json();
@@ -101,7 +100,49 @@ export function RolesModulesFunctionsReport<TData>({
         return roleReports;
     }, [getRoleReportHandler]);
 
-    const data = renderData(roles, 0, "Role");
+
+    const createTable = (dataReports: RolesModulesFunctionsReport[]) => {
+        return (
+            <View>
+                {dataReports.map((report, reportIndex) => (
+                    <View key={`report-${reportIndex}`} style={styles.page}>
+                        <Text style={styles.roleName}>Role: {report.role.id} - {report.role.name}</Text>
+                        <Text>Status: {report.role.status ? 'Active' : 'Inactive'}</Text>
+                        <View style={styles.spaceAfterRole} />
+
+                        {report.dataRoles.length == 0 && (
+                            <View style={styles.moduleInfo}>
+                                <Text style={styles.noFunctionsMessage}>No functions available for this role</Text>
+                            </View>)
+                        }
+
+                        {report.dataRoles.map((dataRole, dataRoleIndex) => (
+                            <View key={`dataRole-${dataRoleIndex}`} style={styles.moduleInfo}>
+                                <Text>Module: {dataRole.module.id} - {dataRole.module.name}</Text>
+                                <Text>Description: {dataRole.module.description}</Text>
+                                <Text>Status: {dataRole.module.status ? 'Active' : 'Inactive'}</Text>
+                                <Text style={styles.subtitle}>Functions</Text>
+                                <View style={styles.table}>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableHeader}>Id</Text>
+                                        <Text style={styles.tableHeader}>Name</Text>
+                                        <Text style={styles.tableHeader}>Status</Text>
+                                    </View>
+                                    {dataRole.functions.map((func, funcIndex) => (
+                                        <View key={`func-${funcIndex}`} style={styles.tableRow}>
+                                            <Text style={styles.tableCell}>{func.id}</Text>
+                                            <Text style={styles.tableCell}>{func.name}</Text>
+                                            <Text style={styles.tableCell}>{func.status ? 'Active' : 'Inactive'}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+            </View>
+        );
+    };
 
     useEffect(() => {
         const ids = getIdSelectedItems();
@@ -111,7 +152,7 @@ export function RolesModulesFunctionsReport<TData>({
     }, []);
 
     return (
-        <ReportHeader data={data} dataType={"Roles"} />
+        <ReportHeader data={createTable(roles)} dataType={"Roles"} />
     );
 };
 
