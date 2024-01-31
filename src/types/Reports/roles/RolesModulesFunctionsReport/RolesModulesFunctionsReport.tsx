@@ -111,10 +111,8 @@ export function RolesModulesFunctionsReport<TData>({
                         <View style={styles.spaceAfterRole} />
 
                         {report.dataRoles.length == 0 && (
-                            <View style={styles.moduleInfo}>
-                                <Text style={styles.noFunctionsMessage}>No functions available for this role</Text>
-                            </View>)
-                        }
+                            <Text style={styles.noFunctionsMessage}>No functions available for this role</Text>
+                        )}
 
                         {report.dataRoles.map((dataRole, dataRoleIndex) => (
                             <View key={`dataRole-${dataRoleIndex}`} style={styles.moduleInfo}>
@@ -123,7 +121,7 @@ export function RolesModulesFunctionsReport<TData>({
                                 <Text>Status: {dataRole.module.status ? 'Active' : 'Inactive'}</Text>
                                 <Text style={styles.subtitle}>Functions</Text>
                                 <View style={styles.table}>
-                                    <View style={styles.tableRow}>
+                                    <View style={styles.tableRowHeader}>
                                         <Text style={styles.tableHeader}>Id</Text>
                                         <Text style={styles.tableHeader}>Name</Text>
                                         <Text style={styles.tableHeader}>Status</Text>

@@ -28,6 +28,14 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+
+    tableRowHeader: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        backgroundColor: '#cccccc',
+        color: '#000000',
+    },
     tableCell: {
         width: '33%', // Ancho fijo para cada columna, ajusta según tus necesidades
         padding: 5,
@@ -53,6 +61,7 @@ export const styles = StyleSheet.create({
         marginTop: 5,
         fontSize: 10,
         fontStyle: 'italic',
+        marginLeft: 20,
       },
     
 
