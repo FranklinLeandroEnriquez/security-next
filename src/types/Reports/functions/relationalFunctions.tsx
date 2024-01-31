@@ -8,7 +8,7 @@ import { renderData } from '@/types/Reports/shared/FormatData';
 import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
 import { FunctionResponse } from '@/types/Function/FunctionResponse';
 
-export function relationalFunctions<TData>({
+export function RelationalFunctions<TData>({
     table,
 }: ReporType<TData>) {
 
@@ -63,4 +63,4 @@ export function relationalFunctions<TData>({
         <ReportHeader data={data} dataType='Functions' />
     );
 }
-export default relationalFunctions;
+export default RelationalFunctions;

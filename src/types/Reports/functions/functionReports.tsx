@@ -1,6 +1,6 @@
 import { Report } from '@/types/Reports/shared/Report';
 import BasicFunctions from './allFunctions';
-import { relationalFunctions } from './relationalFunctions';
+import { RelationalFunctions } from './relationalFunctions';
 import { Function } from '@/types/Function/columns';
 export const functionReports = (): Report<Function>[] => {
     return [
@@ -10,7 +10,7 @@ export const functionReports = (): Report<Function>[] => {
         },
         {
             title: 'Relational Functions',
-            type: relationalFunctions
+            type: RelationalFunctions
         }
     ]
 }

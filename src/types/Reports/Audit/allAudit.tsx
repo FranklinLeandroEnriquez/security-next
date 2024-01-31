@@ -7,9 +7,8 @@ import { toast } from 'sonner';
 import { ReporType } from '@/types/Reports/shared/Report';
 import { renderData } from '@/types/Reports/shared/FormatData';
 import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
-import { getAudits, getIp, logAuditAction } from '@/services/Audit/AuditService';
 
-export function allAudit<TData>({
+export function AllAudit<TData>({
     table,
 }: ReporType<TData>) {
     const [audits, setAudits] = useState<AuditResponse[]>([]);
@@ -66,4 +65,4 @@ export function allAudit<TData>({
     );
 }
 
-export default allAudit;
+export default AllAudit;

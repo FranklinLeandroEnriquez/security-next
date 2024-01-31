@@ -10,7 +10,7 @@ import { ReportHeader } from "@/types/Reports/shared/HeaderReport";
 import { FunctionResponse } from '../functions/allFunctions';
 import { getFunction } from '@/services/Function/FunctionService';
 
-export function relationalModules<TData>({
+export function RelationalModules<TData>({
     table,
 }: ReporType<TData>) {
     const [modules, setModules] = React.useState<ModuleResponse[]>([]);
@@ -105,4 +105,4 @@ export function relationalModules<TData>({
     );
 }
 
-export default relationalModules;
+export default RelationalModules;
