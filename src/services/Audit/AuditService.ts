@@ -19,12 +19,12 @@ export const getAudit = async (id: number, token: string) => {
     );
 }
 
-export const getAuditByUser = async (id: number,  token: string,  skip: number, take: number) => {
-    return await fetch(`${HOST}/api/audit/user/${id}?skip=${skip}&take=${take}`,
-    {
-        cache: 'no-store',
-        headers: { authorization: `Bearer ${token}` }
-    });
+export const getAuditByUser = async (id: number, token: string, numberOfRecors: number) => {
+    return await fetch(`${HOST}/api/audit/user/${id}?numberOfRecors=${numberOfRecors}`,
+        {
+            cache: 'no-store',
+            headers: { authorization: `Bearer ${token}` }
+        });
 }
 
 export async function logAuditAction(audit: AuditRequest, token: string) {
