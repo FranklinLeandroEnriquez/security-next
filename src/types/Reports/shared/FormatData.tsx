@@ -8,12 +8,12 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         color: '#333333',
     },
-    row:{
+    row: {
         flexDirection: 'row',
     },
     cell: {
         borderWidth: 1,
-        borderColor: '#000', 
+        borderColor: '#000',
         padding: 2,
         flex: 1,
     },
@@ -38,7 +38,7 @@ export const renderData = (data: Record<string, any>, depth = 0, dataType = '') 
     const total = Object.keys(data).length;
     return (
         <React.Fragment>
-            {depth != 0 && id !== '' && <Text style={{ ...styles.title, marginLeft: depth * 20, marginTop:10 }}>{dataType} ID: {id}</Text>}
+            {depth != 0 && id !== '' && <Text style={{ ...styles.title, marginLeft: depth * 20, marginTop: 10 }}>{dataType} ID: {id}</Text>}
             {Object.entries(data).map(([key, value], index) => {
                 if (key === 'id') {
                     return null; // Omitir la propiedad 'id'
@@ -48,7 +48,7 @@ export const renderData = (data: Record<string, any>, depth = 0, dataType = '') 
                     return (
                         <React.Fragment key={key}>
                             {Array.isArray(data) && depth == 0 && <View style={styles.separator} />}
-                            {Array.isArray(data) ? renderData(value, depth + 1, dataType) : renderData(value, depth,"> "+key)}
+                            {Array.isArray(data) ? renderData(value, depth + 1, dataType) : renderData(value, depth, "> " + key)}
                         </React.Fragment>
                     );
                 } else {
