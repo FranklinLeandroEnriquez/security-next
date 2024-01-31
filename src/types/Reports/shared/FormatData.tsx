@@ -53,8 +53,8 @@ export const renderData = (data: Record<string, any>, depth = 0, dataType = '') 
                     );
                 } else {
                     return (
-                        <View style={styles.row}>
-                            <Text key={key} style={{ ...styles.cell, marginLeft: depth * 20 }}>
+                        <View key={key} style={styles.row}>
+                            <Text style={{ ...styles.cell, marginLeft: depth * 20 }}>
                                 <Text style={styles.key}>{key}: </Text>
                             </Text>
                             <Text style={styles.cell}>
@@ -66,7 +66,7 @@ export const renderData = (data: Record<string, any>, depth = 0, dataType = '') 
             })}
             {depth == 0 && <View style={styles.separator} />}
             {depth == 0 && <Text style={styles.title}>Total {dataType}s: {total}</Text>}
-
         </React.Fragment>
     );
-};
+    
+}
